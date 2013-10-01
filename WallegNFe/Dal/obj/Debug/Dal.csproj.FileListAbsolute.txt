@@ -1,0 +1,4 @@
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Dal\bin\Debug\Dal.dll
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Dal\bin\Debug\Dal.pdb
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Dal\obj\Debug\Dal.dll
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Dal\obj\Debug\Dal.pdb

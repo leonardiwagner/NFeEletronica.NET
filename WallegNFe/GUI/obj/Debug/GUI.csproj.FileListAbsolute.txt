@@ -1,0 +1,7 @@
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\GUI\bin\Debug\GUI.exe
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\GUI\bin\Debug\GUI.pdb
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\GUI\obj\Debug\GUI.csprojResolveAssemblyReference.cache
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\GUI\obj\Debug\GUI.Properties.Resources.resources
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\GUI\obj\Debug\GUI.csproj.GenerateResource.Cache
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\GUI\obj\Debug\GUI.exe
+C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\GUI\obj\Debug\GUI.pdb
