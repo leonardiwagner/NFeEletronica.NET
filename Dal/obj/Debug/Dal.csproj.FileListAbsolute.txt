@@ -1,0 +1,8 @@
+C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Dal\bin\Debug\Dal.dll.config
+C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Dal\bin\Debug\Dal.dll
+C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Dal\bin\Debug\Dal.pdb
+C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Dal\obj\Debug\Dal.dll
+C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Dal\obj\Debug\Dal.pdb
+C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Dal\obj\Debug\Dal.csprojResolveAssemblyReference.cache
+C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Dal\bin\Debug\Model.dll
+C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Dal\bin\Debug\Model.pdb

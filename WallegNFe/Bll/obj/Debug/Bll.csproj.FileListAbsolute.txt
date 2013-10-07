@@ -1,9 +1,0 @@
-C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Bll\obj\Debug\Bll.csprojResolveAssemblyReference.cache
-C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Bll\bin\Debug\Bll.dll
-C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Bll\bin\Debug\Bll.pdb
-C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Bll\bin\Debug\Dal.dll
-C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Bll\bin\Debug\Model.dll
-C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Bll\bin\Debug\Dal.pdb
-C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Bll\bin\Debug\Model.pdb
-C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Bll\obj\Debug\Bll.dll
-C:\Users\wagner\Documents\GitHub\WallegNFe\WallegNFe\Bll\obj\Debug\Bll.pdb
