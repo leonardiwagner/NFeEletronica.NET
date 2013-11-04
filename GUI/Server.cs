@@ -33,27 +33,55 @@ namespace GUI
 
         private void btnIniciar_Click(object sender, EventArgs e)
         {
-
             Bll.NFe bllNFe = new Bll.NFe();
+
+            //Le as notas para envio
+            
             for (int i = 0; i < this.NotaEnvio.Count(); i++)
             {
-                bllNFe.AdicionaNotaLote(this.NotaEnvio[i].ArquivoFisico);
+                //bllNFe.AdicionaNotaLote(this.NotaEnvio[i].ArquivoFisico);
                 
             }
 
             bllNFe.Enviar();
 
-        
-
-           
         }
 
 
         private void LerNotas()
         {
+            Bll.Nota bllNota = new Bll.Nota();
+            Bll.Xml bllXml = new Bll.Xml();
 
-            Bll.Arquivo bllArquivo = new Bll.Arquivo();
-            this.NotaEnvio = bllArquivo.LeNota(Model.NotaSituacao.DEFAULT);
+            //Carrega as notas para envio
+            List<Model.Nota> notaList = bllNota.Carregar(Model.NotaSituacao.DEFAULT);
+
+            //Verifica se as notas estão de acordo com o schema
+            String arquivoSchemaNota = new Bll.Operacao(Model.OperacaoType.NFe).Schema;
+            for (int i = 0; i < notaList.Count(); i++)
+            {
+                try
+                {
+                    bllXml.ValidaSchema(notaList[i].ArquivoFisicoCaminho, arquivoSchemaNota);
+
+                    //move para validadas
+                    bllNota.Move(notaList[i], Model.NotaSituacao.VALIDADA);
+                }
+                catch
+                {
+                    //não bateu com o schema
+                    bllNota.Move(notaList[i], Model.NotaSituacao.INVALIDA);
+                }
+            }
+
+            //Carrega as notas validadas
+            Bll.Assinatura bllAssinatura = new Bll.Assinatura();
+            List<Model.Nota> notaValidadaList = bllNota.Carregar(Model.NotaSituacao.VALIDADA);
+            for(int i=0;i<this.NotaEnvio.Count(); i++)
+            {
+                //bllAssinatura.AssinarXml(notaValidadaList[i].ArquivoFisicoCaminho, new Bll.Operacao(Model.OperacaoType.EnvioLote), null);
+            }
+            
 
 
 

@@ -36,8 +36,8 @@
             this.btnPesquisarNovo = new System.Windows.Forms.Button();
             this.btnPesquisar = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.fldNumeroFim = new System.Windows.Forms.TextBox();
+            this.fldNumeroInicio = new System.Windows.Forms.TextBox();
             this.fldDestinatarioNome = new System.Windows.Forms.TextBox();
             this.fldDestinatarioCNPJ = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -46,6 +46,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.fldPeriodoInicio = new System.Windows.Forms.DateTimePicker();
             this.label2 = new System.Windows.Forms.Label();
+            this.lblInfo = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grdResultado)).BeginInit();
             this.pnlFiltro.SuspendLayout();
             this.SuspendLayout();
@@ -61,6 +62,7 @@
             // 
             // fldNotaSituacao
             // 
+            this.fldNotaSituacao.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.fldNotaSituacao.FormattingEnabled = true;
             this.fldNotaSituacao.Location = new System.Drawing.Point(567, 101);
             this.fldNotaSituacao.Margin = new System.Windows.Forms.Padding(4);
@@ -92,8 +94,8 @@
             this.pnlFiltro.Controls.Add(this.btnPesquisarNovo);
             this.pnlFiltro.Controls.Add(this.btnPesquisar);
             this.pnlFiltro.Controls.Add(this.label7);
-            this.pnlFiltro.Controls.Add(this.textBox4);
-            this.pnlFiltro.Controls.Add(this.textBox3);
+            this.pnlFiltro.Controls.Add(this.fldNumeroFim);
+            this.pnlFiltro.Controls.Add(this.fldNumeroInicio);
             this.pnlFiltro.Controls.Add(this.fldDestinatarioNome);
             this.pnlFiltro.Controls.Add(this.fldDestinatarioCNPJ);
             this.pnlFiltro.Controls.Add(this.label6);
@@ -134,6 +136,7 @@
             this.btnPesquisar.TabIndex = 16;
             this.btnPesquisar.Text = "Pesquisar";
             this.btnPesquisar.UseVisualStyleBackColor = true;
+            this.btnPesquisar.Click += new System.EventHandler(this.btnPesquisar_Click);
             // 
             // label7
             // 
@@ -145,21 +148,21 @@
             this.label7.TabIndex = 15;
             this.label7.Text = "a";
             // 
-            // textBox4
+            // fldNumeroFim
             // 
-            this.textBox4.Location = new System.Drawing.Point(248, 67);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(4);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(135, 26);
-            this.textBox4.TabIndex = 14;
+            this.fldNumeroFim.Location = new System.Drawing.Point(248, 67);
+            this.fldNumeroFim.Margin = new System.Windows.Forms.Padding(4);
+            this.fldNumeroFim.Name = "fldNumeroFim";
+            this.fldNumeroFim.Size = new System.Drawing.Size(135, 26);
+            this.fldNumeroFim.TabIndex = 14;
             // 
-            // textBox3
+            // fldNumeroInicio
             // 
-            this.textBox3.Location = new System.Drawing.Point(91, 67);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(4);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(135, 26);
-            this.textBox3.TabIndex = 13;
+            this.fldNumeroInicio.Location = new System.Drawing.Point(91, 67);
+            this.fldNumeroInicio.Margin = new System.Windows.Forms.Padding(4);
+            this.fldNumeroInicio.Name = "fldNumeroInicio";
+            this.fldNumeroInicio.Size = new System.Drawing.Size(135, 26);
+            this.fldNumeroInicio.TabIndex = 13;
             // 
             // fldDestinatarioNome
             // 
@@ -236,22 +239,32 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Período";
             // 
-            // GUI
+            // lblInfo
+            // 
+            this.lblInfo.AutoSize = true;
+            this.lblInfo.Location = new System.Drawing.Point(13, 472);
+            this.lblInfo.Name = "lblInfo";
+            this.lblInfo.Size = new System.Drawing.Size(46, 18);
+            this.lblInfo.TabIndex = 7;
+            this.lblInfo.Text = "label8";
+            // 
+            // Pesquisa
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(805, 477);
+            this.ClientSize = new System.Drawing.Size(805, 495);
+            this.Controls.Add(this.lblInfo);
             this.Controls.Add(this.pnlFiltro);
             this.Controls.Add(this.grdResultado);
             this.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "GUI";
+            this.Name = "Pesquisa";
             this.Text = "WallegNFe - Pesquisar";
-            this.Load += new System.EventHandler(this.GUI_Load);
             ((System.ComponentModel.ISupportInitialize)(this.grdResultado)).EndInit();
             this.pnlFiltro.ResumeLayout(false);
             this.pnlFiltro.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -265,8 +278,8 @@
         private System.Windows.Forms.Button btnPesquisarNovo;
         private System.Windows.Forms.Button btnPesquisar;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox fldNumeroFim;
+        private System.Windows.Forms.TextBox fldNumeroInicio;
         private System.Windows.Forms.TextBox fldDestinatarioNome;
         private System.Windows.Forms.TextBox fldDestinatarioCNPJ;
         private System.Windows.Forms.Label label6;
@@ -275,6 +288,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DateTimePicker fldPeriodoInicio;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblInfo;
     }
 }
 

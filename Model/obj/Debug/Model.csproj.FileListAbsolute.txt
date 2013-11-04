@@ -8,3 +8,8 @@ C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Model\bin\
 C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache
 C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Model\obj\Debug\Model.dll
 C:\Users\Walleg\Downloads\WallegNFe-master\WallegNFe-master\WallegNFe\Model\obj\Debug\Model.pdb
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\Model\bin\Debug\Model.dll
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\Model\bin\Debug\Model.pdb
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\Model\obj\Debug\Model.dll
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\Model\obj\Debug\Model.pdb
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache

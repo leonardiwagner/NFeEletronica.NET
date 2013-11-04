@@ -22,7 +22,7 @@ namespace Bll
         /// <param name="operacao"></param>
         /// <param name="x509Cert"></param>
         /// <returns>Xml assinado</returns>
-        public String AssinarXml(string arquivoNome, Model.Operacao operacao, X509Certificate2 x509Cert)
+        public String AssinarXml(string arquivoNome, Bll.Operacao operacao, X509Certificate2 x509Cert)
         {
             String TagAssinatura = operacao.TagAssinatura;
             String TagAtributoId = operacao.TagAtributoId;

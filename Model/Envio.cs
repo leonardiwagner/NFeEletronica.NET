@@ -10,7 +10,7 @@ namespace Model
 {
     public class Envio
     {
-        public Operacao TipoOperacao { get; set; }
+        //public Operacao TipoOperacao { get; set; }
         public X509Certificate2 Certificado { get; set; }
         public XmlDocument LoteXml { get; set; }
     }

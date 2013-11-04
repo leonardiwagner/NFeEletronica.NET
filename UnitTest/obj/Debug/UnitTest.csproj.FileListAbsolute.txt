@@ -1,0 +1,11 @@
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\obj\Debug\UnitTest.csprojResolveAssemblyReference.cache
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\bin\Debug\UnitTest.dll
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\bin\Debug\UnitTest.pdb
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\bin\Debug\Bll.dll
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\bin\Debug\Model.dll
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\bin\Debug\Dal.dll
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\bin\Debug\Bll.pdb
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\bin\Debug\Model.pdb
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\bin\Debug\Dal.pdb
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\obj\Debug\UnitTest.dll
+C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\UnitTest\obj\Debug\UnitTest.pdb

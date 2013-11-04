@@ -20,16 +20,16 @@ namespace Bll
         /// <param name="arquivoXml">Arquivo Xml</param>
         /// <param name="arquivoSchema">Arquivo de Schema</param>
         /// <returns>True se estiver certo, Erro se estiver errado</returns>
-        public String ValidaSchema(String arquivoXml, String arquivoSchema)
+        public void ValidaSchema(String arquivoXml, String arquivoSchema)
         {
             //Seleciona o arquivo de schema de acordo com o schema informado
             arquivoSchema = Bll.Util.ContentFolderSchemaValidacao + "\\" + arquivoSchema;
 
             //Verifica se o arquivo de XML foi encontrado.
-            if (!Bll.Util.FileExists(arquivoXml)) throw new Exception("Arquivo de XML informado: \"" + arquivoXml + "\" não encontrado.");
+            if (!Bll.Arquivo.ExisteArquivo(arquivoXml)) throw new Exception("Arquivo de XML informado: \"" + arquivoXml + "\" não encontrado.");
 
             //Verifica se o arquivo de schema foi encontrado.
-            if (!Bll.Util.FileExists(arquivoSchema)) throw new Exception("Arquivo de schema: \"" + arquivoSchema + "\" não encontrado.");
+            if (!Bll.Arquivo.ExisteArquivo(arquivoSchema)) throw new Exception("Arquivo de schema: \"" + arquivoSchema + "\" não encontrado.");
 
             // Cria um novo XMLValidatingReader
             XmlValidatingReader reader = new XmlValidatingReader(new XmlTextReader(new StreamReader(arquivoXml)));
@@ -45,11 +45,7 @@ namespace Bll
             while (reader.Read()) { }
             reader.Close(); //Fecha o arquivo.
             //O Resultado é preenchido no reader_ValidationEventHandler
-            if (ValidarResultado == "")
-            {
-                return ValidarResultado;
-            }
-            else
+            if (ValidarResultado != "")
             {
                 throw new Exception(ValidarResultado);
             }
@@ -70,10 +66,8 @@ namespace Bll
         {
             Model.Nota nota = new Model.Nota();
 
-
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(caminhoXml);
-
 
             nota.DestinatarioCNPJ = xmlDoc.GetElementsByTagName("emit")[0].ChildNodes[0].InnerText;
             nota.DestinatarioNome = xmlDoc.GetElementsByTagName("emit")[0].ChildNodes[1].InnerText;
@@ -81,8 +75,34 @@ namespace Bll
             nota.DataEmissao = DateTime.Parse(xmlDoc.GetElementsByTagName("ide")[0].ChildNodes[7].InnerText);
             nota.Numero = xmlDoc.GetElementsByTagName("ide")[0].ChildNodes[6].InnerText;        
 
-
             return nota;
+        }
+
+        /// <summary>
+        /// Le o conteúdo de um arquivo XML como texto
+        /// </summary>
+        /// <param name="arquivoNome"></param>
+        /// <returns></returns>
+        public static String XmlToString(string arquivoCaminho)
+        {
+            string conteudo_xml = string.Empty;
+
+            StreamReader SR = null;
+            try
+            {
+                SR = File.OpenText(arquivoCaminho);
+                conteudo_xml = SR.ReadToEnd();
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+            finally
+            {
+                SR.Close();
+            }
+
+            return conteudo_xml;
         }
     }
 }

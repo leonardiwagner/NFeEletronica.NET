@@ -46,6 +46,7 @@
     <Compile Include="Certificado.cs" />
     <Compile Include="EnviarLote.cs" />
     <Compile Include="NFe.cs" />
+    <Compile Include="Nota.cs" />
     <Compile Include="Operacao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util.cs" />

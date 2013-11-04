@@ -11,50 +11,115 @@ namespace Bll
 {
     public class Arquivo
     {
-
-        public List<Model.Nota> LeNota(Model.NotaSituacao NotaSituacao)
+        /// <summary>
+        /// Retorna a pasta de notas de acordo com a situação
+        /// </summary>
+        /// <param name="situacao"></param>
+        /// <returns></returns>
+        public static String PastaNota(Model.NotaSituacao situacao)
         {
-            switch (NotaSituacao)
+            switch (situacao)
             {
                 case Model.NotaSituacao.DEFAULT:
-                    return this.LeNotaPasta(Bll.Util.ContentFolderDefault, NotaSituacao);
+                    return Bll.Util.ContentFolderDefault;
                 case Model.NotaSituacao.VALIDADA:
-                    return this.LeNotaPasta(Bll.Util.ContentFolderValidado, NotaSituacao);
+                    return Bll.Util.ContentFolderValidado;
                 case Model.NotaSituacao.ASSINADA:
-                    return this.LeNotaPasta(Bll.Util.ContentFolderAssinado, NotaSituacao);
+                    return Bll.Util.ContentFolderAssinado;
                 case Model.NotaSituacao.ENVIADA:
-                    return this.LeNotaPasta(Bll.Util.ContentFolderEnviado, NotaSituacao);
+                    return Bll.Util.ContentFolderEnviado;
                 case Model.NotaSituacao.REJEITADA:
-                    return this.LeNotaPasta(Bll.Util.ContentFolderRejeitado, NotaSituacao);
+                    return Bll.Util.ContentFolderRejeitado;
+                default:
+                    return null;
             }
-
-            return null;
         }
 
         /// <summary>
-        /// Retorna todos os arquivos de uma pasta com sua determinada situação
+        /// Retorna todos os arquivos *.xml de uma pasta
         /// </summary>
-        /// <param name="Pasta"></param>
-        /// <param name="PastaSituacao"></param>
+        /// <param name="pas"></param>
         /// <returns></returns>
-        private List<Model.Nota> LeNotaPasta(String Pasta, Model.NotaSituacao PastaSituacao)
+        public static List<String> LePastaXml(String pasta)
         {
-            Bll.Xml bllXml = new Xml();
-
-            List<Model.Nota> NotaLista = new List<Model.Nota>();
-            foreach (String Arquivo in Directory.EnumerateFiles(Pasta, "*.xml"))
-            {
-
-                Model.Nota nota = bllXml.XmlToNota(Arquivo);
-                nota.Situacao = PastaSituacao;
-                NotaLista.Add(nota);
-
-                
-            }
-
-            return NotaLista;
+            return Directory.EnumerateFiles(pasta, "*.xml").ToList();
         }
 
+
+        /// <summary>
+        /// Retorna o nome de um arquivo pelo seu caminho
+        /// </summary>
+        /// <param name="arquivoCaminho"></param>
+        /// <returns></returns>
+        public static String Nome(String arquivoCaminho)
+        {
+            return Path.GetFileName(arquivoCaminho);
+        }
+
+        /// <summary>
+        /// Salva um arquivo
+        /// </summary>
+        /// <param name="conteudo"></param>
+        /// <param name="arquivoNome"></param>
+        /// <returns></returns>
+        public static String Salva(String conteudo, String arquivoCaminho)
+        {
+            StreamWriter SW_2 = File.CreateText(arquivoCaminho);
+            SW_2.Write(conteudo);
+            SW_2.Close();
+
+            return arquivoCaminho;
+        }
+
+        /// <summary>
+        /// Verifica se um arquivo existe
+        /// </summary>
+        /// <param name="FilePath"></param>
+        /// <returns></returns>
+        public static bool ExisteArquivo(String arquivoCaminho)
+        {
+            if (File.Exists(arquivoCaminho))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Verifica se uma pasta existe
+        /// </summary>
+        /// <param name="FilePath"></param>
+        /// <returns></returns>
+        public static bool ExistePasta(String pastaCaminho)
+        {
+            if (Directory.Exists(pastaCaminho))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Move um arquivo
+        /// </summary>
+        /// <param name="From"></param>
+        /// <param name="To"></param>
+        /// <returns></returns>
+        public static String Move(String arquivoDe, String arquivoPara)
+        {
+            File.Move(arquivoDe, arquivoPara);
+            return arquivoPara;
+        }
+
+        /// <summary>
+        /// Copia um arquivo
+        /// </summary>
+        /// <param name="From"></param>
+        /// <param name="To"></param>
+        /// <returns></returns>
+        public static String Copia(String arquivoDe, String arquivoPara)
+        {
+            File.Copy(arquivoDe, arquivoPara);
+            return arquivoPara;
+        }
         
 
         

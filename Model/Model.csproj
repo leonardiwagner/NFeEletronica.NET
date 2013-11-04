@@ -41,7 +41,8 @@
   <ItemGroup>
     <Compile Include="Envio.cs" />
     <Compile Include="Nota.cs" />
-    <Compile Include="Operacao.cs" />
+    <Compile Include="NotaSituacao.cs" />
+    <Compile Include="OperacaoTipo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

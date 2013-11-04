@@ -85,7 +85,7 @@ namespace Bll
 
             //Salva o lote assinado
             String ArquivoNome = DateTime.Now.ToString("yyyyMMdd-mmHH-ss-fffff") + ".xml";
-            String ArquivoAssinado = Bll.Util.SalvaArquivo(ArquivoLote, Bll.Util.ContentFolderAssinado + "\\" + ArquivoNome);
+            String ArquivoAssinado = Bll.Arquivo.Salva(ArquivoLote, Bll.Util.ContentFolderAssinado + "\\" + ArquivoNome);
 
             Model.Envio envio = new Model.Envio();
             envio.LoteXml = new XmlDocument();
@@ -97,8 +97,8 @@ namespace Bll
             try
             {
                 Bll.Xml bllValidaXml = new Bll.Xml();
-                Bll.Operacao bllOperacao = new Bll.Operacao();
-                String ErroValidaXml = bllValidaXml.ValidaSchema(ArquivoAssinado, bllOperacao.Selecionar(Model.OperacaoType.EnvioLote).Schema);
+                //Bll.Operacao bllOperacao = new Bll.Operacao();
+                String ErroValidaXml = ""; // bllValidaXml.ValidaSchema(ArquivoAssinado, Bll.Operacao.Selecionar(Model.OperacaoType.EnvioLote).Schema);
                 if (!String.IsNullOrEmpty(ErroValidaXml)) throw new Exception(ErroValidaXml);
             }
             catch (Exception Erro)
@@ -157,7 +157,7 @@ namespace Bll
 
             //Assina todas as notas
             List<String> NotaAssinadaLista = new List<string>();
-            Bll.Operacao bllOperacao = new Bll.Operacao();
+            //Bll.Operacao bllOperacao = new Bll.Operacao();
             Bll.Assinatura bllAssinatura = new Bll.Assinatura();
             for (int i = 0; i < this.NotaList.Count; i++)
             {
@@ -165,7 +165,7 @@ namespace Bll
                 String ArquivoAssinado = "";
                 try
                 {
-                    ArquivoAssinado = bllAssinatura.AssinarXml(NotaLista[i], bllOperacao.Selecionar(Model.OperacaoType.NFe), this.Certificado);
+                    ArquivoAssinado = ""; // bllAssinatura.AssinarXml(NotaLista[i], bllOperacao.Selecionar(Model.OperacaoType.NFe), this.Certificado);
                 }
                 catch (Exception Erro)
                 {
