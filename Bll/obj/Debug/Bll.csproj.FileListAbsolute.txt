@@ -25,3 +25,12 @@ C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\Bll\bin\Debug\Model.
 C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\Bll\obj\Debug\Bll.csprojResolveAssemblyReference.cache
 C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\Bll\obj\Debug\Bll.dll
 C:\Users\micro2\Downloads\WallegNFe-master\WallegNFe-master\Bll\obj\Debug\Bll.pdb
+C:\Users\micro2\Documents\GitHub\WallegNFe\Bll\bin\Debug\Bll.dll
+C:\Users\micro2\Documents\GitHub\WallegNFe\Bll\bin\Debug\Bll.pdb
+C:\Users\micro2\Documents\GitHub\WallegNFe\Bll\bin\Debug\Dal.dll
+C:\Users\micro2\Documents\GitHub\WallegNFe\Bll\bin\Debug\Model.dll
+C:\Users\micro2\Documents\GitHub\WallegNFe\Bll\bin\Debug\Dal.pdb
+C:\Users\micro2\Documents\GitHub\WallegNFe\Bll\bin\Debug\Model.pdb
+C:\Users\micro2\Documents\GitHub\WallegNFe\Bll\obj\Debug\Bll.csprojResolveAssemblyReference.cache
+C:\Users\micro2\Documents\GitHub\WallegNFe\Bll\obj\Debug\Bll.dll
+C:\Users\micro2\Documents\GitHub\WallegNFe\Bll\obj\Debug\Bll.pdb

@@ -8,6 +8,13 @@ namespace UnitTest
     public class NFe
     {
         [TestMethod]
+        public void ValidaNota()
+        {
+            Bll.Xml bllXml = new Bll.Xml();
+            bllXml.ValidaSchema("C:\\myfilename.xml", "C:\\nfe_v2.00.xsd");
+        }
+
+        [TestMethod]
         public void ListarNotas()
         {
             Bll.Arquivo bllArquivo = new Bll.Arquivo();
