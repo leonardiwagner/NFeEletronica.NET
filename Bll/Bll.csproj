@@ -49,6 +49,13 @@
     <Compile Include="Nota.cs" />
     <Compile Include="Operacao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servicos\CadConsultaCadastro.cs" />
+    <Compile Include="Servicos\Consulta.cs" />
+    <Compile Include="Servicos\Inutilizacao.cs" />
+    <Compile Include="Servicos\Recepcao.cs" />
+    <Compile Include="Servicos\RecepcaoEvento.cs" />
+    <Compile Include="Servicos\RetRecepcao.cs" />
+    <Compile Include="Servicos\StatusServico.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Webservice.cs" />
     <Compile Include="Xml.cs" />
