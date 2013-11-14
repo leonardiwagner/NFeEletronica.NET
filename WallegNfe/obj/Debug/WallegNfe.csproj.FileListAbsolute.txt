@@ -1,0 +1,6 @@
+C:\Users\micro2\Documents\GitHub\2\WallegNfe\WallegNfe\obj\Debug\WallegNfe.csprojResolveAssemblyReference.cache
+C:\Users\micro2\Documents\GitHub\2\WallegNfe\WallegNfe\bin\Debug\WallegNfe.dll
+C:\Users\micro2\Documents\GitHub\2\WallegNfe\WallegNfe\bin\Debug\WallegNfe.pdb
+C:\Users\micro2\Documents\GitHub\2\WallegNfe\WallegNfe\obj\Debug\WallegNfe.dll
+C:\Users\micro2\Documents\GitHub\2\WallegNfe\WallegNfe\obj\Debug\WallegNfe.pdb
+C:\Users\micro2\Documents\GitHub\2\WallegNfe\WallegNfe\bin\Debug\WallegNfe.dll.config

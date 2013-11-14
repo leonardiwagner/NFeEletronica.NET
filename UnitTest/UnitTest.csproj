@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{511318DE-3C8D-486D-9917-5B514334545D}</ProjectGuid>
+    <ProjectGuid>{C77085C1-601C-4597-A526-EE6BFBF849E2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnitTest</RootNamespace>
@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -50,18 +51,19 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="NFe.cs" />
+    <Compile Include="Certificado.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Operacao.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bll\Bll.csproj">
-      <Project>{7f7c3b1f-6044-4def-986e-06f7023c1566}</Project>
-      <Name>Bll</Name>
+    <ProjectReference Include="..\WallegNfe\WallegNfe.csproj">
+      <Project>{97c0497f-ec90-41c2-be61-3c7abed1c71a}</Project>
+      <Name>WallegNfe</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Model\Model.csproj">
-      <Project>{a304af84-2d65-44c3-ad19-636e90a6402a}</Project>
-      <Name>Model</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
