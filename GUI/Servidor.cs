@@ -27,9 +27,9 @@ namespace GUI
 
             //Envia uma nota
             WallegNfe.Operacao.Recepcao recepcao = new WallegNfe.Operacao.Recepcao(certificado);
-            recepcao.AdicionarNota("C:\\NFE\\Xml\\teste.xml");
+            recepcao.AdicionarNota("C:\\Pasta\\00015599.xml");
 
-            WallegNfe.Retorno retorno1 = recepcao.Enviar(3);
+            WallegNfe.Retorno retorno1 = recepcao.Enviar(5);
 
             WallegNfe.Operacao.RetRecepcao retRecepcao = new WallegNfe.Operacao.RetRecepcao(certificado);
 
