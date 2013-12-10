@@ -42,5 +42,57 @@ namespace WallegNfe.Properties {
                 return ((string)(this["WallegNfe_NfeRecepcao2_NfeRecepcao2"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeInutilizacao2.asmx")]
+        public string WallegNfe_NfeInutilizacao2_NfeInutilizacao2 {
+            get {
+                return ((string)(this["WallegNfe_NfeInutilizacao2_NfeInutilizacao2"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeConsulta2.asmx")]
+        public string WallegNfe_NfeConsulta2_NfeConsulta2 {
+            get {
+                return ((string)(this["WallegNfe_NfeConsulta2_NfeConsulta2"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeStatusServico2.asmx")]
+        public string WallegNfe_NfeStatusServico2_NfeStatusServico2 {
+            get {
+                return ((string)(this["WallegNfe_NfeStatusServico2_NfeStatusServico2"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/CadConsultaCadastro2.as" +
+            "mx")]
+        public string WallegNfe_CadConsultaCadastro2_CadConsultaCadastro2 {
+            get {
+                return ((string)(this["WallegNfe_CadConsultaCadastro2_CadConsultaCadastro2"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx" +
+            "")]
+        public string WallegNfe_RecepcaoEvento_RecepcaoEvento {
+            get {
+                return ((string)(this["WallegNfe_RecepcaoEvento_RecepcaoEvento"]));
+            }
+        }
     }
 }
