@@ -13,7 +13,7 @@ namespace WallegNfe.Operacao
 {
     public class Recepcao : BaseOperacao
     {
-        private List<Model.Nota> NotaLista = new List<Model.Nota>();
+        private List<Model.Nota2> NotaLista = new List<Model.Nota2>();
         private long NumeroLote = 0;
 
         public Recepcao(WallegNfe.Nfe nfe) : base(nfe) 
@@ -53,7 +53,7 @@ namespace WallegNfe.Operacao
             }
 
             //Carrega uma nota XML e passa para um objeto Nota
-            Model.Nota nota = bllNota.Carregar(arquivoCaminhoXml);
+            Model.Nota2 nota = bllNota.Carregar(arquivoCaminhoXml);
 
             //Assina a nota
             try

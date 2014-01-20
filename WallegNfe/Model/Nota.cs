@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WallegNfe.Model
 {
-    public class Nota
+    public class Nota2
     {
         public String ArquivoFisicoNome { get; set; }
         public String ArquivoFisicoCaminho { get; set; }

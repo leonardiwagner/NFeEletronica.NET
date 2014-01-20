@@ -14,14 +14,14 @@ namespace WallegNfe.Bll
         /// Carrega uma nota apartir de um arquivo XML
         /// </summary>
         /// <returns></returns>
-        public Model.Nota Carregar(String arquivoNotaXml)
+        public Model.Nota2 Carregar(String arquivoNotaXml)
         {
             if (!Bll.Arquivo.ExisteArquivo(arquivoNotaXml))
             {
                 throw new Exception("O arquivo de nota para envio não existe: " + arquivoNotaXml);
             }
 
-            Model.Nota nota = new Model.Nota();
+            Model.Nota2 nota = new Model.Nota2();
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(arquivoNotaXml);
@@ -38,7 +38,7 @@ namespace WallegNfe.Bll
             return nota;
         }
 
-        public static void Move(Model.Nota nota, Model.NotaSituacao situacao)
+        public static void Move(Model.Nota2 nota, Model.NotaSituacao situacao)
         {
             String novoCaminho = Bll.Arquivo.PastaNota(situacao) + "\\" + nota.ArquivoFisicoNome;
             Bll.Arquivo.Move(nota.ArquivoFisicoCaminho, novoCaminho);
