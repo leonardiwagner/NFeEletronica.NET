@@ -47,14 +47,17 @@
     <Compile Include="Bll\Arquivo.cs" />
     <Compile Include="Bll\Util.cs" />
     <Compile Include="Bll\Xml.cs" />
-    <Compile Include="Certificado.cs" />
+    <Compile Include="Bll\Certificado.cs" />
     <Compile Include="Model\Nota.cs" />
     <Compile Include="Bll\Nota.cs" />
     <Compile Include="Model\NotaSituacao.cs" />
-    <Compile Include="Retorno.cs" />
+    <Compile Include="Model\Retorno\RetRecepcao.cs" />
+    <Compile Include="Nfe.cs" />
+    <Compile Include="Model\Retorno\Recepcao.cs" />
     <Compile Include="Operacao\CadConsultaCadastro.cs" />
     <Compile Include="Operacao\Consulta.cs" />
     <Compile Include="Operacao\Inutilizacao.cs" />
+    <Compile Include="Operacao\BaseOperacao.cs" />
     <Compile Include="Operacao\Recepcao.cs" />
     <Compile Include="Operacao\RecepcaoEvento.cs" />
     <Compile Include="Operacao\RetRecepcao.cs" />
@@ -129,6 +132,7 @@
   <ItemGroup>
     <None Include="Web References\NfeRecepcao2\NfeRecepcao2.disco" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

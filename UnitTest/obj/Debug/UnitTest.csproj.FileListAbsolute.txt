@@ -6,3 +6,11 @@ C:\Users\micro2\Documents\GitHub\2\WallegNfe\UnitTest\bin\Debug\WallegNfe.pdb
 C:\Users\micro2\Documents\GitHub\2\WallegNfe\UnitTest\obj\Debug\UnitTest.dll
 C:\Users\micro2\Documents\GitHub\2\WallegNfe\UnitTest\obj\Debug\UnitTest.pdb
 C:\Users\micro2\Documents\GitHub\2\WallegNfe\UnitTest\bin\Debug\UnitTest.dll.config
+C:\Users\micro2\Documents\GitHub\WallegNFe\UnitTest\bin\Debug\UnitTest.dll.config
+C:\Users\micro2\Documents\GitHub\WallegNFe\UnitTest\bin\Debug\UnitTest.dll
+C:\Users\micro2\Documents\GitHub\WallegNFe\UnitTest\bin\Debug\UnitTest.pdb
+C:\Users\micro2\Documents\GitHub\WallegNFe\UnitTest\bin\Debug\WallegNfe.dll
+C:\Users\micro2\Documents\GitHub\WallegNFe\UnitTest\bin\Debug\WallegNfe.pdb
+C:\Users\micro2\Documents\GitHub\WallegNFe\UnitTest\obj\Debug\UnitTest.csprojResolveAssemblyReference.cache
+C:\Users\micro2\Documents\GitHub\WallegNFe\UnitTest\obj\Debug\UnitTest.dll
+C:\Users\micro2\Documents\GitHub\WallegNFe\UnitTest\obj\Debug\UnitTest.pdb

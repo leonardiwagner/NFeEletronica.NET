@@ -11,17 +11,30 @@ using System.Xml;
 
 namespace WallegNfe.Operacao
 {
-    public class Recepcao
+    public class Recepcao : BaseOperacao
     {
+        private List<Model.Nota> NotaLista = new List<Model.Nota>();
+        private long NumeroLote = 0;
+
+        public Recepcao(WallegNfe.Nfe nfe) : base(nfe) 
+        {
+            this.ArquivoSchema = "nfe_v2.00.xsd";
+        }
+        
+        
+
+
+        /*
         private readonly String ArquivoSchema = "nfe_v2.00.xsd";
         private X509Certificate2 Certificado = null;
 
-        private List<Model.Nota> NotaLista = new List<Model.Nota>();
+        
 
         public Recepcao(X509Certificate2 certificado)
         {
             this.Certificado = certificado;
         }
+         */
 
         /// <summary>
         /// Adiciona e valida uma nota ao lote para ser enviada. Caso for inválida irá gerar um erro.
@@ -43,45 +56,30 @@ namespace WallegNfe.Operacao
             Model.Nota nota = bllNota.Carregar(arquivoCaminhoXml);
 
             //Assina a nota
-            bllAssinatura.AssinarXml(nota.ArquivoFisicoCaminho, this.Certificado, "NFe", "infNFe");
+            try
+            {
+                bllAssinatura.AssinarXml(nota.ArquivoFisicoCaminho, this.Certificado, "NFe", "infNFe");
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Erro ao assinar Nota: " + e.Message);
+            }
 
             //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
-            bllXml.ValidaSchema(arquivoCaminhoXml, Bll.Util.ContentFolderSchemaValidacao + "\\" + this.ArquivoSchema);
-
+            try
+            {
+                bllXml.ValidaSchema(arquivoCaminhoXml, Bll.Util.ContentFolderSchemaValidacao + "\\" + this.ArquivoSchema);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Erro ao validar Nota: " + e.Message);
+            }
+            
             //Se passou está validado, manda para a pasta de validados
             Bll.Nota.Move(nota, Model.NotaSituacao.VALIDADA);
 
             //Adiciona para a lista do lote a serem enviadas
             this.NotaLista.Add(nota);
-        }
-
-        public WallegNfe.Retorno Enviar(long numeroLote)
-        {
-            //Salva o lote assinado
-            String ArquivoNome = DateTime.Now.ToString("yyyyMMdd-mmHH-ss-fffff") + ".xml";
-
-            NfeRecepcao2.NfeRecepcao2 nfeRecepcao2 = new NfeRecepcao2.NfeRecepcao2();
-            NfeRecepcao2.nfeCabecMsg nfeCabecalho = new NfeRecepcao2.nfeCabecMsg();
-
-            //Informa dados no WS de cabecalho
-            nfeCabecalho.cUF = "35";
-            nfeCabecalho.versaoDados = "2.00";
-
-            nfeRecepcao2.nfeCabecMsgValue = nfeCabecalho;
-            nfeRecepcao2.ClientCertificates.Add(this.Certificado);
-
-            //Envia para o webservice e recebe a resposta
-            XmlNode xmlResposta = nfeRecepcao2.nfeRecepcaoLote2(this.MontarXml(numeroLote).DocumentElement);
-
-            for (int i = 0; i < this.NotaLista.Count; i++)
-            {
-                Bll.Nota.Move(this.NotaLista[i], Model.NotaSituacao.ENVIADA);
-            }
-
-            WallegNfe.Retorno retorno = new WallegNfe.Retorno();
-            retorno.Recibo = xmlResposta["infRec"]["nRec"].InnerText;
-
-            return retorno;
         }
 
         private XmlDocument MontarXml(long numeroLote)
@@ -116,9 +114,34 @@ namespace WallegNfe.Operacao
             return Bll.Xml.StringToXml(xmlString);
         }
 
-        public void NfeRecepcaoLote2()
+        public Model.Retorno.Recepcao Enviar(long numeroLote)
         {
-            throw new NotImplementedException();
+            //Salva o lote assinado
+            String ArquivoNome = DateTime.Now.ToString("yyyyMMdd-mmHH-ss-fffff") + ".xml";
+
+            NfeRecepcao2.NfeRecepcao2 nfeRecepcao2 = new NfeRecepcao2.NfeRecepcao2();
+            NfeRecepcao2.nfeCabecMsg nfeCabecalho = new NfeRecepcao2.nfeCabecMsg();
+
+            //Informa dados no WS de cabecalho
+            nfeCabecalho.cUF = "35";
+            nfeCabecalho.versaoDados = "2.00";
+
+            nfeRecepcao2.nfeCabecMsgValue = nfeCabecalho;
+            nfeRecepcao2.ClientCertificates.Add(this.Certificado);
+
+            //Envia para o webservice e recebe a resposta
+            XmlNode xmlResposta = nfeRecepcao2.nfeRecepcaoLote2(this.MontarXml(numeroLote).DocumentElement);
+
+            for (int i = 0; i < this.NotaLista.Count; i++)
+            {
+                Bll.Nota.Move(this.NotaLista[i], Model.NotaSituacao.ENVIADA);
+            }
+
+            WallegNfe.Model.Retorno.Recepcao retorno = new WallegNfe.Model.Retorno.Recepcao();
+            retorno.Recibo = xmlResposta["infRec"]["nRec"].InnerText;
+            retorno.Motivo = xmlResposta["xMotivo"].InnerText;
+
+           return retorno;
         }
     }
 }

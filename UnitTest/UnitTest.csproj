@@ -51,9 +51,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Certificado.cs" />
+    <Compile Include="Teste.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Operacao.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WallegNfe\WallegNfe.csproj">

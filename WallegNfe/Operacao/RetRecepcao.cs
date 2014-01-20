@@ -12,16 +12,13 @@ namespace WallegNfe.Operacao
     /// <summary>
     /// Consulta Processamento de Lote de NF-e
     /// </summary>
-    public class RetRecepcao
+    public class RetRecepcao : BaseOperacao
     {
-        private X509Certificate2 Certificado = null;
+        public RetRecepcao(WallegNfe.Nfe nfe)
+            : base(nfe) 
+        {}
 
-        public RetRecepcao(X509Certificate2 certificado)
-        {
-            this.Certificado = certificado;
-        }
-
-        public WallegNfe.Retorno  NfeRetRecepcao2(String numeroRecibo)
+        public WallegNfe.Model.Retorno.RetRecepcao  Enviar(String numeroRecibo)
         {
             //Monta corpo do xml de envio
             StringBuilder xmlString = new StringBuilder();
@@ -46,19 +43,17 @@ namespace WallegNfe.Operacao
             XmlNode respostaXml = nfeRetRecepcao2.nfeRetRecepcao2(consultaXml);
 
             //Esse e o resultado só do lote (cabeçado e tal)
-            WallegNfe.Retorno retorno = new WallegNfe.Retorno();
+            WallegNfe.Model.Retorno.RetRecepcao retorno = new WallegNfe.Model.Retorno.RetRecepcao();
             retorno.Status = respostaXml["cStat"].InnerText;
             retorno.Motivo = respostaXml["xMotivo"].InnerText;
 
-            //Isso aqui é o resultado de CADA NFe
+            //Isso aqui é o resultado de CADA NFe, mas como por enquanto pra cada lote só manda 1 nota, entao segue assim por enquanto #todo
             retorno.Status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText;
             retorno.Motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText;
 
             return retorno;
-
-            DateTime d;
-            
             
         }
+
     }
 }

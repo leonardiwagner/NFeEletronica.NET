@@ -16,6 +16,11 @@ namespace WallegNfe.Bll
         /// <returns></returns>
         public Model.Nota Carregar(String arquivoNotaXml)
         {
+            if (!Bll.Arquivo.ExisteArquivo(arquivoNotaXml))
+            {
+                throw new Exception("O arquivo de nota para envio não existe: " + arquivoNotaXml);
+            }
+
             Model.Nota nota = new Model.Nota();
 
             XmlDocument xmlDoc = new XmlDocument();

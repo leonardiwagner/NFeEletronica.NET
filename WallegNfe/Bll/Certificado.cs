@@ -11,7 +11,7 @@ using System.Security.Cryptography.Pkcs;
 //Trabalhar com arquivos
 using System.IO;
 
-namespace WallegNfe
+namespace WallegNfe.Bll
 {
     public class Certificado
     {
