@@ -41,14 +41,40 @@ namespace WallegNfe.Model.Nota
         public String icms_vBCST { get; set; }
         public String icms_pICMSST { get; set; }
         public String icms_vICMSST { get; set; }
+        public String icms_pRedBC { get; set; }
+        public String icms_CSOSN { get; set; }
+        public String icms_pCredSN { get; set; }
+        public String icms_vCredICMSSN { get; set; }
+        public String icms_vBCSTRet { get; set; }
+        public String icms_vICMSSTRet { get; set; }
 
         //CST
-        public Enum.CST cst { get; set; }
-        public String cst_vBCSTRet { get; set; }         // N26  - Valor da BC do ICMS ST cobrado anteriormente por ST
-        public String cst_vICMSSTRet { get; set; }       // N27  - Valor do ICMS ST cobrado anteriormente por ST
-        public String cst_pCredSN { get; set; }          // N29        - Alíquota aplicável de cálculo do crédito (Simples Nacional).
-        public String cst_vCredICMSSN { get; set; }
+        public Enum.IPI ipi { get; set; }
+        public String ipi_cIEnq {get;set;}
+        public String ipi_CST {get;set;}
+        public String ipi_vBC   {get;set;}
+        public String ipi_pIPI {get;set;}
+        public String ipi_qUnid_ {get;set;}
+        public String ipi_vUnid {get;set;}
+        public String ipi_vIPI {get;set;}
 
+        //PIS
+        public Enum.PIS pis { get; set; }
+        public String pis_CST { get; set; }
+        public String pis_vBC { get; set; }
+        public String pis_pPIS { get; set; }
+        public String pis_vPIS { get; set; }
+        public String pis_qBCProd { get; set; }
+        public String pis_vAliqProd { get; set; }
+
+        //COFINS
+        public Enum.COFINS cofins { get; set; }
+        public String cofins_CST { get; set; }
+        public String cofins_vBC { get; set; }
+        public String cofins_pCOFINS { get; set; }
+        public String cofins_vCOFINS { get; set; }
+        public String cofins_qBCProd { get; set; }
+        public String cofins_vAliqProd { get; set; }
         
     }
 }

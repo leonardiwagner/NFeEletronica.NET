@@ -10,9 +10,9 @@ namespace WallegNfe.Model.Nota.Enum
         ICMS00, ICMS10, ICMS20, ICMS30, ICMS40_50, ICMS51, ICMS60, ICMS70, ICMS90, ICMS101, ICMS102_400, ICMS201, ICMS202, ICMS500, ICMS900
     }
 
-    public enum CST
+    public enum IPI
     {
-        CST00_49_50_99, CST01
+        IPI00_49_50_99, IPI01_55
     }
 
     public enum PIS

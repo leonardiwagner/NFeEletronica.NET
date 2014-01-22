@@ -7,7 +7,7 @@ namespace WallegNfe.Model.Nota
 {
     public class IDE
     {
-        public String cUf { get; set; }
+        public String cUF { get; set; }
         public String cNF { get; set; }
         public String natOp { get; set; }
         public String indPag { get; set; }
@@ -15,7 +15,7 @@ namespace WallegNfe.Model.Nota
         public String serie { get; set; }
         public String nNF { get; set; }
         public String dEmi { get; set; }
-        //public String dSaiEnt { get; set; }
+        public String dSaiEnt { get; set; }
         public String tpNF { get; set; }
         public String cMunFG { get; set; }
         public String tpImp { get; set; }
@@ -29,7 +29,7 @@ namespace WallegNfe.Model.Nota
         //valores padrão
         public IDE()
         {
-            this.cUf = "35";
+            this.cUF = "35";
             this.mod = "55";
             this.serie = "1";
             this.tpImp = "1";

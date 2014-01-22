@@ -15,6 +15,11 @@ namespace Exemplo
         {
             WallegNfe.Nfe nfe = new WallegNfe.Nfe(false, "C:\\certificado2.pfx");
 
+            WallegNfe.Nota nota = new WallegNfe.Nota();
+            nota.emit.xNome = "fdsfsd";
+            nota.dest.fone = "(11 33213)";
+
+
             //Enviar uma nota
             WallegNfe.Operacao.Recepcao nfeRecepcao = new WallegNfe.Operacao.Recepcao(nfe);
 
@@ -27,9 +32,6 @@ namespace Exemplo
 
             //Cancelar nota
             WallegNfe.Operacao.RecepcaoEvento nfeRecepcaoEvento = new WallegNfe.Operacao.RecepcaoEvento(nfe);
-
-
-
 
             Console.ReadLine();
         }
