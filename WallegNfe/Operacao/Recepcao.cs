@@ -13,7 +13,7 @@ namespace WallegNfe.Operacao
 {
     public class Recepcao : BaseOperacao
     {
-        private List<Model.Nota2> NotaLista = new List<Model.Nota2>();
+        private List<WallegNfe.Nota> NotaLista = new List<WallegNfe.Nota>();
         private long NumeroLote = 0;
 
         public Recepcao(WallegNfe.Nfe nfe) : base(nfe) 
@@ -42,23 +42,31 @@ namespace WallegNfe.Operacao
         /// <param name="arquivoCaminhoXml"></param>
         public void AdicionarNota(String arquivoCaminhoXml)
         {
+            //Carrega uma nota XML e passa para um objeto Nota
             Bll.Nota bllNota = new Bll.Nota();
+            WallegNfe.Nota nota = bllNota.Carregar(arquivoCaminhoXml);
+
+            this.AdicionarNota(nota);
+        }
+
+        public void AdicionarNota(WallegNfe.Nota nota)
+        {
+            
             Bll.Assinatura bllAssinatura = new Bll.Assinatura();
             Bll.Xml bllXml = new Bll.Xml();
 
             //Verifica se já passou o limite de notas por lote (regra do SEFAZ). 
             if (this.NotaLista.Count >= 50)
             {
-                throw new Exception("Limite máximo por lote é de 50 arquivos"); 
+                throw new Exception("Limite máximo por lote é de 50 arquivos");
             }
 
-            //Carrega uma nota XML e passa para um objeto Nota
-            Model.Nota2 nota = bllNota.Carregar(arquivoCaminhoXml);
+            
 
             //Assina a nota
             try
             {
-                bllAssinatura.AssinarXml(nota.ArquivoFisicoCaminho, this.Certificado, "NFe", "infNFe");
+                bllAssinatura.AssinarXml(nota.CaminhoFisico, this.Certificado, "NFe", "infNFe");
             }
             catch (Exception e)
             {
@@ -68,15 +76,15 @@ namespace WallegNfe.Operacao
             //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
             try
             {
-                bllXml.ValidaSchema(arquivoCaminhoXml, Bll.Util.ContentFolderSchemaValidacao + "\\" + this.ArquivoSchema);
+                bllXml.ValidaSchema(nota.CaminhoFisico, Bll.Util.ContentFolderSchemaValidacao + "\\" + this.ArquivoSchema);
             }
             catch (Exception e)
             {
                 throw new Exception("Erro ao validar Nota: " + e.Message);
             }
-            
+
             //Se passou está validado, manda para a pasta de validados
-            Bll.Nota.Move(nota, Model.NotaSituacao.VALIDADA);
+            //Bll.Nota.Move(nota, Model.NotaSituacao.VALIDADA);
 
             //Adiciona para a lista do lote a serem enviadas
             this.NotaLista.Add(nota);
@@ -94,7 +102,7 @@ namespace WallegNfe.Operacao
             for (int i = 0; i < this.NotaLista.Count; i++)
             {
                 //Converte o Xml de uma nota em texto
-                String NotaString = this.NotaLista[i].ArquivoFisicoLer();
+                String NotaString = this.NotaLista[i].ConteudoXml;
 
                 //Identifica somente o conteudo entre a tag <NFe>
                 int inicioTag = NotaString.IndexOf("<NFe");

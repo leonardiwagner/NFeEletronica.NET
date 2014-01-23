@@ -54,7 +54,7 @@ namespace WallegNfe.Model.Nota
         public String ipi_CST {get;set;}
         public String ipi_vBC   {get;set;}
         public String ipi_pIPI {get;set;}
-        public String ipi_qUnid_ {get;set;}
+        public String ipi_qUnid {get;set;}
         public String ipi_vUnid {get;set;}
         public String ipi_vIPI {get;set;}
 

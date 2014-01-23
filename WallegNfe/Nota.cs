@@ -19,6 +19,14 @@ namespace WallegNfe
 
         private StringBuilder XmlString = null;
 
+        public String CaminhoFisico = "";
+        public String ArquivoNome = "";
+        public String ConteudoXml = "";
+        public Model.NotaSituacao Situacao { get; set; }
+
+        
+       
+
         public Nota()
         {
             this.ide = new Model.Nota.IDE();
@@ -43,7 +51,7 @@ namespace WallegNfe
             String codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
             this.ide.cNF = codigoNumerico;
             
-            String result = this.ide.cUF + this.ide.dEmi.Substring(7, 2) + this.ide.dEmi.Substring(4, 2) + this.emit.CNPJ + String.Format("D2", this.ide.mod) + String.Format("D3", this.ide.serie) + String.Format("D9", this.ide.nNF) + String.Format("D1", this.ide.tpEmis) + codigoNumerico;
+            String result = this.ide.cUF + this.ide.dEmi.Substring(8, 2) + this.ide.dEmi.Substring(5, 2) + this.emit.CNPJ + String.Format("D2", this.ide.mod) + String.Format("D3", this.ide.serie) + String.Format("D9", this.ide.nNF) + String.Format("D1", this.ide.tpEmis) + codigoNumerico;
             result = result + this.GerarModulo11(result);
 
             this.XmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
@@ -65,21 +73,39 @@ namespace WallegNfe
                 this.XmlString.Append("</infAdic>");
             */
 
-            this.XmlString.Append("   <Signature></Signature>");
+           
 
             this.XmlString.Append("   </infNFe>");
+            this.XmlString.Append("   <Signature></Signature>");
             this.XmlString.Append("</NFe>");
 
             XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml(this.XmlString.ToString());
-            xmlDocument.Save(caminho);
+
+            try
+            {
+                xmlDocument.LoadXml(this.XmlString.ToString());
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Erro ao gerar a nota como XML: " + e.Message);
+            }
+
+            try
+            {
+                xmlDocument.Save(caminho);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Erro ao salvar a nota como XML: " + e.Message);
+            }
+
+            this.CaminhoFisico = caminho;
+            this.ConteudoXml = this.XmlString.ToString();
         }
 
         private void MontaIDE()
         {
             
-
-
             this.XmlString.Append("<ide>");
             this.XmlString.Append("	<cUF>" + this.ide.cUF + "</cUF>");
             this.XmlString.Append("	<cNF>" + this.ide.cNF + "</cNF>");
@@ -89,7 +115,10 @@ namespace WallegNfe
             this.XmlString.Append("	<serie>" + this.ide.serie + "</serie>");
             this.XmlString.Append("	<nNF>" + this.ide.nNF + "</nNF>");
             this.XmlString.Append("	<dEmi>" + this.ide.dEmi  + "</dEmi>");
-            this.XmlString.Append("	<dSaiEnt>" + this.ide.dSaiEnt + "</dSaiEnt>"); 
+
+            if(!String.IsNullOrEmpty(this.ide.dSaiEnt))
+                this.XmlString.Append("	<dSaiEnt>" + this.ide.dSaiEnt + "</dSaiEnt>"); 
+
             this.XmlString.Append("	<tpNF>" + this.ide.tpNF + "</tpNF>");
             this.XmlString.Append("	<cMunFG>" + this.ide.cMunFG + "</cMunFG>");
             this.XmlString.Append("	<tpImp>" + this.ide.tpImp   + "</tpImp>");
@@ -208,7 +237,7 @@ namespace WallegNfe
         {
             for(int i=0;i< this.detList.Count;i++)
             {
-                this.XmlString.Append("<det nItem=\"" + (this.detList.Count + 1).ToString() + "\">");
+                this.XmlString.Append("<det nItem=\"" + (i + 1).ToString() + "\">");
                 this.XmlString.Append("	<prod>");
                 this.XmlString.Append("		<cProd>" + this.detList[i].cProd + "</cProd>");
                 this.XmlString.Append("		<cEAN>" + this.detList[i].cEAN + "</cEAN>");
@@ -520,15 +549,17 @@ namespace WallegNfe
 
         private void MontaDET_IPI(Model.Nota.DET det)
         {
-            this.XmlString.Append("</IPI>");
+            this.XmlString.Append("<IPI>");
 
             this.XmlString.Append("<cIEnq>" + det.ipi_cIEnq + "</cIEnq>");
-            this.XmlString.Append("<IPITrib>");
+            
 
             switch (det.ipi)
             {
 
                 case Model.Nota.Enum.IPI.IPI00_49_50_99:
+                    this.XmlString.Append("<IPITrib>");
+
                     this.XmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
@@ -538,11 +569,12 @@ namespace WallegNfe
                     }
                     else
                     {
-                        this.XmlString.Append("    <qUnid>" + det.ipi_qUnid_ + "</qUnid>");
+                        this.XmlString.Append("    <qUnid>" + det.ipi_qUnid + "</qUnid>");
                         this.XmlString.Append("    <vUnid>" + det.ipi_vUnid + "</vUnid>");
                     }
 
                     this.XmlString.Append("    <vIPI>" + det.ipi_vIPI + "</vIPI>");
+
                     this.XmlString.Append("</IPITrib>");
                     break;
                 case Model.Nota.Enum.IPI.IPI01_55:
