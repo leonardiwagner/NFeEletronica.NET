@@ -18,4 +18,6 @@ Claro! Estamos dando prioridade para as necessidades da empresa, mas caso algué
 
 Confira o Wiki do projeto para ver exemplos de código!
 
+https://github.com/leonardiwagner/WallegNFe/wiki/Exemplo-de-uso
+
 
