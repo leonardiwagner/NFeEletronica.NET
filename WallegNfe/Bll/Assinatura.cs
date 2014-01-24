@@ -23,7 +23,7 @@ namespace WallegNfe.Bll
         /// <param name="arquivoNome"></param>
         /// <param name="operacao"></param>
         /// <param name="x509Cert"></param>
-        public String AssinarXml(string arquivoNome, X509Certificate2 x509Cert, String TagAssinatura, String TagAtributoId)
+        public String AssinarXml(string arquivoNome, X509Certificate2 x509Cert, String TagAssinatura, String NotaId)
         {
             StreamReader SR = null;
 
@@ -35,61 +35,21 @@ namespace WallegNfe.Bll
                 SR.Close();
                 SR = null;
 
-                try
-                {
                     // Create a new XML document.
                     XmlDocument doc = new XmlDocument();
 
                     // Format the document to ignore white spaces.
                     doc.PreserveWhitespace = false;
 
-                    // Load the passed XML file using it’s name.
-                    try
-                    {
-                        doc.LoadXml(xmlString);
 
-                        if (doc.GetElementsByTagName(TagAssinatura).Count == 0)
-                        {
-                            throw new Exception("A tag de assinatura " + TagAssinatura.Trim() + " não existe no XML. (Código do Erro: 5)");
-                        }
-                        else if (doc.GetElementsByTagName(TagAtributoId).Count == 0)
-                        {
-                            throw new Exception("A tag de assinatura " + TagAtributoId.Trim() + " não existe no XML. (Código do Erro: 4)");
-                        }
-                        // Existe mais de uma tag a ser assinada
-                        else
-                        {
-                            try
-                            {
                                 XmlDocument XMLDoc;
 
-                                XmlNodeList lists = doc.GetElementsByTagName(TagAssinatura);
-                                foreach (XmlNode nodes in lists)
-                                {
-                                    foreach (XmlNode childNodes in nodes.ChildNodes)
-                                    {
-                                        if (!childNodes.Name.Equals(TagAtributoId))
-                                            continue;
+                                
 
-                                        if (childNodes.NextSibling != null && childNodes.NextSibling.Name.Equals("Signature"))
-                                            continue;
+                                Reference reference = new Reference();
+                                reference.Uri = arquivoNome;
 
-                                        // Create a reference to be signed
-                                        Reference reference = new Reference();
-                                        reference.Uri = "";
-
-                                        // pega o uri que deve ser assinada                                       
-                                        XmlElement childElemen = (XmlElement)childNodes;
-                                        if (childElemen.GetAttributeNode("Id") != null)
-                                        {
-                                            reference.Uri = "#" + childElemen.GetAttributeNode("Id").Value;
-                                        }
-                                        else if (childElemen.GetAttributeNode("id") != null)
-                                        {
-                                            reference.Uri = "#" + childElemen.GetAttributeNode("id").Value;
-                                        }
-
-                                        // Create a SignedXml object.
+                                  // Create a SignedXml object.
                                         SignedXml signedXml = new SignedXml(doc);
 
                                         // Add the key to the SignedXml document
@@ -121,9 +81,9 @@ namespace WallegNfe.Bll
                                         XmlElement xmlDigitalSignature = signedXml.GetXml();
 
                                         // Gravar o elemento no documento XML
-                                        nodes.AppendChild(doc.ImportNode(xmlDigitalSignature, true));
-                                    }
-                                }
+                                        XmlNodeList documento = doc.GetElementsByTagName(TagAssinatura);
+                                       // documento.AppendChild(doc.ImportNode(xmlDigitalSignature, true));
+
 
                                 XMLDoc = new XmlDocument();
                                 XMLDoc.PreserveWhitespace = false;
@@ -140,23 +100,7 @@ namespace WallegNfe.Bll
                                 SW_2.Close();
 
                                 return SignedFile;
-                                
-                            }
-                            catch (Exception caught)
-                            {
-                                throw (caught);
-                            }
-                        }
-                    }
-                    catch (Exception caught)
-                    {
-                        throw (caught);
-                    }
-                }
-                catch (Exception caught)
-                {
-                    throw (caught);
-                }
+                        
             }
             catch (Exception ex)
             {

@@ -66,7 +66,7 @@ namespace WallegNfe.Operacao
             //Assina a nota
             try
             {
-                bllAssinatura.AssinarXml(nota.CaminhoFisico, this.Certificado, "NFe", "infNFe");
+                bllAssinatura.AssinarXml(nota.CaminhoFisico, this.Certificado, "Signature", nota.NotaId);
             }
             catch (Exception e)
             {

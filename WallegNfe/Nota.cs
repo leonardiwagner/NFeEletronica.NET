@@ -22,6 +22,7 @@ namespace WallegNfe
         public String CaminhoFisico = "";
         public String ArquivoNome = "";
         public String ConteudoXml = "";
+        public String NotaId = "";
         public Model.NotaSituacao Situacao { get; set; }
 
         
@@ -50,9 +51,10 @@ namespace WallegNfe
             Random random = new Random();
             String codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
             this.ide.cNF = codigoNumerico;
-            
-            String result = this.ide.cUF + this.ide.dEmi.Substring(8, 2) + this.ide.dEmi.Substring(5, 2) + this.emit.CNPJ + String.Format("D2", this.ide.mod) + String.Format("D3", this.ide.serie) + String.Format("D9", this.ide.nNF) + String.Format("D1", this.ide.tpEmis) + codigoNumerico;
+
+            String result = this.ide.cUF + this.ide.dEmi.Replace("-", "").Substring(2, 4) + this.emit.CNPJ +  System.Int32.Parse(this.ide.mod).ToString("D2") + System.Int32.Parse(this.ide.serie).ToString("D3") + System.Int32.Parse(this.ide.nNF).ToString("D9") + System.Int32.Parse(this.ide.tpEmis).ToString("D1") + codigoNumerico;
             result = result + this.GerarModulo11(result);
+            this.NotaId = result;
 
             this.XmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
             this.XmlString.Append("   <infNFe Id=\"NFe" + result + "\" versao=\"2.00\">");
@@ -63,7 +65,7 @@ namespace WallegNfe
             MontaDET();
             MontaTOTAL();
             MontaTRANSP();
-            MontaCOBR();
+            //MontaCOBR();
 
               /*
                 this.XmlString.Append("<infAdic>");
@@ -73,7 +75,6 @@ namespace WallegNfe
                 this.XmlString.Append("</infAdic>");
             */
 
-           
 
             this.XmlString.Append("   </infNFe>");
             this.XmlString.Append("   <Signature></Signature>");
@@ -117,12 +118,17 @@ namespace WallegNfe
             this.XmlString.Append("	<dEmi>" + this.ide.dEmi  + "</dEmi>");
 
             if(!String.IsNullOrEmpty(this.ide.dSaiEnt))
-                this.XmlString.Append("	<dSaiEnt>" + this.ide.dSaiEnt + "</dSaiEnt>"); 
+                this.XmlString.Append("	<dSaiEnt>" + this.ide.dSaiEnt + "</dSaiEnt>");
+
+            /*
+            if (!String.IsNullOrEmpty(this.ide.hSaiEnt))
+                this.XmlString.Append("	<hSaiEnt>" + this.ide.hSaiEnt + "</hSaiEnt>");
+            */
 
             this.XmlString.Append("	<tpNF>" + this.ide.tpNF + "</tpNF>");
             this.XmlString.Append("	<cMunFG>" + this.ide.cMunFG + "</cMunFG>");
             this.XmlString.Append("	<tpImp>" + this.ide.tpImp   + "</tpImp>");
-            this.XmlString.Append("	<tpEmis>" + this.ide   + "</tpEmis>");
+            this.XmlString.Append("	<tpEmis>" + this.ide.tpEmis   + "</tpEmis>");
             this.XmlString.Append("	<cDV>" + this.ide.cDV   + "</cDV>");
             this.XmlString.Append("	<tpAmb>" + this.ide.tpAmb   + "</tpAmb>");
             this.XmlString.Append("	<finNFe>" + this.ide.finNFe   + "</finNFe>");
@@ -185,7 +191,10 @@ namespace WallegNfe
             this.XmlString.Append("		<CEP>" + this.emit.CEP + "</CEP>");
             this.XmlString.Append("		<cPais>1058</cPais>");
             this.XmlString.Append("		<xPais>BRASIL</xPais>");
-            this.XmlString.Append("		<fone>" + this.emit.fone + "</fone>");
+
+            if(!String.IsNullOrEmpty(this.emit.fone))
+                this.XmlString.Append("		<fone>" + this.emit.fone + "</fone>");
+
             this.XmlString.Append("	</enderEmit>");
 
             this.XmlString.Append("	<IE>" + this.emit.IE + "</IE>");
@@ -221,14 +230,22 @@ namespace WallegNfe
             this.XmlString.Append("		<cMun>" + this.dest.cMun + "</cMun>");
             this.XmlString.Append("		<xMun>" + this.dest.xMun + "</xMun>");
             this.XmlString.Append("		<UF>" + this.dest.UF + "</UF>");
-            this.XmlString.Append("		<CEP>" + this.dest.CEP + "</CEP>");
+
+            if(!String.IsNullOrEmpty(this.dest.CEP))
+                this.XmlString.Append("		<CEP>" + this.dest.CEP + "</CEP>");
+
             this.XmlString.Append("		<cPais>1058</cPais>");
             this.XmlString.Append("		<xPais>BRASIL</xPais>");
-            this.XmlString.Append("		<fone>" + this.dest.fone + "</fone>");
+
+            if(!String.IsNullOrEmpty(this.dest.fone))
+                this.XmlString.Append("		<fone>" + this.dest.fone + "</fone>");
+
             this.XmlString.Append("	</enderDest>");
 
-            this.XmlString.Append("	<IE>" + this.dest + "</IE>");       
-            this.XmlString.Append("	<email>" + this.dest + "</email>");
+            this.XmlString.Append("	<IE>" + this.dest.IE + "</IE>");    
+   
+            if(!String.IsNullOrEmpty(this.dest.email))
+                this.XmlString.Append("	<email>" + this.dest.email + "</email>");
 
             this.XmlString.Append("</dest>");
         }
@@ -549,6 +566,8 @@ namespace WallegNfe
 
         private void MontaDET_IPI(Model.Nota.DET det)
         {
+            return;
+
             this.XmlString.Append("<IPI>");
 
             this.XmlString.Append("<cIEnq>" + det.ipi_cIEnq + "</cIEnq>");
@@ -720,8 +739,17 @@ namespace WallegNfe
 
             if(!String.IsNullOrEmpty(this.transp.CNPJ)){
                 this.XmlString.Append("	<transporta>");
-                this.XmlString.Append("		<CNPJ>" + this.transp.CNPJ + "</CNPJ>");
-                this.XmlString.Append("		<xNome>" + this.transp.xNome + "</xNothis>");
+                
+                if(!String.IsNullOrEmpty(this.transp.CNPJ))
+                    this.XmlString.Append("		<CNPJ>" + this.transp.CNPJ + "</CNPJ>");
+
+                /*
+                if(!String.IsNullOrEmpty(this.transp.CPF))
+                    this.XmlString.Append("		<CPF>" + this.transp.CPF + "</CPF>");
+                */
+
+                if(!String.IsNullOrEmpty(this.transp.xNome))
+                    this.XmlString.Append("		<xNome>" + this.transp.xNome + "</xNothis>");
 
                 if(!String.IsNullOrEmpty(this.transp.IE)){
                     this.XmlString.Append("		<IE>" + this.transp.IE + "</IE>");
@@ -748,24 +776,36 @@ namespace WallegNfe
                 this.XmlString.Append("	</veicTransp>");
             }
 
-            this.XmlString.Append("	<vol>");
-            this.XmlString.Append("		<qVol>" + this.transp.qVol + "</qVol>");
-            this.XmlString.Append("		<esp>" + this.transp.esp + "</esp>");
-
-            if (!String.IsNullOrEmpty(this.transp.marca))
+            if (!String.IsNullOrEmpty(this.transp.qVol))
             {
-                this.XmlString.Append("		<marca>" + this.transp.marca + "</marca>");
-            }
+                this.XmlString.Append("	<vol>");
+                this.XmlString.Append("		<qVol>" + this.transp.qVol + "</qVol>");
+                this.XmlString.Append("		<esp>" + this.transp.esp + "</esp>");
+            
 
-            this.XmlString.Append("		<nVol>" + this.transp.nVol + "</nVol>");
-            this.XmlString.Append("		<pesoL>0</pesoL>");
-            this.XmlString.Append("		<pesoB>" + this.transp.pesoB + "</pesoB>");
-            this.XmlString.Append("	</vol>");
+                if (!String.IsNullOrEmpty(this.transp.marca))
+                {
+                    this.XmlString.Append("		<marca>" + this.transp.marca + "</marca>");
+                }
+
+                if(!String.IsNullOrEmpty(this.transp.nVol))
+                    this.XmlString.Append("		<nVol>" + this.transp.nVol + "</nVol>");
+
+                if(!String.IsNullOrEmpty(this.transp.pesoL))
+                    this.XmlString.Append("		<pesoL>" + this.transp.pesoL + "</pesoL>");
+
+                if(!String.IsNullOrEmpty(this.transp.pesoB))
+                    this.XmlString.Append("		<pesoB>" + this.transp.pesoB + "</pesoB>");
+
+                this.XmlString.Append("	</vol>");
+            }
             this.XmlString.Append("</transp>");
         }
 
         private void MontaCOBR()
         {
+            return; //por enquanto deixar isso de lado porque precisa ser opcional a cobrança
+
             this.XmlString.Append("<cobr>");
             this.XmlString.Append("	<fat>");
             this.XmlString.Append("		<nFat>" + this.cobr.nFat + "</nFat>");
