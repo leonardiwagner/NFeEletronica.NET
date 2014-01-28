@@ -47,12 +47,34 @@ namespace WallegNfe.Operacao
             retorno.Status = respostaXml["cStat"].InnerText;
             retorno.Motivo = respostaXml["xMotivo"].InnerText;
 
-            //Isso aqui é o resultado de CADA NFe, mas como por enquanto pra cada lote só manda 1 nota, entao segue assim por enquanto #todo
-            retorno.Status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText;
-            retorno.Motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText;
+            if (retorno.Status != "225")
+            {
+                //Isso aqui é o resultado de CADA NFe, mas como por enquanto pra cada lote só manda 1 nota, entao segue assim por enquanto #todo
+                retorno.Status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText;
+                retorno.Motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText;
+
+                if (retorno.Status != "100")
+                {
+                    throw new Exception("Lote não processado: " + retorno.Motivo);
+                }
+                else
+                {
+                    return new Model.Retorno.RetRecepcao()
+                    {
+                        Motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText,
+                        NumeroNota = respostaXml["protNFe"]["infProt"]["chNFe"].InnerText,
+                        Protocolo = respostaXml["protNFe"]["infProt"]["nProt"].InnerText,
+                        Status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText
+                    };
+                }
+
+            }
+            else
+            {
+                throw new Exception("Erro ao enviar lote XML: " + retorno.Motivo);
+            }
 
             return retorno;
-            
         }
 
     }

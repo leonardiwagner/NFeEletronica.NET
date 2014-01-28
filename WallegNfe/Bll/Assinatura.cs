@@ -23,14 +23,14 @@ namespace WallegNfe.Bll
         /// <param name="arquivoNome"></param>
         /// <param name="operacao"></param>
         /// <param name="x509Cert"></param>
-        public String AssinarXml(string arquivoNome, X509Certificate2 x509Cert, String TagAssinatura, String NotaId)
+        public String AssinarXml(WallegNfe.Nota nota, X509Certificate2 x509Cert, String TagAssinatura)
         {
             StreamReader SR = null;
 
             try
             {
                 //Abrir o arquivo XML a ser assinado e ler o seu conteúdo
-                SR = File.OpenText(arquivoNome);
+                SR = File.OpenText(nota.CaminhoFisico);
                 string xmlString = SR.ReadToEnd();
                 SR.Close();
                 SR = null;
@@ -40,14 +40,14 @@ namespace WallegNfe.Bll
 
                     // Format the document to ignore white spaces.
                     doc.PreserveWhitespace = false;
-
+                    doc.LoadXml(xmlString);
 
                                 XmlDocument XMLDoc;
 
                                 
 
                                 Reference reference = new Reference();
-                                reference.Uri = arquivoNome;
+                                reference.Uri = "#NFe" + nota.NotaId ;
 
                                   // Create a SignedXml object.
                                         SignedXml signedXml = new SignedXml(doc);
@@ -81,8 +81,13 @@ namespace WallegNfe.Bll
                                         XmlElement xmlDigitalSignature = signedXml.GetXml();
 
                                         // Gravar o elemento no documento XML
-                                        XmlNodeList documento = doc.GetElementsByTagName(TagAssinatura);
-                                       // documento.AppendChild(doc.ImportNode(xmlDigitalSignature, true));
+                                        XmlNodeList assinaturaNodes = doc.GetElementsByTagName(TagAssinatura);
+                                        foreach (XmlNode nodes in assinaturaNodes)
+                                        {
+                                            nodes.AppendChild(doc.ImportNode(xmlDigitalSignature, true));
+                                            break;
+                                        }
+                                       
 
 
                                 XMLDoc = new XmlDocument();
@@ -93,8 +98,11 @@ namespace WallegNfe.Bll
                                 // Atualizar a string do XML já assinada
                                 string StringXMLAssinado = XMLDoc.OuterXml;
 
+                                //Atualiza a nota assinada
+                                nota.ConteudoXml = StringXMLAssinado;
+
                                 // Gravar o XML Assinado no HD
-                                String SignedFile = arquivoNome;
+                                String SignedFile = nota.CaminhoFisico;
                                 StreamWriter SW_2 = File.CreateText(SignedFile);
                                 SW_2.Write(StringXMLAssinado);
                                 SW_2.Close();

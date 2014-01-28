@@ -24,6 +24,7 @@ namespace WallegNfe.Model.Nota
         public String vUnTrib { get; set; }
 
         public String vFrete { get; set; }
+        public String vDesc { get; set; }
 
         public String indTot { get; set; }
 

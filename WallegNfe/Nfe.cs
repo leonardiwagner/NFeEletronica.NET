@@ -51,7 +51,7 @@ namespace WallegNfe
             X509Certificate2 certificado = null;
 
             //Operação se é para carregar um certificado que já existe
-            if (!String.IsNullOrEmpty(this.ArquivoCertificado))
+            if (1==2 && !String.IsNullOrEmpty(this.ArquivoCertificado))
             {
                 //verifica se o certificado já existe e funciona
                 if (Bll.Arquivo.ExisteArquivo(this.ArquivoCertificado))
@@ -77,7 +77,7 @@ namespace WallegNfe
             if (certificado != null)
             {
                 //verifica se é para salvar o certificado em um arquivo
-                if (Bll.Arquivo.ExisteArquivo(this.ArquivoCertificado))
+                if (!Bll.Arquivo.ExisteArquivo(this.ArquivoCertificado))
                 {
                     bllCertificado.SalvarCertificado(certificado, this.ArquivoCertificado);
                 }

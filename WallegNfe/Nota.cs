@@ -48,13 +48,38 @@ namespace WallegNfe
 
         public void SalvarNota(String caminho)
         {
+            /*
+            this.CaminhoFisico = "C:\\NFE\\nota-fixa.xml";
+
+            System.IO.StreamReader SR = null;
+            SR = System.IO.File.OpenText(this.CaminhoFisico);
+            string xmlString = SR.ReadToEnd();
+            SR.Close();
+            SR = null;
+            this.ConteudoXml = xmlString;
+
+            return;
+            */
+
+            //#todo, fazer isso ser so em amb. de homologacao
+
+            this.emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
+            this.dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
+            
+
             Random random = new Random();
             String codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
             this.ide.cNF = codigoNumerico;
 
             String result = this.ide.cUF + this.ide.dEmi.Replace("-", "").Substring(2, 4) + this.emit.CNPJ +  System.Int32.Parse(this.ide.mod).ToString("D2") + System.Int32.Parse(this.ide.serie).ToString("D3") + System.Int32.Parse(this.ide.nNF).ToString("D9") + System.Int32.Parse(this.ide.tpEmis).ToString("D1") + codigoNumerico;
-            result = result + this.GerarModulo11(result);
+            String digitoVerificador =  this.GerarModulo11(result);
+
+            result = result + digitoVerificador;
             this.NotaId = result;
+
+            this.ide.cDV = digitoVerificador;
+
+            //this.XmlString.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); não precisa pq o lote já tem isso
 
             this.XmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
             this.XmlString.Append("   <infNFe Id=\"NFe" + result + "\" versao=\"2.00\">");
@@ -77,18 +102,31 @@ namespace WallegNfe
 
 
             this.XmlString.Append("   </infNFe>");
-            this.XmlString.Append("   <Signature></Signature>");
+            //this.XmlString.Append("   <Signature></Signature>");
             this.XmlString.Append("</NFe>");
 
             XmlDocument xmlDocument = new XmlDocument();
 
             try
             {
-                xmlDocument.LoadXml(this.XmlString.ToString());
+                xmlDocument.LoadXml(this.XmlString.ToString().Replace("&","&amp;"));
             }
             catch (Exception e)
             {
-                throw new Exception("Erro ao gerar a nota como XML: " + e.Message);
+
+                
+                // Gravar o XML Assinado no HD
+                /*
+                String SignedFile = "C:\\ERRYNHO.XML";
+                System.IO.StreamWriter SW_2 = System.IO.File.CreateText(SignedFile);
+                SW_2.Write(this.XmlString);
+                SW_2.Close();
+                */
+
+               
+
+
+                throw new Exception("Erro ao gerar a nota como XML 2: " + e.Message);
             }
 
             try
@@ -137,33 +175,38 @@ namespace WallegNfe
             this.XmlString.Append("</ide>");
         }
 
-        private int GerarModulo11(String text)
+        private String GerarModulo11(String chaveAcesso)
         {
-            int[] intPesos = {2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5, 6, 7, 8, 9};
+            // Cálculo do módulo 11.
+            // DV = Digito verificador.
 
-            int intSoma = 0 ;
-            int intIdx = 0;
+            // O peso é o multiplicador da expressão, deve ser somente de 2 à 9, então já iniciamos com 2.
+            int peso = 2;
+            // Somatória do resultado.
+            int soma = 0;
 
-            for (int i=text.Length;i>text.Length;i--)
+            try
             {
-                intSoma += i * intPesos[i];
+                // Passa número a número da chave pegando da direita pra esquerda (pra isso o Reverse()).
+                chaveAcesso.ToCharArray()
+                    .Reverse()
+                    .ToList()
+                    .ForEach(f =>
+                    {
+                        // Acumula valores da soma gerada das multiplicações (peso).
+                        soma += (Convert.ToInt32(f.ToString()) * peso);
+                        // Como o peso pode ir somente até 9 é feito essa validação.
+                        peso = (peso == 9) ? 2 : peso + 1;
+                    });
 
-                if (intIdx == 9)
-                    intIdx = 2;
-                else
-                    intIdx+=1;
+                // DV = 11 - (resto da divisão)
+                // Quando o resto da divisão for 0 (zero) ou 1 (um), o DV deverá ser igual a 0 (zero).
+                return (11 - (soma % 11)) <= 1 ? "0" : (11 - (soma % 11)).ToString();
             }
-
-            int intResto;
-            int intDigito;
-
-            intResto = (intSoma * 10) % 11;
-            intDigito = intResto;
-
-            if(intDigito >= 10)
-                return 0;
-            else
-                return intDigito;
+            catch
+            {
+                return "ERRO: A chave de acesso deve conter apenas números.";
+            }
         }
 
         private void MontaEMIT()
@@ -187,7 +230,7 @@ namespace WallegNfe
             this.XmlString.Append("		<xBairro>" +this.emit.xBairro + "</xBairro>");
             this.XmlString.Append("		<cMun>" + this.emit.cMun + "</cMun>");
             this.XmlString.Append("		<xMun>" +this.emit.xMun + "</xMun>");
-            this.XmlString.Append("		<UF>" + this.emit.UF + "</UF>");
+            this.XmlString.Append("		<UF>" + this.emit.UF.Trim() + "</UF>");
             this.XmlString.Append("		<CEP>" + this.emit.CEP + "</CEP>");
             this.XmlString.Append("		<cPais>1058</cPais>");
             this.XmlString.Append("		<xPais>BRASIL</xPais>");
@@ -229,7 +272,7 @@ namespace WallegNfe
             this.XmlString.Append("		<xBairro>" + this.dest.xBairro + "</xBairro>");
             this.XmlString.Append("		<cMun>" + this.dest.cMun + "</cMun>");
             this.XmlString.Append("		<xMun>" + this.dest.xMun + "</xMun>");
-            this.XmlString.Append("		<UF>" + this.dest.UF + "</UF>");
+            this.XmlString.Append("		<UF>" + this.dest.UF.Trim() + "</UF>");
 
             if(!String.IsNullOrEmpty(this.dest.CEP))
                 this.XmlString.Append("		<CEP>" + this.dest.CEP + "</CEP>");
@@ -256,7 +299,7 @@ namespace WallegNfe
             {
                 this.XmlString.Append("<det nItem=\"" + (i + 1).ToString() + "\">");
                 this.XmlString.Append("	<prod>");
-                this.XmlString.Append("		<cProd>" + this.detList[i].cProd + "</cProd>");
+                this.XmlString.Append("		<cProd>" + this.detList[i].cProd.Trim() + "</cProd>");
                 this.XmlString.Append("		<cEAN>" + this.detList[i].cEAN + "</cEAN>");
                 this.XmlString.Append("		<xProd>" + this.detList[i].xProd + "</xProd>");
                 this.XmlString.Append("		<NCM>" + this.detList[i].NCM + "</NCM>");
@@ -274,7 +317,10 @@ namespace WallegNfe
                 {
                     this.XmlString.Append("		<vFrete>" + this.detList[i].vFrete + "</vFrete>");
                 }
-
+                if (!String.IsNullOrEmpty(this.detList[i].vDesc))
+                {
+                    this.XmlString.Append("		<vDesc>" + this.detList[i].vDesc + "</vDesc>");
+                }
                 //#TODO , ver o o wagner porque isso vai ser pego de uma tabela de regras de acordo com o CFOP
                 this.XmlString.Append("		<indTot>1</indTot>");
                 this.XmlString.Append("	</prod>");
@@ -764,7 +810,7 @@ namespace WallegNfe
                 }
 
                 if(!String.IsNullOrEmpty(this.transp.UF)){
-                    this.XmlString.Append("		<UF>" + this.transp.UF + "</UF>");
+                    this.XmlString.Append("		<UF>" + this.transp.UF.Trim() + "</UF>");
                 }
 
                 this.XmlString.Append("	</transporta>");

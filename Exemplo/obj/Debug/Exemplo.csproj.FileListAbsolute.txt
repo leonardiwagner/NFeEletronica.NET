@@ -2,7 +2,6 @@ C:\Users\micro2\Documents\GitHub\WallegNFe\Exemplo\bin\Debug\Exemplo.exe.config
 C:\Users\micro2\Documents\GitHub\WallegNFe\Exemplo\bin\Debug\Exemplo.exe
 C:\Users\micro2\Documents\GitHub\WallegNFe\Exemplo\bin\Debug\Exemplo.pdb
 C:\Users\micro2\Documents\GitHub\WallegNFe\Exemplo\bin\Debug\WallegNfe.dll
-C:\Users\micro2\Documents\GitHub\WallegNFe\Exemplo\bin\Debug\WallegNfe.pdb
 C:\Users\micro2\Documents\GitHub\WallegNFe\Exemplo\obj\Debug\Exemplo.csprojResolveAssemblyReference.cache
 C:\Users\micro2\Documents\GitHub\WallegNFe\Exemplo\obj\Debug\Exemplo.exe
 C:\Users\micro2\Documents\GitHub\WallegNFe\Exemplo\obj\Debug\Exemplo.pdb

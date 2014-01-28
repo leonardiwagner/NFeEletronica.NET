@@ -35,29 +35,29 @@ namespace Exemplo
             nota.ide.finNFe = "1";
             nota.ide.procEmi = "3";
 
-            nota.emit.CNPJ = "11111111111111"; //ou emit.CNPJ
-            nota.emit.xNome = "Renato Gaucho";
+            nota.emit.CNPJ = "07293766000150"; //ou emit.CNPJ
+            nota.emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
             nota.emit.xLgr = "R. da bavária";
             nota.emit.nro = "123";
             nota.emit.xBairro = "Santa Claus";
             nota.emit.cMun = "3550308";
-            nota.emit.xMun = "Bavária";
-            nota.emit.UF = "AC";
+            nota.emit.xMun = "São Paulo";
+            nota.emit.UF = "SP";
             nota.emit.CEP = "30720360";
             nota.emit.cPais = "1058";
             nota.emit.xPais = "BRASIL";
             nota.emit.fone = "1331231231";
-            nota.emit.IE = "ISENTO";
+            nota.emit.IE = "117013148112";
             nota.emit.CRT = "1";
 
-            nota.dest.CPF = "11111111111";
-            nota.dest.xNome = "Razão de Teste";
+            nota.dest.CPF = "73696773204";
+            nota.dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
             nota.dest.xLgr = "R. Logradouro Teste";
             nota.dest.nro = "123";
             nota.dest.xBairro = "Bairro da Luz";
             nota.dest.cMun = "3550308";
-            nota.dest.xMun = "São Pedro";
-            nota.dest.UF = "RR";
+            nota.dest.xMun = "São Paulo";
+            nota.dest.UF = "SP";
             nota.dest.CEP = "30720360";
             nota.dest.cPais = "1058";
             nota.dest.xPais = "BRASIL";
@@ -86,25 +86,22 @@ namespace Exemplo
             notaProduto.NCM = "22071090";
             notaProduto.CFOP = "5401";
             notaProduto.uCom = "CX";
-            notaProduto.qCom = "10.0000";
-            notaProduto.vUnCom = "32.50000000";
-            notaProduto.vProd = "325.00";
+            notaProduto.qCom = "1.0000";
+            notaProduto.vUnCom = "1.00000000";
+            notaProduto.vProd = "1.00";
             notaProduto.cEANTrib = "7896090701049";
             notaProduto.uTrib = "CX";
-            notaProduto.qTrib = "10.0000";
-            notaProduto.vUnTrib = "32.50000000";
+            notaProduto.qTrib = "1.0000";
+            notaProduto.vUnTrib = "1.00000000";
             notaProduto.indTot = "1";
 
 
-            notaProduto.icms = WallegNfe.Model.Nota.Enum.ICMS.ICMS00;
+            notaProduto.icms = WallegNfe.Model.Nota.Enum.ICMS.ICMS102_400 ;
 
             
-            notaProduto.icms_orig = "1";
-            notaProduto.icms_CST = "00";
-            notaProduto.icms_modBC = "3";
-            notaProduto.icms_vBC = "0";
-            notaProduto.icms_pICMS = "0";
-            notaProduto.icms_vICMS = "0";
+            notaProduto.icms_orig = "0";
+            notaProduto.icms_CSOSN = "102";
+            
 
             /*
             notaProduto.ipi = WallegNfe.Model.Nota.Enum.IPI.IPI00_49_50_99;
@@ -130,7 +127,7 @@ namespace Exemplo
             nota.total.vICMS = "0.00";
             nota.total.vBCST = "0.00";
             nota.total.vST = "0.00";
-            nota.total.vProd = "0.00";
+            nota.total.vProd = "1.00";
             nota.total.vFrete = "0.00";
             nota.total.vSeg = "0.00";
             nota.total.vDesc = "0.00";
@@ -139,7 +136,7 @@ namespace Exemplo
             nota.total.vPIS = "0.00";
             nota.total.vCOFINS = "0.00";
             nota.total.vOutro = "0.00";
-            nota.total.vNF = "0.00";
+            nota.total.vNF = "1.00";
             nota.total.vTotTrib = "0.00";
 
 
@@ -158,8 +155,10 @@ namespace Exemplo
             WallegNfe.Operacao.RetRecepcao nfeRetRecepcao = new WallegNfe.Operacao.RetRecepcao(nfe);
             WallegNfe.Model.Retorno.RetRecepcao retRetorno = nfeRetRecepcao.Enviar(numeroRecibo);
 
+            /*
             //Cancelar nota
             WallegNfe.Operacao.RecepcaoEvento nfeRecepcaoEvento = new WallegNfe.Operacao.RecepcaoEvento(nfe);
+            */
 
             Console.ReadLine();
         }

@@ -66,7 +66,8 @@ namespace WallegNfe.Operacao
             //Assina a nota
             try
             {
-                bllAssinatura.AssinarXml(nota.CaminhoFisico, this.Certificado, "Signature", nota.NotaId);
+                bllAssinatura.AssinarXml(nota, this.Certificado, "NFe");
+
             }
             catch (Exception e)
             {
@@ -96,7 +97,10 @@ namespace WallegNfe.Operacao
             //Cabeçalho do lote
             String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
             xmlString += "<enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + "2.00" + "\">";
-            xmlString += "<idLote>" + numeroLote.ToString("000000000000000") + "</idLote>";
+
+
+            xmlString += "<idLote>11291</idLote>";
+            //xmlString += "<idLote>" + numeroLote.ToString("000000000000000") + "</idLote>";
 
             //Adiciona as notas no lote
             for (int i = 0; i < this.NotaLista.Count; i++)
@@ -113,11 +117,30 @@ namespace WallegNfe.Operacao
 
 
                 //Move a nota para assinadas
-                Bll.Nota.Move(this.NotaLista[i], Model.NotaSituacao.ASSINADA);
+               // Bll.Nota.Move(this.NotaLista[i], Model.NotaSituacao.ASSINADA);
             }
 
             //Rodapé do lote
             xmlString += "</enviNFe>";
+
+
+            Bll.Xml bllXml = new Bll.Xml();
+
+            // Gravar o XML Assinado no HD
+            String SignedFile = "C:\\NFE\\lote-fixo.xml";
+            System.IO.StreamWriter SW_2 = System.IO.File.CreateText(SignedFile);
+            SW_2.Write(xmlString);
+            SW_2.Close();
+
+            //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
+            try
+            {
+                bllXml.ValidaSchema("C:\\NFE\\lote-fixo.xml", Bll.Util.ContentFolderSchemaValidacao + "\\enviNFe_v2.00.xsd");
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Erro ao validar Nota: " + e.Message);
+            }
 
             return Bll.Xml.StringToXml(xmlString);
         }
@@ -142,7 +165,7 @@ namespace WallegNfe.Operacao
 
             for (int i = 0; i < this.NotaLista.Count; i++)
             {
-                Bll.Nota.Move(this.NotaLista[i], Model.NotaSituacao.ENVIADA);
+                //Bll.Nota.Move(this.NotaLista[i], Model.NotaSituacao.ENVIADA);
             }
 
             WallegNfe.Model.Retorno.Recepcao retorno = new WallegNfe.Model.Retorno.Recepcao();

@@ -7,7 +7,8 @@ namespace WallegNfe.Model.Retorno
 {
     public class RetRecepcao
     {
-        public String Recibo { get; set; }
+        public String NumeroNota { get; set; }
+        public String Protocolo { get; set; }
         public String Status { get; set; }
         public String Motivo { get; set; }
     }
