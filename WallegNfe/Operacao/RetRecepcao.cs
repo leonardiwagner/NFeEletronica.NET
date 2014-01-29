@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 
 using System.Xml;
+using System.Windows.Forms;
+
+
 
 using System.Security.Cryptography.X509Certificates;
 
@@ -18,8 +21,11 @@ namespace WallegNfe.Operacao
             : base(nfe) 
         {}
 
-        public WallegNfe.Model.Retorno.RetRecepcao  Enviar(String numeroRecibo)
+        public WallegNfe.Model.Retorno.RetRecepcao  Enviar(String numeroRecibo, String cUF)
         {
+
+
+
             //Monta corpo do xml de envio
             StringBuilder xmlString = new StringBuilder();
             xmlString.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -30,11 +36,13 @@ namespace WallegNfe.Operacao
 
             XmlNode consultaXml = Bll.Xml.StringToXml(xmlString.ToString());
 
+            
+
             NfeRetRecepcao2.NfeRetRecepcao2 nfeRetRecepcao2 = new NfeRetRecepcao2.NfeRetRecepcao2();
             NfeRetRecepcao2.nfeCabecMsg nfeCabecalho = new NfeRetRecepcao2.nfeCabecMsg();
 
             //Informa dados no WS de cabecalho
-            nfeCabecalho.cUF = "35";
+            nfeCabecalho.cUF = cUF;
             nfeCabecalho.versaoDados = "2.00";
 
             nfeRetRecepcao2.nfeCabecMsgValue = nfeCabecalho;
@@ -42,16 +50,18 @@ namespace WallegNfe.Operacao
 
             XmlNode respostaXml = nfeRetRecepcao2.nfeRetRecepcao2(consultaXml);
 
+
             //Esse e o resultado só do lote (cabeçado e tal)
             WallegNfe.Model.Retorno.RetRecepcao retorno = new WallegNfe.Model.Retorno.RetRecepcao();
             retorno.Status = respostaXml["cStat"].InnerText;
             retorno.Motivo = respostaXml["xMotivo"].InnerText;
 
+
+
             if (retorno.Status != "225")
             {
+
                 //Isso aqui é o resultado de CADA NFe, mas como por enquanto pra cada lote só manda 1 nota, entao segue assim por enquanto #todo
-                retorno.Status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText;
-                retorno.Motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText;
 
                 if (retorno.Status != "100")
                 {
@@ -59,13 +69,21 @@ namespace WallegNfe.Operacao
                 }
                 else
                 {
-                    return new Model.Retorno.RetRecepcao()
+
+                    try
                     {
-                        Motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText,
-                        NumeroNota = respostaXml["protNFe"]["infProt"]["chNFe"].InnerText,
-                        Protocolo = respostaXml["protNFe"]["infProt"]["nProt"].InnerText,
-                        Status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText
-                    };
+                        return new Model.Retorno.RetRecepcao()
+                        {
+                            Motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText,
+                            NumeroNota = respostaXml["protNFe"]["infProt"]["chNFe"].InnerText,
+                            Protocolo = respostaXml["protNFe"]["infProt"]["nProt"].InnerText,
+                            Status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText
+                        };
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("Erro ler resposta de envio: " + e.Message);
+                    }
                 }
 
             }

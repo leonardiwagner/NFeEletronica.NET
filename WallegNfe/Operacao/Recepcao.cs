@@ -145,7 +145,7 @@ namespace WallegNfe.Operacao
             return Bll.Xml.StringToXml(xmlString);
         }
 
-        public Model.Retorno.Recepcao Enviar(long numeroLote)
+        public Model.Retorno.Recepcao Enviar(long numeroLote, String cUF)
         {
             //Salva o lote assinado
             String ArquivoNome = DateTime.Now.ToString("yyyyMMdd-mmHH-ss-fffff") + ".xml";
@@ -154,7 +154,7 @@ namespace WallegNfe.Operacao
             NfeRecepcao2.nfeCabecMsg nfeCabecalho = new NfeRecepcao2.nfeCabecMsg();
 
             //Informa dados no WS de cabecalho
-            nfeCabecalho.cUF = "35";
+            nfeCabecalho.cUF = cUF;
             nfeCabecalho.versaoDados = "2.00";
 
             nfeRecepcao2.nfeCabecMsgValue = nfeCabecalho;

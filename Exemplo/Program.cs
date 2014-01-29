@@ -149,11 +149,11 @@ namespace Exemplo
             WallegNfe.Operacao.Recepcao nfeRecepcao = new WallegNfe.Operacao.Recepcao(nfe);
 
             nfeRecepcao.AdicionarNota(nota);
-            String numeroRecibo = nfeRecepcao.Enviar(1).Recibo;
+            String numeroRecibo = nfeRecepcao.Enviar(1,"35").Recibo;
 
             //Consultar nota
             WallegNfe.Operacao.RetRecepcao nfeRetRecepcao = new WallegNfe.Operacao.RetRecepcao(nfe);
-            WallegNfe.Model.Retorno.RetRecepcao retRetorno = nfeRetRecepcao.Enviar(numeroRecibo);
+            WallegNfe.Model.Retorno.RetRecepcao retRetorno = nfeRetRecepcao.Enviar(numeroRecibo, "35");
 
             /*
             //Cancelar nota

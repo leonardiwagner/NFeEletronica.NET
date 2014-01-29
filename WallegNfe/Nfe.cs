@@ -70,6 +70,9 @@ namespace WallegNfe
                 }
             }
 
+
+            //certificado = bllCertificado.SelecionarPorOtmismo(
+
             //Se a operação acima não retornar nada é porque o certificado precisa ser selecionado
             certificado = bllCertificado.SelecionarPorWindows();
 

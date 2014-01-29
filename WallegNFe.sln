@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Windows Desktop
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WallegNfe", "WallegNfe\WallegNfe.csproj", "{97C0497F-EC90-41C2-BE61-3C7ABED1C71A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{C77085C1-601C-4597-A526-EE6BFBF849E2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUI", "GUI\GUI.csproj", "{048D84D4-B2A3-4D76-99B3-A0A5C98F8BB1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exemplo", "Exemplo\Exemplo.csproj", "{0E40290B-4364-45C8-8270-1E7E9536A39A}"
 EndProject
 Global
@@ -19,14 +15,6 @@ Global
 		{97C0497F-EC90-41C2-BE61-3C7ABED1C71A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97C0497F-EC90-41C2-BE61-3C7ABED1C71A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97C0497F-EC90-41C2-BE61-3C7ABED1C71A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C77085C1-601C-4597-A526-EE6BFBF849E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C77085C1-601C-4597-A526-EE6BFBF849E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C77085C1-601C-4597-A526-EE6BFBF849E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C77085C1-601C-4597-A526-EE6BFBF849E2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{048D84D4-B2A3-4D76-99B3-A0A5C98F8BB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{048D84D4-B2A3-4D76-99B3-A0A5C98F8BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{048D84D4-B2A3-4D76-99B3-A0A5C98F8BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{048D84D4-B2A3-4D76-99B3-A0A5C98F8BB1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0E40290B-4364-45C8-8270-1E7E9536A39A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0E40290B-4364-45C8-8270-1E7E9536A39A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E40290B-4364-45C8-8270-1E7E9536A39A}.Release|Any CPU.ActiveCfg = Release|Any CPU

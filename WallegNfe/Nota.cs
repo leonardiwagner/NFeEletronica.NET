@@ -25,9 +25,6 @@ namespace WallegNfe
         public String NotaId = "";
         public Model.NotaSituacao Situacao { get; set; }
 
-        
-       
-
         public Nota()
         {
             this.ide = new Model.Nota.IDE();
@@ -39,6 +36,8 @@ namespace WallegNfe
             this.cobr = new Model.Nota.COBR();
 
             this.XmlString = new StringBuilder();
+
+            Console.WriteLine("Iniciando");
         }
 
         public void AddDet(Model.Nota.DET det)
@@ -66,7 +65,6 @@ namespace WallegNfe
             this.emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
             this.dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
             
-
             Random random = new Random();
             String codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
             this.ide.cNF = codigoNumerico;
@@ -114,17 +112,12 @@ namespace WallegNfe
             catch (Exception e)
             {
 
-                
-                // Gravar o XML Assinado no HD
                 /*
-                String SignedFile = "C:\\ERRYNHO.XML";
+                String SignedFile = "C:\\nota-debug.XML";
                 System.IO.StreamWriter SW_2 = System.IO.File.CreateText(SignedFile);
                 SW_2.Write(this.XmlString);
                 SW_2.Close();
                 */
-
-               
-
 
                 throw new Exception("Erro ao gerar a nota como XML 2: " + e.Message);
             }
@@ -213,7 +206,6 @@ namespace WallegNfe
         {
             this.XmlString.Append("<emit>");
 
-            
             if(!String.IsNullOrEmpty(this.emit.CPF))
             {
                 this.XmlString.Append("	<CPF>" + this.emit.CPF  + "</CPF>");
@@ -753,8 +745,6 @@ namespace WallegNfe
             this.XmlString.Append("</COFINS>");
         }
 
-
-
         private void MontaTOTAL()
         {
             this.XmlString.Append("<total>");
@@ -795,7 +785,7 @@ namespace WallegNfe
                 */
 
                 if(!String.IsNullOrEmpty(this.transp.xNome))
-                    this.XmlString.Append("		<xNome>" + this.transp.xNome + "</xNothis>");
+                    this.XmlString.Append("		<xNome>" + this.transp.xNome + "</xNome>");
 
                 if(!String.IsNullOrEmpty(this.transp.IE)){
                     this.XmlString.Append("		<IE>" + this.transp.IE + "</IE>");
@@ -869,7 +859,6 @@ namespace WallegNfe
             }
 
             this.XmlString.Append("</cobr>");
-		
         }
     }
 }
