@@ -16,6 +16,7 @@ namespace WallegNfe
         public Model.Nota.TOTAL total { get; set; }
         public Model.Nota.TRANSP transp { get; set; }
         public Model.Nota.COBR cobr { get; set; }
+        public String infAdic { get; set; }
 
         private StringBuilder XmlString = null;
 
@@ -60,8 +61,8 @@ namespace WallegNfe
             return;
             */
 
+            
             //#todo, fazer isso ser so em amb. de homologacao
-
             this.emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
             this.dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
             
@@ -90,13 +91,16 @@ namespace WallegNfe
             MontaTRANSP();
             //MontaCOBR();
 
-              /*
+
+            if (!String.IsNullOrEmpty(this.infAdic))
+            {
                 this.XmlString.Append("<infAdic>");
                 this.XmlString.Append("	<infCpl>");
-                this.XmlString.Append(fatura.Obs.Trim());
+                this.XmlString.Append(this.infAdic);
                 this.XmlString.Append("	</infCpl>");
                 this.XmlString.Append("</infAdic>");
-            */
+            }
+            
 
 
             this.XmlString.Append("   </infNFe>");
@@ -604,44 +608,46 @@ namespace WallegNfe
 
         private void MontaDET_IPI(Model.Nota.DET det)
         {
-            return;
-
-            this.XmlString.Append("<IPI>");
-
-            this.XmlString.Append("<cIEnq>" + det.ipi_cIEnq + "</cIEnq>");
-            
-
-            switch (det.ipi)
+            if (!String.IsNullOrEmpty(det.ipi_cIEnq))
             {
 
-                case Model.Nota.Enum.IPI.IPI00_49_50_99:
-                    this.XmlString.Append("<IPITrib>");
+                this.XmlString.Append("<IPI>");
 
-                    this.XmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
+                this.XmlString.Append("<cIEnq>" + det.ipi_cIEnq + "</cIEnq>");
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
-                    {
-                        this.XmlString.Append("    <vBC>" + det.ipi_vBC + "</vBC>");
-                        this.XmlString.Append("    <pIPI>" + det.ipi_pIPI + "</pIPI>");
-                    }
-                    else
-                    {
-                        this.XmlString.Append("    <qUnid>" + det.ipi_qUnid + "</qUnid>");
-                        this.XmlString.Append("    <vUnid>" + det.ipi_vUnid + "</vUnid>");
-                    }
 
-                    this.XmlString.Append("    <vIPI>" + det.ipi_vIPI + "</vIPI>");
+                switch (det.ipi)
+                {
 
-                    this.XmlString.Append("</IPITrib>");
-                    break;
-                case Model.Nota.Enum.IPI.IPI01_55:
-                    this.XmlString.Append("<IPINT>");
-                    this.XmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
-                    this.XmlString.Append("</IPINT>");
-                    break;
+                    case Model.Nota.Enum.IPI.IPI00_49_50_99:
+                        this.XmlString.Append("<IPITrib>");
+
+                        this.XmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
+
+                        if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                        {
+                            this.XmlString.Append("    <vBC>" + det.ipi_vBC + "</vBC>");
+                            this.XmlString.Append("    <pIPI>" + det.ipi_pIPI + "</pIPI>");
+                        }
+                        else
+                        {
+                            this.XmlString.Append("    <qUnid>" + det.ipi_qUnid + "</qUnid>");
+                            this.XmlString.Append("    <vUnid>" + det.ipi_vUnid + "</vUnid>");
+                        }
+
+                        this.XmlString.Append("    <vIPI>" + det.ipi_vIPI + "</vIPI>");
+
+                        this.XmlString.Append("</IPITrib>");
+                        break;
+                    case Model.Nota.Enum.IPI.IPI01_55:
+                        this.XmlString.Append("<IPINT>");
+                        this.XmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
+                        this.XmlString.Append("</IPINT>");
+                        break;
+                }
+
+                this.XmlString.Append("</IPI>");
             }
-
-            this.XmlString.Append("</IPI>");
         }
 
         private void MontaDET_PIS(Model.Nota.DET det)
