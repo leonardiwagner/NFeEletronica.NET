@@ -63,7 +63,7 @@ namespace WallegNfe.Operacao
 
                 //Isso aqui é o resultado de CADA NFe, mas como por enquanto pra cada lote só manda 1 nota, entao segue assim por enquanto #todo
 
-                if (retorno.Status != "100")
+                if (retorno.Status != "100" && retorno.Status != "104")
                 {
                     throw new Exception("Lote não processado: " + retorno.Motivo);
                 }
