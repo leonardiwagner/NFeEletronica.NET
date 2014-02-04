@@ -147,13 +147,13 @@ namespace Exemplo
 
             //Enviar uma nota
             WallegNfe.Operacao.Recepcao nfeRecepcao = new WallegNfe.Operacao.Recepcao(nfe);
-
             nfeRecepcao.AdicionarNota(nota);
-            String numeroRecibo = nfeRecepcao.Enviar(1,"35").Recibo;
 
-            //Consultar nota
+            WallegNfe.Model.Retorno.Recepcao retornoRecepcao = nfeRecepcao.Enviar(1, "35");
+
+            ////Consultar nota
             WallegNfe.Operacao.RetRecepcao nfeRetRecepcao = new WallegNfe.Operacao.RetRecepcao(nfe);
-            WallegNfe.Model.Retorno.RetRecepcao retRetorno = nfeRetRecepcao.Enviar(numeroRecibo, "35");
+            WallegNfe.Model.Retorno.RetRecepcao retRetorno = nfeRetRecepcao.Enviar(retornoRecepcao.Recibo, "35");
 
             /*
             //Cancelar nota

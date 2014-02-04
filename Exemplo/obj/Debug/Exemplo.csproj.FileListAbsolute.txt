@@ -8,3 +8,4 @@ C:\Users\micro2\Documents\GitHub\WallegNFe\Exemplo\obj\Debug\Exemplo.pdb
 C:\Users\wagner\Documents\GitHub\WallegNFe\Exemplo\bin\Debug\Exemplo.exe.config
 C:\Users\wagner\Documents\GitHub\WallegNFe\Exemplo\obj\Debug\Exemplo.exe
 C:\Users\wagner\Documents\GitHub\WallegNFe\Exemplo\obj\Debug\Exemplo.pdb
+C:\Users\micro2\Documents\GitHub\WallegNFe\Exemplo\bin\Debug\WallegNfe.pdb

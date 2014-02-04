@@ -46,6 +46,39 @@ namespace WallegNfe
             this.detList.Add(det);
         }
 
+
+        public String calcularNota(String numeroNota)
+        {
+
+            this.NotaId = numeroNota;
+            this.ide.cNF = numeroNota;
+            this.ide.cDV = numeroNota.Substring(0,numeroNota.Length - 1);
+
+            return this.NotaId;
+        }
+
+        public String calcularNota()
+        {
+
+            //#todo, fazer isso ser so em amb. de homologacao
+            this.emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
+            this.dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
+
+            Random random = new Random();
+            String codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
+            this.ide.cNF = codigoNumerico;
+
+            String result = this.ide.cUF + this.ide.dEmi.Replace("-", "").Substring(2, 4) + this.emit.CNPJ + System.Int32.Parse(this.ide.mod).ToString("D2") + System.Int32.Parse(this.ide.serie).ToString("D3") + System.Int32.Parse(this.ide.nNF).ToString("D9") + System.Int32.Parse(this.ide.tpEmis).ToString("D1") + codigoNumerico;
+            String digitoVerificador = this.GerarModulo11(result);
+
+            result = result + digitoVerificador;
+            this.NotaId = result;
+
+            this.ide.cDV = digitoVerificador;
+
+            return this.NotaId;
+        }
+
         public void SalvarNota(String caminho)
         {
             /*
@@ -62,26 +95,11 @@ namespace WallegNfe
             */
 
             
-            //#todo, fazer isso ser so em amb. de homologacao
-            this.emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
-            this.dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
-            
-            Random random = new Random();
-            String codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
-            this.ide.cNF = codigoNumerico;
-
-            String result = this.ide.cUF + this.ide.dEmi.Replace("-", "").Substring(2, 4) + this.emit.CNPJ +  System.Int32.Parse(this.ide.mod).ToString("D2") + System.Int32.Parse(this.ide.serie).ToString("D3") + System.Int32.Parse(this.ide.nNF).ToString("D9") + System.Int32.Parse(this.ide.tpEmis).ToString("D1") + codigoNumerico;
-            String digitoVerificador =  this.GerarModulo11(result);
-
-            result = result + digitoVerificador;
-            this.NotaId = result;
-
-            this.ide.cDV = digitoVerificador;
 
             //this.XmlString.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); não precisa pq o lote já tem isso
 
             this.XmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
-            this.XmlString.Append("   <infNFe Id=\"NFe" + result + "\" versao=\"2.00\">");
+            this.XmlString.Append("   <infNFe Id=\"NFe" + this.NotaId + "\" versao=\"2.00\">");
 
             MontaIDE();
             MontaEMIT();
@@ -89,7 +107,7 @@ namespace WallegNfe
             MontaDET();
             MontaTOTAL();
             MontaTRANSP();
-            //MontaCOBR();
+            MontaCOBR();
 
 
             if (!String.IsNullOrEmpty(this.infAdic))
@@ -174,6 +192,33 @@ namespace WallegNfe
 
         private String GerarModulo11(String chaveAcesso)
         {
+                    
+
+		            int total = 0;
+		            int multiplier = 2;
+
+                    for (int i = chaveAcesso.Length - 1; i >= 0; i--)
+                    {
+			            if (9 < multiplier) {
+				            multiplier = 2;
+			            }
+
+                        int digit = Int32.Parse(chaveAcesso.Substring(i,1));
+			            total += digit * multiplier++;
+		            }
+
+		             int remainder = (total % 11);
+
+		            if (0 == remainder || 1 == remainder) {
+			            return "0";
+		            }
+
+		            return (11 - remainder).ToString();
+        }
+
+        /*
+        private String GerarModulo11(String chaveAcesso)
+        {
             // Cálculo do módulo 11.
             // DV = Digito verificador.
 
@@ -204,7 +249,7 @@ namespace WallegNfe
             {
                 return "ERRO: A chave de acesso deve conter apenas números.";
             }
-        }
+        }*/
 
         private void MontaEMIT()
         {
@@ -846,25 +891,27 @@ namespace WallegNfe
 
         private void MontaCOBR()
         {
-            return; //por enquanto deixar isso de lado porque precisa ser opcional a cobrança
-
-            this.XmlString.Append("<cobr>");
-            this.XmlString.Append("	<fat>");
-            this.XmlString.Append("		<nFat>" + this.cobr.nFat + "</nFat>");
-            this.XmlString.Append("		<vOrig>" + this.cobr.vOrig + "</vOrig>");
-            this.XmlString.Append("		<vLiq>" + this.cobr.vLiq + "</vLiq>");
-            this.XmlString.Append("	</fat>");
-
-            for (int i = 0; i < this.cobr.dup.Count; i++)
+            if (!String.IsNullOrEmpty(this.cobr.nFat))
             {
-                this.XmlString.Append("	<dup>");
-                this.XmlString.Append("		<nDup>" + this.cobr.dup[i].nDup + "</nDup>");
-                this.XmlString.Append("		<dVenc>" + this.cobr.dup[i].dVenc + "</dVenc>");
-                this.XmlString.Append("		<vDup>" + this.cobr.dup[i].vDup + "</vDup>");
-                this.XmlString.Append("	</dup>");
-            }
 
-            this.XmlString.Append("</cobr>");
+                this.XmlString.Append("<cobr>");
+                this.XmlString.Append("	<fat>");
+                this.XmlString.Append("		<nFat>" + this.cobr.nFat + "</nFat>");
+                this.XmlString.Append("		<vOrig>" + this.cobr.vOrig + "</vOrig>");
+                this.XmlString.Append("		<vLiq>" + this.cobr.vLiq + "</vLiq>");
+                this.XmlString.Append("	</fat>");
+
+                for (int i = 0; i < this.cobr.dup.Count; i++)
+                {
+                    this.XmlString.Append("	<dup>");
+                    this.XmlString.Append("		<nDup>" + this.cobr.dup[i].nDup + "</nDup>");
+                    this.XmlString.Append("		<dVenc>" + this.cobr.dup[i].dVenc + "</dVenc>");
+                    this.XmlString.Append("		<vDup>" + this.cobr.dup[i].vDup + "</vDup>");
+                    this.XmlString.Append("	</dup>");
+                }
+
+                this.XmlString.Append("</cobr>");
+            }
         }
     }
 }

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 
 using System.Xml;
-using System.Windows.Forms;
 
-
+using System.Timers;
 
 using System.Security.Cryptography.X509Certificates;
 
@@ -48,13 +47,31 @@ namespace WallegNfe.Operacao
             nfeRetRecepcao2.nfeCabecMsgValue = nfeCabecalho;
             nfeRetRecepcao2.ClientCertificates.Add(this.Certificado);
 
-            XmlNode respostaXml = nfeRetRecepcao2.nfeRetRecepcao2(consultaXml);
 
-
-            //Esse e o resultado só do lote (cabeçado e tal)
             WallegNfe.Model.Retorno.RetRecepcao retorno = new WallegNfe.Model.Retorno.RetRecepcao();
-            retorno.Status = respostaXml["cStat"].InnerText;
-            retorno.Motivo = respostaXml["xMotivo"].InnerText;
+            XmlNode respostaXml = null;
+
+            bool isEmProcessamento = true;
+                       
+            //Verifica a resposta de envio da sefaz e aguarda até quando estiver processado
+            do
+            {
+                respostaXml = nfeRetRecepcao2.nfeRetRecepcao2(consultaXml);
+
+                //Esse e o resultado só do lote (cabeçado e tal)
+                retorno.Status = respostaXml["cStat"].InnerText;
+                retorno.Motivo = respostaXml["xMotivo"].InnerText;
+
+                if (retorno.Status != "105")
+                {
+                    isEmProcessamento = false;
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(5000);
+                }
+
+            } while (isEmProcessamento);
 
 
 
@@ -62,13 +79,29 @@ namespace WallegNfe.Operacao
             {
 
                 //Isso aqui é o resultado de CADA NFe, mas como por enquanto pra cada lote só manda 1 nota, entao segue assim por enquanto #todo
-
                 if (retorno.Status != "100" && retorno.Status != "104")
                 {
-                    throw new Exception("Lote não processado: " + retorno.Motivo);
+                    throw new Exception("Lote não processado: "  + retorno.Status + " - " + retorno.Motivo);
                 }
                 else
                 {
+                    String protocolo = "";
+                    String status = "";
+                    String motivo = "";
+
+                    try
+                    {
+                        motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText;
+                        status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText;
+                        protocolo = respostaXml["protNFe"]["infProt"]["nProt"].InnerText;
+                    }
+                    catch { }
+
+                    //Caso deu algum problema e nao veio o protocolo, mas veio a descrição do problema
+                    if (String.IsNullOrEmpty(protocolo) && (!String.IsNullOrEmpty(status) && !String.IsNullOrEmpty(motivo)))
+                    {
+                        throw new Exception("Erro de retorno: " + status + " - " + motivo);
+                    }
 
                     try
                     {
@@ -86,13 +119,13 @@ namespace WallegNfe.Operacao
                     }
                 }
 
+                return retorno;
             }
             else
             {
                 throw new Exception("Erro ao enviar lote XML: " + retorno.Motivo);
             }
 
-            return retorno;
         }
 
     }
