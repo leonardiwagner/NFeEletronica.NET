@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="https://nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx?wsdl" docRef="https://nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="https://nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx" xmlns:q1="http://www.portalfiscal.inf.br/nfe/wsdl/RecepcaoEvento" binding="q1:RecepcaoEventoSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

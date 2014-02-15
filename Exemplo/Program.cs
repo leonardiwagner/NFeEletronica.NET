@@ -13,6 +13,21 @@ namespace Exemplo
     {
         static void Main(string[] args)
         {
+
+
+            WallegNfe.Nfe nfe2 = new WallegNfe.Nfe(false, "C:\\certificado3.pfx");
+            WallegNfe.Operacao.RecepcaoEvento operacaoEvento = new WallegNfe.Operacao.RecepcaoEvento(nfe2);
+
+            operacaoEvento.Cancelar(new WallegNfe.Model.Evento()
+            {
+                 ChaveAcesso = "35140207293766000150550010000414621933552767",
+                 CNPJ = "07293766000150",
+                 Justificativa = "teste",
+                 Protocolo = ""
+            },"C:\\cancela.xml");
+
+            return;
+
             //Cria a nota com o objeto "Nota"
             WallegNfe.Nota nota = new WallegNfe.Nota();
 

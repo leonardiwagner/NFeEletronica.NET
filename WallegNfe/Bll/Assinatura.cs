@@ -17,6 +17,7 @@ namespace WallegNfe.Bll
     public class Assinatura
     {
 
+     
         /// <summary>
         /// Assina um arquivo Xml
         /// </summary>
@@ -29,11 +30,13 @@ namespace WallegNfe.Bll
 
             try
             {
-                //Abrir o arquivo XML a ser assinado e ler o seu conteúdo
-                SR = File.OpenText(nota.CaminhoFisico);
-                string xmlString = SR.ReadToEnd();
-                SR.Close();
-                SR = null;
+
+                    //Abrir o arquivo XML a ser assinado e ler o seu conteúdo
+                    SR = File.OpenText(nota.CaminhoFisico);
+                    string xmlString = SR.ReadToEnd();
+                    SR.Close();
+                    SR = null;
+        
 
                     // Create a new XML document.
                     XmlDocument doc = new XmlDocument();
@@ -102,12 +105,14 @@ namespace WallegNfe.Bll
                                 nota.ConteudoXml = StringXMLAssinado;
 
                                 // Gravar o XML Assinado no HD
-                                String SignedFile = nota.CaminhoFisico;
-                                StreamWriter SW_2 = File.CreateText(SignedFile);
-                                SW_2.Write(StringXMLAssinado);
-                                SW_2.Close();
+                        
+                                    String SignedFile = nota.CaminhoFisico;
+                                    StreamWriter SW_2 = File.CreateText(SignedFile);
+                                    SW_2.Write(StringXMLAssinado);
+                                    SW_2.Close();
 
-                                return SignedFile;
+                                    return SignedFile;
+                              
                         
             }
             catch (Exception ex)

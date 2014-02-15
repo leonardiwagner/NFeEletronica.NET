@@ -28,6 +28,8 @@ namespace WallegNfe.Model.Nota
 
         public String indTot { get; set; }
 
+        public String vTotTrib { get; set; }
+
         //ICMS
         public Enum.ICMS icms {get;set;}
         public String icms_orig { get; set; }

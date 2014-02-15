@@ -48,7 +48,7 @@
     <Compile Include="Bll\Util.cs" />
     <Compile Include="Bll\Xml.cs" />
     <Compile Include="Bll\Certificado.cs" />
-    <Compile Include="Model\Cancelamento.cs" />
+    <Compile Include="Model\Evento.cs" />
     <Compile Include="Model\Nota.cs" />
     <Compile Include="Bll\Nota.cs" />
     <Compile Include="Model\NotaSituacao.cs" />
@@ -88,6 +88,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
+    <Compile Include="Web References\RecepcaoEvento1\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -102,6 +107,11 @@
     </None>
     <None Include="Web References\NfeRetRecepcao2\NfeRetRecepcao2.wsdl" />
     <None Include="Web References\NfeRetRecepcao2\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\RecepcaoEvento1\RecepcaoEvento.wsdl" />
+    <None Include="Web References\RecepcaoEvento1\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
@@ -135,6 +145,17 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>WallegNfe_NfeRetRecepcao2_NfeRetRecepcao2</CachedSettingsPropName>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\RecepcaoEvento1\</RelPath>
+      <UpdateFromURL>https://nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>WallegNfe_RecepcaoEvento1_RecepcaoEvento</CachedSettingsPropName>
+    </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\NfeRetRecepcao2\NfeRetRecepcao2.disco" />
@@ -142,7 +163,9 @@
   <ItemGroup>
     <None Include="Web References\NfeRecepcao2\NfeRecepcao2.disco" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Web References\RecepcaoEvento1\RecepcaoEvento.disco" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

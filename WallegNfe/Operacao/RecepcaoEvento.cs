@@ -16,32 +16,52 @@ namespace WallegNfe.Operacao
             //this.ArquivoSchema = "nfe_v2.00.xsd";
         }
 
-        public void Enviar(Model.Cancelamento cancelamento)
+        public void Cancelar(Model.Evento eventoCancelamento , String caminhoXml)
         {
+            String tpEvento = "110111";
+            String id = "ID" + tpEvento + eventoCancelamento.ChaveAcesso + "1";
             
             
             StringBuilder xmlString = new StringBuilder();
             xmlString.Append("<envEvento versao=\"1.00\" xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
             xmlString.Append("	<idLote>0131318</idLote>");
             xmlString.Append("	<evento xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"1.00\">");
-            xmlString.Append("		<infEvento Id=\"ID1101114112097895696800018355005000003869112230706001\">");
+            xmlString.Append("		<infEvento Id=\"" + id  + "\">");
             xmlString.Append("			<cOrgao>41</cOrgao>");
             xmlString.Append("			<tpAmb>2</tpAmb>");
-            xmlString.Append("			<CNPJ>" +  cancelamento.CPFCNPJ + "</CNPJ>");
-            xmlString.Append("			<chNFe>41120978956968000183550050000038691122307060</chNFe>");
-            xmlString.Append("			<dhEvento>2012-09-13T10:46:57-03:00</dhEvento>");
-            xmlString.Append("			<tpEvento>110111</tpEvento>");
+            xmlString.Append("			<CNPJ>" + eventoCancelamento.CNPJ + "</CNPJ>");
+            xmlString.Append("			<chNFe>" + eventoCancelamento.ChaveAcesso   + "</chNFe>");
+            xmlString.Append("			<dhEvento>"  + DateTime.Now.ToFileTimeUtc()  + "</dhEvento>"); //2012-09-13T10:46:57-03:00
+            xmlString.Append("			<tpEvento>" + tpEvento  + "</tpEvento>");
             xmlString.Append("			<nSeqEvento>1</nSeqEvento>");
             xmlString.Append("			<verEvento>1.00</verEvento>");
             xmlString.Append("			<detEvento versao=\"1.00\">");
             xmlString.Append("				<descEvento>Cancelamento</descEvento>");
-            xmlString.Append("				<nProt>141120001011473</nProt>");
-            xmlString.Append("				<xJust>teste cancelamento por evento</xJust>");
+            xmlString.Append("				<nProt>" + eventoCancelamento.Protocolo + "</nProt>");
+            xmlString.Append("				<xJust>" + eventoCancelamento.Justificativa + "</xJust>");
             xmlString.Append("			</detEvento>");
             xmlString.Append("		</infEvento>");
-            xmlString.Append("		<Signature></Signature>");
+            //xmlString.Append("		<Signature></Signature>");
             xmlString.Append("	</evento>");
             xmlString.Append("</envEvento>");
+
+
+            System.IO.StreamWriter SW_2 = System.IO.File.CreateText(caminhoXml);
+            SW_2.Write(xmlString.ToString());
+            SW_2.Close();
+
+            Bll.Assinatura bllAssinatura = new Bll.Assinatura();
+
+            //Assina a nota
+            try
+            {
+                bllAssinatura.AssinarXml(new Nota() { NotaId = eventoCancelamento.ChaveAcesso, CaminhoFisico = caminhoXml }, this.Certificado, "envEvento");
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Erro ao assinar Nota: " + e.Message);
+            }
             
         }
     }

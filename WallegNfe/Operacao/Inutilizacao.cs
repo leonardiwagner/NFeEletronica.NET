@@ -7,7 +7,7 @@ namespace Bll.Servicos
 {
     public class Inutilizacao
     {
-        public void NfeInutilizacaoNF2()
+        public void NfeInutilizacaoNF2(String cUf, String ano, String CNPJ, String mod, String serie, String inicio, String fim, String justificativa)
         {
             //Monta corpo do xml de envio
             StringBuilder xmlString = new StringBuilder();

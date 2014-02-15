@@ -94,5 +94,15 @@ namespace WallegNfe.Properties {
                 return ((string)(this["WallegNfe_RecepcaoEvento_RecepcaoEvento"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx")]
+        public string WallegNfe_RecepcaoEvento1_RecepcaoEvento {
+            get {
+                return ((string)(this["WallegNfe_RecepcaoEvento1_RecepcaoEvento"]));
+            }
+        }
     }
 }

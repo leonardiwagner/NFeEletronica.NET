@@ -47,15 +47,6 @@ namespace WallegNfe
         }
 
 
-        public String calcularNota(String numeroNota)
-        {
-
-            this.NotaId = numeroNota;
-            this.ide.cNF = numeroNota;
-            this.ide.cDV = numeroNota.Substring(0,numeroNota.Length - 1);
-
-            return this.NotaId;
-        }
 
         public String calcularNota()
         {
@@ -368,6 +359,9 @@ namespace WallegNfe
 
                 this.XmlString.Append("	<imposto>");
 
+                if(!string.IsNullOrEmpty(this.detList[i].vTotTrib))
+                    this.XmlString.Append("	<vTotTrib>" +  this.detList[i].vTotTrib + "</vTotTrib>");
+
                 this.MontaDET_ICMS(this.detList[i]);
                 this.MontaDET_IPI(this.detList[i]);
                 this.MontaDET_PIS(this.detList[i]);
@@ -403,7 +397,6 @@ namespace WallegNfe
                     this.XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
                     this.XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
                     this.XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-
                     this.XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
 
                     if (!String.IsNullOrEmpty(det.icms_pMVAST))
@@ -418,7 +411,7 @@ namespace WallegNfe
 
                     this.XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
                     this.XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    this.XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                    this.XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
 
                     this.XmlString.Append("</ICMS10>");
                     break;
@@ -486,8 +479,6 @@ namespace WallegNfe
                     this.XmlString.Append("<ICMS60>");
                     this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
                     this.XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    this.XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    this.XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
                     this.XmlString.Append("</ICMS60>");
                     break;
                 case Model.Nota.Enum.ICMS.ICMS70:
@@ -658,7 +649,7 @@ namespace WallegNfe
 
                 this.XmlString.Append("<IPI>");
 
-                this.XmlString.Append("<cIEnq>" + det.ipi_cIEnq + "</cIEnq>");
+                this.XmlString.Append("<cEnq>" + det.ipi_cIEnq + "</cEnq>");
 
 
                 switch (det.ipi)
@@ -669,7 +660,7 @@ namespace WallegNfe
 
                         this.XmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
 
-                        if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                        if (!String.IsNullOrEmpty(det.ipi_vBC))
                         {
                             this.XmlString.Append("    <vBC>" + det.ipi_vBC + "</vBC>");
                             this.XmlString.Append("    <pIPI>" + det.ipi_pIPI + "</pIPI>");
@@ -814,7 +805,10 @@ namespace WallegNfe
             this.XmlString.Append("		<vCOFINS>0.00</vCOFINS>");
             this.XmlString.Append("		<vOutro>" + this.total.vOutro + "</vOutro>");
             this.XmlString.Append("		<vNF>" + this.total.vNF + "</vNF>");
-            this.XmlString.Append("		<vTotTrib>0.00</vTotTrib>");
+
+            if (!string.IsNullOrEmpty(this.total.vTotTrib))
+                this.XmlString.Append("		<vTotTrib>" + this.total.vTotTrib + "</vTotTrib>");
+            
             this.XmlString.Append("	</ICMSTot>");
             this.XmlString.Append("</total>");
         }
