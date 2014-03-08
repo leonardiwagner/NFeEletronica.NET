@@ -11,7 +11,7 @@ using System.Xml.Linq;
 //Trabalhar com arquivos
 using System.IO;
 
-namespace WallegNfe.Bll
+namespace WallegNFe.Bll
 {
     public class Xml
     {

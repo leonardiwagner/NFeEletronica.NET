@@ -11,7 +11,7 @@ using System.Security.Cryptography.Pkcs;
 //Trabalhar com arquivos
 using System.IO;
 
-namespace WallegNfe.Bll
+namespace WallegNFe.Bll
 {
     public class Certificado
     {
@@ -84,7 +84,7 @@ namespace WallegNfe.Bll
         /// <returns></returns>
         public String SalvarCertificado(X509Certificate2 certificado, String arquivoCaminho)
         {
-            byte[] certData = certificado.Export(X509ContentType.Cert, "WallegNfe");
+            byte[] certData = certificado.Export(X509ContentType.Cert, "WallegNFe");
             File.WriteAllBytes(arquivoCaminho, certData);
 
             return arquivoCaminho;
@@ -97,7 +97,7 @@ namespace WallegNfe.Bll
         /// <returns></returns>
         public X509Certificate2 SelecionarPorArquivo(String arquivoCaminho)
         {
-            return new X509Certificate2(arquivoCaminho, "WallegNfe");
+            return new X509Certificate2(arquivoCaminho, "WallegNFe");
         }
 
     }

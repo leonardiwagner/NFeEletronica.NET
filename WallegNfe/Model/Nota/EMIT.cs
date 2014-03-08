@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WallegNfe.Model.Nota
+namespace WallegNFe.Model.Nota
 {
     public class EMIT
     {
         public String CPF { get; set; }
         public String CNPJ { get; set; }
         public String xNome { get; set; }
-
         public String xLgr { get; set; }
         public String nro { get; set; }
         public String xBairro { get; set; }

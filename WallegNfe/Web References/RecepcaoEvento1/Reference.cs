@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace WallegNfe.RecepcaoEvento1 {
+namespace WallegNFe.RecepcaoEvento1 {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -38,7 +38,7 @@ namespace WallegNfe.RecepcaoEvento1 {
         /// <remarks/>
         public RecepcaoEvento() {
             this.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            this.Url = global::WallegNfe.Properties.Settings.Default.WallegNfe_RecepcaoEvento1_RecepcaoEvento;
+            this.Url = global::WallegNFe.Properties.Settings.Default.WallegNFe_RecepcaoEvento1_RecepcaoEvento;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

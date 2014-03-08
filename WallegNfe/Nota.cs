@@ -5,10 +5,12 @@ using System.Text;
 
 using System.Xml;
 
-namespace WallegNfe
+namespace WallegNFe
 {
     public class Nota
     {
+        private readonly NfeContexto NfeContexto;
+
         public Model.Nota.IDE ide { get; set; }
         public Model.Nota.EMIT emit { get; set; }
         public Model.Nota.DEST dest { get; set; }
@@ -26,8 +28,10 @@ namespace WallegNfe
         public String NotaId = "";
         public Model.NotaSituacao Situacao { get; set; }
 
-        public Nota()
+        public Nota(NfeContexto nfeContexto)
         {
+            this.NfeContexto = nfeContexto;
+
             this.ide = new Model.Nota.IDE();
             this.emit = new Model.Nota.EMIT();
             this.dest = new Model.Nota.DEST();
@@ -38,7 +42,10 @@ namespace WallegNfe
 
             this.XmlString = new StringBuilder();
 
-            Console.WriteLine("Iniciando");
+            if (this.NfeContexto.Producao)
+                this.ide.tpAmb = "1";
+            else
+                this.ide.tpAmb = "2"; 
         }
 
         public void AddDet(Model.Nota.DET det)
@@ -46,21 +53,21 @@ namespace WallegNfe
             this.detList.Add(det);
         }
 
-
-
-        public String calcularNota()
+        public String GerarCodigoDaNota()
         {
 
-            //#todo, fazer isso ser so em amb. de homologacao
-            this.emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
-            this.dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
+            if (!this.NfeContexto.Producao)
+            {
+                this.emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
+                this.dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
+            }
 
             Random random = new Random();
             String codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
             this.ide.cNF = codigoNumerico;
 
             String result = this.ide.cUF + this.ide.dEmi.Replace("-", "").Substring(2, 4) + this.emit.CNPJ + System.Int32.Parse(this.ide.mod).ToString("D2") + System.Int32.Parse(this.ide.serie).ToString("D3") + System.Int32.Parse(this.ide.nNF).ToString("D9") + System.Int32.Parse(this.ide.tpEmis).ToString("D1") + codigoNumerico;
-            String digitoVerificador = this.GerarModulo11(result);
+            String digitoVerificador = Bll.Util.GerarModulo11(result);
 
             result = result + digitoVerificador;
             this.NotaId = result;
@@ -72,34 +79,19 @@ namespace WallegNfe
 
         public void SalvarNota(String caminho)
         {
-            /*
-            this.CaminhoFisico = "C:\\NFE\\nota-fixa.xml";
+            this.GerarCodigoDaNota();
 
-            System.IO.StreamReader SR = null;
-            SR = System.IO.File.OpenText(this.CaminhoFisico);
-            string xmlString = SR.ReadToEnd();
-            SR.Close();
-            SR = null;
-            this.ConteudoXml = xmlString;
-
-            return;
-            */
-
-            
-
-            //this.XmlString.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); não precisa pq o lote já tem isso
-
+           
             this.XmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
             this.XmlString.Append("   <infNFe Id=\"NFe" + this.NotaId + "\" versao=\"2.00\">");
 
-            MontaIDE();
-            MontaEMIT();
-            MontaDEST();
-            MontaDET();
-            MontaTOTAL();
-            MontaTRANSP();
-            MontaCOBR();
-
+            this.MontaIDE();
+            this.MontaEMIT();
+            this.MontaDEST();
+            this.MontaDET();
+            this.MontaTOTAL();
+            this.MontaTRANSP();
+            this.MontaCOBR();
 
             if (!String.IsNullOrEmpty(this.infAdic))
             {
@@ -109,11 +101,9 @@ namespace WallegNfe
                 this.XmlString.Append("	</infCpl>");
                 this.XmlString.Append("</infAdic>");
             }
-            
-
 
             this.XmlString.Append("   </infNFe>");
-            //this.XmlString.Append("   <Signature></Signature>");
+            //this.XmlString.Append("   <Signature></Signature>"); acho que não precisa disso
             this.XmlString.Append("</NFe>");
 
             XmlDocument xmlDocument = new XmlDocument();
@@ -124,14 +114,6 @@ namespace WallegNfe
             }
             catch (Exception e)
             {
-
-                /*
-                String SignedFile = "C:\\nota-debug.XML";
-                System.IO.StreamWriter SW_2 = System.IO.File.CreateText(SignedFile);
-                SW_2.Write(this.XmlString);
-                SW_2.Close();
-                */
-
                 throw new Exception("Erro ao gerar a nota como XML 2: " + e.Message);
             }
 
@@ -150,7 +132,6 @@ namespace WallegNfe
 
         private void MontaIDE()
         {
-            
             this.XmlString.Append("<ide>");
             this.XmlString.Append("	<cUF>" + this.ide.cUF + "</cUF>");
             this.XmlString.Append("	<cNF>" + this.ide.cNF + "</cNF>");
@@ -164,10 +145,8 @@ namespace WallegNfe
             if(!String.IsNullOrEmpty(this.ide.dSaiEnt))
                 this.XmlString.Append("	<dSaiEnt>" + this.ide.dSaiEnt + "</dSaiEnt>");
 
-            /*
             if (!String.IsNullOrEmpty(this.ide.hSaiEnt))
                 this.XmlString.Append("	<hSaiEnt>" + this.ide.hSaiEnt + "</hSaiEnt>");
-            */
 
             this.XmlString.Append("	<tpNF>" + this.ide.tpNF + "</tpNF>");
             this.XmlString.Append("	<cMunFG>" + this.ide.cMunFG + "</cMunFG>");
@@ -175,72 +154,12 @@ namespace WallegNfe
             this.XmlString.Append("	<tpEmis>" + this.ide.tpEmis   + "</tpEmis>");
             this.XmlString.Append("	<cDV>" + this.ide.cDV   + "</cDV>");
             this.XmlString.Append("	<tpAmb>" + this.ide.tpAmb   + "</tpAmb>");
+
             this.XmlString.Append("	<finNFe>" + this.ide.finNFe   + "</finNFe>");
             this.XmlString.Append("	<procEmi>" + this.ide.procEmi   + "</procEmi>");
             this.XmlString.Append("	<verProc>2.2.19</verProc>");
             this.XmlString.Append("</ide>");
         }
-
-        private String GerarModulo11(String chaveAcesso)
-        {
-                    
-
-		            int total = 0;
-		            int multiplier = 2;
-
-                    for (int i = chaveAcesso.Length - 1; i >= 0; i--)
-                    {
-			            if (9 < multiplier) {
-				            multiplier = 2;
-			            }
-
-                        int digit = Int32.Parse(chaveAcesso.Substring(i,1));
-			            total += digit * multiplier++;
-		            }
-
-		             int remainder = (total % 11);
-
-		            if (0 == remainder || 1 == remainder) {
-			            return "0";
-		            }
-
-		            return (11 - remainder).ToString();
-        }
-
-        /*
-        private String GerarModulo11(String chaveAcesso)
-        {
-            // Cálculo do módulo 11.
-            // DV = Digito verificador.
-
-            // O peso é o multiplicador da expressão, deve ser somente de 2 à 9, então já iniciamos com 2.
-            int peso = 2;
-            // Somatória do resultado.
-            int soma = 0;
-
-            try
-            {
-                // Passa número a número da chave pegando da direita pra esquerda (pra isso o Reverse()).
-                chaveAcesso.ToCharArray()
-                    .Reverse()
-                    .ToList()
-                    .ForEach(f =>
-                    {
-                        // Acumula valores da soma gerada das multiplicações (peso).
-                        soma += (Convert.ToInt32(f.ToString()) * peso);
-                        // Como o peso pode ir somente até 9 é feito essa validação.
-                        peso = (peso == 9) ? 2 : peso + 1;
-                    });
-
-                // DV = 11 - (resto da divisão)
-                // Quando o resto da divisão for 0 (zero) ou 1 (um), o DV deverá ser igual a 0 (zero).
-                return (11 - (soma % 11)) <= 1 ? "0" : (11 - (soma % 11)).ToString();
-            }
-            catch
-            {
-                return "ERRO: A chave de acesso deve conter apenas números.";
-            }
-        }*/
 
         private void MontaEMIT()
         {
@@ -353,8 +272,8 @@ namespace WallegNfe
                 {
                     this.XmlString.Append("		<vDesc>" + this.detList[i].vDesc + "</vDesc>");
                 }
-                //#TODO , ver o o wagner porque isso vai ser pego de uma tabela de regras de acordo com o CFOP
-                this.XmlString.Append("		<indTot>1</indTot>");
+                
+                this.XmlString.Append("		<indTot>" + this.detList[i].indTot + "</indTot>");
                 this.XmlString.Append("	</prod>");
 
                 this.XmlString.Append("	<imposto>");
@@ -639,6 +558,7 @@ namespace WallegNfe
                     break;
                     
             }
+
             this.XmlString.Append("</ICMS>");
         }
 
@@ -650,7 +570,6 @@ namespace WallegNfe
                 this.XmlString.Append("<IPI>");
 
                 this.XmlString.Append("<cEnq>" + det.ipi_cIEnq + "</cEnq>");
-
 
                 switch (det.ipi)
                 {
@@ -824,7 +743,7 @@ namespace WallegNfe
                 if(!String.IsNullOrEmpty(this.transp.CNPJ))
                     this.XmlString.Append("		<CNPJ>" + this.transp.CNPJ + "</CNPJ>");
 
-                /*
+                /* 
                 if(!String.IsNullOrEmpty(this.transp.CPF))
                     this.XmlString.Append("		<CPF>" + this.transp.CPF + "</CPF>");
                 */

@@ -61,7 +61,7 @@
     <Compile Include="Model\Nota\IDE.cs" />
     <Compile Include="Model\Nota\TRANSP.cs" />
     <Compile Include="Model\Retorno\RetRecepcao.cs" />
-    <Compile Include="Nfe.cs" />
+    <Compile Include="NfeContexto.cs" />
     <Compile Include="Model\Retorno\Recepcao.cs" />
     <Compile Include="Nota.cs" />
     <Compile Include="Operacao\CadConsultaCadastro.cs" />

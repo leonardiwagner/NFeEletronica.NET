@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WallegNfe.Model.Nota
+namespace WallegNFe.Model.Nota
 {
     public class DET
     {
         public String nItem { get; set; }
-
         public String cProd { get; set; }
         public String cEAN { get; set; }
         public String xProd { get; set; }
@@ -78,6 +77,12 @@ namespace WallegNfe.Model.Nota
         public String cofins_vCOFINS { get; set; }
         public String cofins_qBCProd { get; set; }
         public String cofins_vAliqProd { get; set; }
-        
+
+        public DET()
+        {
+            //valores padrão
+            this.indTot = "1";
+        }
     }
+
 }

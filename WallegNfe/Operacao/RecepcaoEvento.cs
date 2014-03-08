@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WallegNfe.Operacao
+namespace WallegNFe.Operacao
 {
     public class RecepcaoEvento : BaseOperacao
     {
         private List<Model.Nota2> NotaLista = new List<Model.Nota2>();
         private long NumeroLote = 0;
 
-        public RecepcaoEvento(WallegNfe.Nfe nfe)
+        public RecepcaoEvento(WallegNFe.NfeContexto nfe)
             : base(nfe) 
         {
             //this.ArquivoSchema = "nfe_v2.00.xsd";
@@ -55,7 +55,7 @@ namespace WallegNfe.Operacao
             //Assina a nota
             try
             {
-                bllAssinatura.AssinarXml(new Nota() { NotaId = eventoCancelamento.ChaveAcesso, CaminhoFisico = caminhoXml }, this.Certificado, "envEvento");
+                bllAssinatura.AssinarXml(new Nota(null) { NotaId = eventoCancelamento.ChaveAcesso, CaminhoFisico = caminhoXml }, this.Certificado, "envEvento");
 
             }
             catch (Exception e)

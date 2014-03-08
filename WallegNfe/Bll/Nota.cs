@@ -6,7 +6,7 @@ using System.Text;
 //Trabalhar com Xml
 using System.Xml;
 
-namespace WallegNfe.Bll
+namespace WallegNFe.Bll
 {
     public class Nota
     {
@@ -14,14 +14,14 @@ namespace WallegNfe.Bll
         /// Carrega uma nota apartir de um arquivo XML
         /// </summary>
         /// <returns></returns>
-        public WallegNfe.Nota Carregar(String arquivoNotaXml)
+        public WallegNFe.Nota Carregar(String arquivoNotaXml)
         {
             if (!Bll.Arquivo.ExisteArquivo(arquivoNotaXml))
             {
                 throw new Exception("O arquivo de nota para envio não existe: " + arquivoNotaXml);
             }
 
-            WallegNfe.Nota nota = new WallegNfe.Nota();
+            WallegNFe.Nota nota = new WallegNFe.Nota(null);
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(arquivoNotaXml);
@@ -41,12 +41,5 @@ namespace WallegNfe.Bll
             return nota;
         }
 
-        public static void Move(WallegNfe.Nota nota, Model.NotaSituacao situacao)
-        {
-            String novoCaminho = Bll.Arquivo.PastaNota(situacao) + "\\" + nota.ArquivoNome;
-            Bll.Arquivo.Move(nota.CaminhoFisico, novoCaminho);
-            nota.CaminhoFisico = novoCaminho;
-            nota.Situacao = situacao;
-        }
     }
 }

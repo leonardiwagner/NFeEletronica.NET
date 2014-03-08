@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WallegNfe", "WallegNfe\WallegNfe.csproj", "{97C0497F-EC90-41C2-BE61-3C7ABED1C71A}"
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WallegNFe", "WallegNfe\WallegNFe.csproj", "{97C0497F-EC90-41C2-BE61-3C7ABED1C71A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exemplo", "Exemplo\Exemplo.csproj", "{0E40290B-4364-45C8-8270-1E7E9536A39A}"
 EndProject

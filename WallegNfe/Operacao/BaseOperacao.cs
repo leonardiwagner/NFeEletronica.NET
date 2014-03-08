@@ -5,16 +5,16 @@ using System.Text;
 
 using System.Security.Cryptography.X509Certificates;
 
-namespace WallegNfe.Operacao
+namespace WallegNFe.Operacao
 {
     public abstract class BaseOperacao
     {
-        protected X509Certificate2 Certificado = null;
+        protected readonly X509Certificate2 Certificado;
         protected String ArquivoSchema = null;
 
-        public BaseOperacao(WallegNfe.Nfe nfe)
+        public BaseOperacao(WallegNFe.NfeContexto nfe)
         {
-            this.Certificado = nfe.GetCertificado();
+            this.Certificado = nfe.Certificado;
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WallegNfe.Model.Nota
+namespace WallegNFe.Model.Nota
 {
     public class TOTAL
     {

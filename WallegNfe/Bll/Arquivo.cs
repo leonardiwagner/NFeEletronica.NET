@@ -7,34 +7,11 @@ using System.IO;
 
 using System.Xml;
 
-namespace WallegNfe.Bll
+namespace WallegNFe.Bll
 {
     public class Arquivo
     {
-        
-        /// <summary>
-        /// Retorna a pasta de notas de acordo com a situação
-        /// </summary>
-        /// <param name="situacao"></param>
-        /// <returns></returns>
-        public static String PastaNota(Model.NotaSituacao situacao)
-        {
-            switch (situacao)
-            {
-                case Model.NotaSituacao.DEFAULT:
-                    return Bll.Util.ContentFolderDefault;
-                case Model.NotaSituacao.VALIDADA:
-                    return Bll.Util.ContentFolderValidado;
-                case Model.NotaSituacao.ASSINADA:
-                    return Bll.Util.ContentFolderAssinado;
-                case Model.NotaSituacao.ENVIADA:
-                    return Bll.Util.ContentFolderEnviado;
-                case Model.NotaSituacao.REJEITADA:
-                    return Bll.Util.ContentFolderRejeitado;
-                default:
-                    return null;
-            }
-        }
+       
 
         /*
         /// <summary>

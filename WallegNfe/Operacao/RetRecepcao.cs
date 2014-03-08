@@ -9,18 +9,18 @@ using System.Timers;
 
 using System.Security.Cryptography.X509Certificates;
 
-namespace WallegNfe.Operacao
+namespace WallegNFe.Operacao
 {
     /// <summary>
     /// Consulta Processamento de Lote de NF-e
     /// </summary>
     public class RetRecepcao : BaseOperacao
     {
-        public RetRecepcao(WallegNfe.Nfe nfe)
+        public RetRecepcao(WallegNFe.NfeContexto nfe)
             : base(nfe) 
         {}
 
-        public WallegNfe.Model.Retorno.RetRecepcao  Enviar(String numeroRecibo, String cUF)
+        public WallegNFe.Model.Retorno.RetRecepcao  Enviar(String numeroRecibo, String cUF)
         {
 
 
@@ -48,7 +48,7 @@ namespace WallegNfe.Operacao
             nfeRetRecepcao2.ClientCertificates.Add(this.Certificado);
 
 
-            WallegNfe.Model.Retorno.RetRecepcao retorno = new WallegNfe.Model.Retorno.RetRecepcao();
+            WallegNFe.Model.Retorno.RetRecepcao retorno = new WallegNFe.Model.Retorno.RetRecepcao();
             XmlNode respostaXml = null;
 
             bool isEmProcessamento = true;

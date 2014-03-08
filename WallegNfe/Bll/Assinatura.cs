@@ -12,7 +12,7 @@ using System.Security.Cryptography.Pkcs;
 using System.IO;
 using System.Xml;
 
-namespace WallegNfe.Bll
+namespace WallegNFe.Bll
 {
     public class Assinatura
     {
@@ -24,7 +24,7 @@ namespace WallegNfe.Bll
         /// <param name="arquivoNome"></param>
         /// <param name="operacao"></param>
         /// <param name="x509Cert"></param>
-        public String AssinarXml(WallegNfe.Nota nota, X509Certificate2 x509Cert, String TagAssinatura)
+        public String AssinarXml(WallegNFe.Nota nota, X509Certificate2 x509Cert, String TagAssinatura)
         {
             StreamReader SR = null;
 

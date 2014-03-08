@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WallegNfe.Model.Nota
+namespace WallegNFe.Model.Nota
 {
     public class IDE
     {
@@ -16,6 +16,7 @@ namespace WallegNfe.Model.Nota
         public String nNF { get; set; }
         public String dEmi { get; set; }
         public String dSaiEnt { get; set; }
+        public String hSaiEnt { get; set; }
         public String tpNF { get; set; }
         public String cMunFG { get; set; }
         public String tpImp { get; set; }
