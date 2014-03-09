@@ -9,6 +9,7 @@ namespace WallegNFe.Model.Nota
     {
         public String CPF { get; set; }
         public String CNPJ { get; set; }
+        public String idEstrangeiro { get; set; }
         public String xNome { get; set; }
 
         public String xLgr { get; set; }
@@ -24,6 +25,7 @@ namespace WallegNFe.Model.Nota
         public String fone { get; set; }
 
         public String IE { get; set; }
+        public String indIEDest { get; set; }
 
         public String email { get; set; }
 
@@ -32,7 +34,6 @@ namespace WallegNFe.Model.Nota
             //valores padrão
             this.cPais = "1058";
             this.xPais = "BRASIL";
-            this.IE = "ISENTO";
         }
         
 

@@ -9,7 +9,7 @@ namespace WallegNFe
 {
     public class Nota
     {
-        private readonly NfeContexto NfeContexto;
+        private readonly NFeContexto NFeContexto;
 
         public Model.Nota.IDE ide { get; set; }
         public Model.Nota.EMIT emit { get; set; }
@@ -28,9 +28,9 @@ namespace WallegNFe
         public String NotaId = "";
         public Model.NotaSituacao Situacao { get; set; }
 
-        public Nota(NfeContexto nfeContexto)
+        public Nota(NFeContexto NFeContexto)
         {
-            this.NfeContexto = nfeContexto;
+            this.NFeContexto = NFeContexto;
 
             this.ide = new Model.Nota.IDE();
             this.emit = new Model.Nota.EMIT();
@@ -42,7 +42,7 @@ namespace WallegNFe
 
             this.XmlString = new StringBuilder();
 
-            if (this.NfeContexto.Producao)
+            if (this.NFeContexto.Producao)
                 this.ide.tpAmb = "1";
             else
                 this.ide.tpAmb = "2"; 
@@ -56,7 +56,7 @@ namespace WallegNFe
         public String GerarCodigoDaNota()
         {
 
-            if (!this.NfeContexto.Producao)
+            if (!this.NFeContexto.Producao)
             {
                 this.emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
                 this.dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
@@ -66,7 +66,7 @@ namespace WallegNFe
             String codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
             this.ide.cNF = codigoNumerico;
 
-            String result = this.ide.cUF + this.ide.dEmi.Replace("-", "").Substring(2, 4) + this.emit.CNPJ + System.Int32.Parse(this.ide.mod).ToString("D2") + System.Int32.Parse(this.ide.serie).ToString("D3") + System.Int32.Parse(this.ide.nNF).ToString("D9") + System.Int32.Parse(this.ide.tpEmis).ToString("D1") + codigoNumerico;
+            String result = this.ide.cUF + this.ide.dhEmi.Replace("-", "").Substring(2, 4) + this.emit.CNPJ + System.Int32.Parse(this.ide.mod).ToString("D2") + System.Int32.Parse(this.ide.serie).ToString("D3") + System.Int32.Parse(this.ide.nNF).ToString("D9") + System.Int32.Parse(this.ide.tpEmis).ToString("D1") + codigoNumerico;
             String digitoVerificador = Bll.Util.GerarModulo11(result);
 
             result = result + digitoVerificador;
@@ -83,7 +83,7 @@ namespace WallegNFe
 
            
             this.XmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
-            this.XmlString.Append("   <infNFe Id=\"NFe" + this.NotaId + "\" versao=\"2.00\">");
+            this.XmlString.Append("   <infNFe Id=\"NFe" + this.NotaId + "\" versao=\"" +  this.NFeContexto.Versao + "\">");
 
             this.MontaIDE();
             this.MontaEMIT();
@@ -140,15 +140,21 @@ namespace WallegNFe
             this.XmlString.Append("	<mod>" + this.ide.mod + "</mod>");
             this.XmlString.Append("	<serie>" + this.ide.serie + "</serie>");
             this.XmlString.Append("	<nNF>" + this.ide.nNF + "</nNF>");
-            this.XmlString.Append("	<dEmi>" + this.ide.dEmi  + "</dEmi>");
 
-            if(!String.IsNullOrEmpty(this.ide.dSaiEnt))
-                this.XmlString.Append("	<dSaiEnt>" + this.ide.dSaiEnt + "</dSaiEnt>");
+            if (this.NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            {
+                this.XmlString.Append("	<dhEmi>" + this.ide.dhEmi + "</dhEmi>");
+            }
+            else
+            {
+                this.XmlString.Append("	<dEmi>" + this.ide.dEmi + "</dEmi>");
+            }
 
-            if (!String.IsNullOrEmpty(this.ide.hSaiEnt))
-                this.XmlString.Append("	<hSaiEnt>" + this.ide.hSaiEnt + "</hSaiEnt>");
+            if (!String.IsNullOrEmpty(this.ide.dhSaiEnt))
+                this.XmlString.Append("	<dhSaiEnt>" + this.ide.dhSaiEnt + "</dhSaiEnt>");
 
             this.XmlString.Append("	<tpNF>" + this.ide.tpNF + "</tpNF>");
+            this.XmlString.Append("	<idDest>" + this.ide.idDest + "</idDest>");
             this.XmlString.Append("	<cMunFG>" + this.ide.cMunFG + "</cMunFG>");
             this.XmlString.Append("	<tpImp>" + this.ide.tpImp   + "</tpImp>");
             this.XmlString.Append("	<tpEmis>" + this.ide.tpEmis   + "</tpEmis>");
@@ -156,8 +162,12 @@ namespace WallegNFe
             this.XmlString.Append("	<tpAmb>" + this.ide.tpAmb   + "</tpAmb>");
 
             this.XmlString.Append("	<finNFe>" + this.ide.finNFe   + "</finNFe>");
+
+            this.XmlString.Append("	<indFinal>" + this.ide.indFinal + "</indFinal>");
+            this.XmlString.Append("	<indPres>" + this.ide.indPres + "</indPres>");
+
             this.XmlString.Append("	<procEmi>" + this.ide.procEmi   + "</procEmi>");
-            this.XmlString.Append("	<verProc>2.2.19</verProc>");
+            this.XmlString.Append("	<verProc>1</verProc>");
             this.XmlString.Append("</ide>");
         }
 
@@ -210,6 +220,11 @@ namespace WallegNFe
                 this.XmlString.Append("	<CNPJ>" + this.dest.CNPJ + "</CNPJ>");
             }
 
+            if (!String.IsNullOrEmpty(this.dest.idEstrangeiro))
+            {
+                this.XmlString.Append("	<idEstrangeiro>" + this.dest.idEstrangeiro + "</idEstrangeiro>");
+            }
+
             this.XmlString.Append("	<xNome>" + this.dest.xNome + "</xNome>");
             this.XmlString.Append("	<enderDest>");
             this.XmlString.Append("		<xLgr>" + this.dest.xLgr + "</xLgr>");
@@ -236,7 +251,15 @@ namespace WallegNFe
 
             this.XmlString.Append("	</enderDest>");
 
-            this.XmlString.Append("	<IE>" + this.dest.IE + "</IE>");    
+            if (this.NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            {
+                this.XmlString.Append("	<indIEDest>" + this.dest.indIEDest + "</indIEDest>");
+            }
+
+            if (!String.IsNullOrEmpty(this.dest.IE) && this.NFeContexto.Versao == NFeVersao.VERSAO_2_0_0)
+            {
+                this.XmlString.Append("	<IE>" + this.dest.IE + "</IE>");
+            }
    
             if(!String.IsNullOrEmpty(this.dest.email))
                 this.XmlString.Append("	<email>" + this.dest.email + "</email>");
@@ -712,6 +735,8 @@ namespace WallegNFe
             this.XmlString.Append("	<ICMSTot>");
             this.XmlString.Append("		<vBC>" + this.total.vBC + "</vBC>");
             this.XmlString.Append("		<vICMS>" + this.total.vICMS + "</vICMS>");
+            if(this.NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+                this.XmlString.Append("		<vICMSDeson>" + this.total.vICMSDeson + "</vICMSDeson>");
             this.XmlString.Append("		<vBCST>" + this.total.vBCST + "</vBCST>");
             this.XmlString.Append("		<vST>" + this.total.vST + "</vST>");
             this.XmlString.Append("		<vProd>" + this.total.vProd + "</vProd>");

@@ -9,12 +9,11 @@ namespace WallegNFe.Operacao
 {
     public abstract class BaseOperacao
     {
-        protected readonly X509Certificate2 Certificado;
-        protected String ArquivoSchema = null;
+        protected WallegNFe.NFeContexto NFeContexto;
 
-        public BaseOperacao(WallegNFe.NfeContexto nfe)
+        public BaseOperacao(WallegNFe.NFeContexto nfeContexto)
         {
-            this.Certificado = nfe.Certificado;
+            this.NFeContexto = nfeContexto;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace WallegNFe.Operacao
     /// </summary>
     public class RetRecepcao : BaseOperacao
     {
-        public RetRecepcao(WallegNFe.NfeContexto nfe)
+        public RetRecepcao(WallegNFe.NFeContexto nfe)
             : base(nfe) 
         {}
 
@@ -28,8 +28,8 @@ namespace WallegNFe.Operacao
             //Monta corpo do xml de envio
             StringBuilder xmlString = new StringBuilder();
             xmlString.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            xmlString.Append("<consReciNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"2.00\">");
-            xmlString.Append("    <tpAmb>2</tpAmb>");
+            xmlString.Append("<consReciNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + this.NFeContexto.VersaoString  + "\">");
+            xmlString.Append("    <tpAmb>" + (this.NFeContexto.Producao ? "1" : "2") + "</tpAmb>");
             xmlString.Append("    <nRec>" + numeroRecibo + "</nRec>");
             xmlString.Append("</consReciNFe>");
 
@@ -42,10 +42,10 @@ namespace WallegNFe.Operacao
 
             //Informa dados no WS de cabecalho
             nfeCabecalho.cUF = cUF;
-            nfeCabecalho.versaoDados = "2.00";
+            nfeCabecalho.versaoDados = this.NFeContexto.VersaoString;
 
             nfeRetRecepcao2.nfeCabecMsgValue = nfeCabecalho;
-            nfeRetRecepcao2.ClientCertificates.Add(this.Certificado);
+            nfeRetRecepcao2.ClientCertificates.Add(this.NFeContexto.Certificado);
 
 
             WallegNFe.Model.Retorno.RetRecepcao retorno = new WallegNFe.Model.Retorno.RetRecepcao();

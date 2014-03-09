@@ -10,7 +10,7 @@ namespace WallegNFe.Operacao
         private List<Model.Nota2> NotaLista = new List<Model.Nota2>();
         private long NumeroLote = 0;
 
-        public RecepcaoEvento(WallegNFe.NfeContexto nfe)
+        public RecepcaoEvento(WallegNFe.NFeContexto nfe)
             : base(nfe) 
         {
             //this.ArquivoSchema = "nfe_v2.00.xsd";
@@ -25,17 +25,17 @@ namespace WallegNFe.Operacao
             StringBuilder xmlString = new StringBuilder();
             xmlString.Append("<envEvento versao=\"1.00\" xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
             xmlString.Append("	<idLote>0131318</idLote>");
-            xmlString.Append("	<evento xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"1.00\">");
+            xmlString.Append("	<evento xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + this.NFeContexto.VersaoString + "\">");
             xmlString.Append("		<infEvento Id=\"" + id  + "\">");
             xmlString.Append("			<cOrgao>41</cOrgao>");
-            xmlString.Append("			<tpAmb>2</tpAmb>");
+            xmlString.Append("			<tpAmb>" +  (this.NFeContexto.Producao ? "1" : "2") +  "</tpAmb>");
             xmlString.Append("			<CNPJ>" + eventoCancelamento.CNPJ + "</CNPJ>");
             xmlString.Append("			<chNFe>" + eventoCancelamento.ChaveAcesso   + "</chNFe>");
             xmlString.Append("			<dhEvento>"  + DateTime.Now.ToFileTimeUtc()  + "</dhEvento>"); //2012-09-13T10:46:57-03:00
             xmlString.Append("			<tpEvento>" + tpEvento  + "</tpEvento>");
             xmlString.Append("			<nSeqEvento>1</nSeqEvento>");
             xmlString.Append("			<verEvento>1.00</verEvento>");
-            xmlString.Append("			<detEvento versao=\"1.00\">");
+            xmlString.Append("			<detEvento versao=\"" + this.NFeContexto.VersaoString + "\">");
             xmlString.Append("				<descEvento>Cancelamento</descEvento>");
             xmlString.Append("				<nProt>" + eventoCancelamento.Protocolo + "</nProt>");
             xmlString.Append("				<xJust>" + eventoCancelamento.Justificativa + "</xJust>");
@@ -55,7 +55,7 @@ namespace WallegNFe.Operacao
             //Assina a nota
             try
             {
-                bllAssinatura.AssinarXml(new Nota(null) { NotaId = eventoCancelamento.ChaveAcesso, CaminhoFisico = caminhoXml }, this.Certificado, "envEvento");
+                bllAssinatura.AssinarXml(new Nota(null) { NotaId = eventoCancelamento.ChaveAcesso, CaminhoFisico = caminhoXml }, this.NFeContexto.Certificado, "envEvento");
 
             }
             catch (Exception e)

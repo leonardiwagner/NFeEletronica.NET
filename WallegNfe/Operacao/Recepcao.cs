@@ -14,10 +14,18 @@ namespace WallegNFe.Operacao
     public class Recepcao : BaseOperacao
     {
         private List<WallegNFe.Nota> NotaLista = new List<WallegNFe.Nota>();
+        private readonly bool Sincrono;
+        private String ArquivoSchema = "";
 
-        public Recepcao(WallegNFe.NfeContexto nfe) : base(nfe) 
+
+        public Recepcao(WallegNFe.NFeContexto nfeContexto) : base(nfeContexto) 
         {
-            this.ArquivoSchema = "nfe_v3.10.xsd";
+            if (nfeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+                this.ArquivoSchema = "nfe_v3.10.xsd";
+            else
+                this.ArquivoSchema = "nfe_v2.00.xsd";
+
+            this.Sincrono = false;
         }
         
         /// <summary>
@@ -39,7 +47,7 @@ namespace WallegNFe.Operacao
             //Assina a nota
             try
             {
-                bllAssinatura.AssinarXml(nota, this.Certificado, "NFe");
+                bllAssinatura.AssinarXml(nota, this.NFeContexto.Certificado, "NFe");
 
             }
             catch (Exception e)
@@ -50,7 +58,7 @@ namespace WallegNFe.Operacao
             //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
             try
             {
-                bllXml.ValidaSchema(nota.CaminhoFisico, Bll.Util.ContentFolderSchemaValidacao + "\\" + this.ArquivoSchema);
+                bllXml.ValidaSchema(nota.CaminhoFisico, Bll.Util.ContentFolderSchemaValidacao + "\\" + this.NFeContexto.VersaoString + "\\" + this.ArquivoSchema);
             }
             catch (Exception e)
             {
@@ -76,12 +84,23 @@ namespace WallegNFe.Operacao
 
         private XmlDocument MontarXml(long numeroLote)
         {
-
             //Cabeçalho do lote
             String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-            xmlString += "<enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + "2.00" + "\">";
+            xmlString += "<enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + this.NFeContexto.VersaoString + "\">";
 
             xmlString += "<idLote>" + numeroLote.ToString("000000000000000") + "</idLote>";
+
+            if (this.NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            {
+                if (this.Sincrono)
+                {
+                    xmlString += "<indSinc>1</indSinc>";
+                }
+                else
+                {
+                    xmlString += "<indSinc>0</indSinc>";
+                }
+            }
 
             //Adiciona as notas no lote
             for (int i = 0; i < this.NotaLista.Count; i++)
@@ -102,23 +121,6 @@ namespace WallegNFe.Operacao
 
 
             Bll.Xml bllXml = new Bll.Xml();
-
-            // Gravar o XML Assinado no HD
-            String SignedFile = "C:\\NFE\\lote-fixo.xml";
-            System.IO.StreamWriter SW_2 = System.IO.File.CreateText(SignedFile);
-            SW_2.Write(xmlString);
-            SW_2.Close();
-
-            //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
-            try
-            {
-                bllXml.ValidaSchema("C:\\NFE\\lote-fixo.xml", Bll.Util.ContentFolderSchemaValidacao + "\\enviNFe_v2.00.xsd");
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Erro ao validar Nota: " + e.Message);
-            }
-
             return Bll.Xml.StringToXml(xmlString);
         }
 
@@ -129,10 +131,10 @@ namespace WallegNFe.Operacao
 
             //Informa dados no WS de cabecalho
             nfeCabecalho.cUF = cUF;
-            nfeCabecalho.versaoDados = "2.00";
+            nfeCabecalho.versaoDados = this.NFeContexto.VersaoString;
 
             nfeRecepcao2.nfeCabecMsgValue = nfeCabecalho;
-            nfeRecepcao2.ClientCertificates.Add(this.Certificado);
+            nfeRecepcao2.ClientCertificates.Add(this.NFeContexto.Certificado);
 
             //Envia para o webservice e recebe a resposta
             XmlNode xmlResposta = nfeRecepcao2.nfeRecepcaoLote2(this.MontarXml(numeroLote).DocumentElement);

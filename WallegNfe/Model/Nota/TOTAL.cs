@@ -10,6 +10,7 @@ namespace WallegNFe.Model.Nota
         public String vBC { get; set; }
         public String vICMS { get; set; }
         public String vBCST { get; set; }
+        public String vICMSDeson { get; set; }
         public String vST { get; set; }
         public String vProd { get; set; }
         public String vFrete { get; set; }

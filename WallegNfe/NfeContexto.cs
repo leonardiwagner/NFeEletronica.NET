@@ -8,13 +8,25 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace WallegNFe
 {
-    public class NfeContexto
+    public class NFeContexto
     {
         private X509Certificate2 _Certificado = null;
         private readonly bool _Producao = false;
+        private readonly String _VersaoString;
+        private readonly NFeVersao _Versao;
 
-        public NfeContexto(bool producao)
+        public NFeContexto(bool producao, NFeVersao versao)
         {
+            this._Versao = versao;
+            if (this._Versao == NFeVersao.VERSAO_3_1_0)
+            {
+                this._VersaoString = "3.10";
+            }
+            else
+            {
+                this._VersaoString = "2.00";
+            }
+
             this.Inicializar();
         }
 
@@ -23,6 +35,22 @@ namespace WallegNFe
             get
             {
                 return this._Producao;
+            }
+        }
+
+        public NFeVersao Versao
+        {
+            get
+            {
+                return this._Versao;
+            }
+        }
+
+        public String VersaoString
+        {
+            get
+            {
+                return this._VersaoString;
             }
         }
 
@@ -63,4 +91,6 @@ namespace WallegNFe
         }
 
     }
+
+    
 }

@@ -10,10 +10,10 @@ namespace Exemplo
         public void Enviar()
         {
             //Cria o objeto de contexto, e seleciona o certificado no computador
-            WallegNFe.NfeContexto nfeContexto = new WallegNFe.NfeContexto(false);
+            WallegNFe.NFeContexto NFeContexto = new WallegNFe.NFeContexto(false, WallegNFe.NFeVersao.VERSAO_2_0_0);
 
             //Cria a nota com o objeto "Nota"
-            WallegNFe.Nota nota = new WallegNFe.Nota(nfeContexto);
+            WallegNFe.Nota nota = new WallegNFe.Nota(NFeContexto);
 
             nota.ide.cUF = "35";
             
@@ -26,7 +26,7 @@ namespace Exemplo
             nota.ide.mod = "55";
             nota.ide.serie = "1";
             nota.ide.nNF = "12345";
-            nota.ide.dEmi = "2014-01-23";
+            nota.ide.dhEmi = "2010-08-19T13:00:15-03:00";
             //dSaiEnt e hSaiEnt são opcionais
             nota.ide.tpNF = "1";
             nota.ide.cMunFG = "3550308";
@@ -34,7 +34,9 @@ namespace Exemplo
             nota.ide.tpImp = "1";
             nota.ide.tpEmis = "1";
             nota.ide.cDV = "0";
-            
+            nota.ide.idDest = "1";
+            nota.ide.indFinal = "1";
+            nota.ide.indPres = "0";
             //Não é necessário passar o tipo de ambiente, pois já pega automaticamente do contexto
             //nota.ide.tpAmb = "2";
             
@@ -68,7 +70,7 @@ namespace Exemplo
             nota.dest.cPais = "1058";
             nota.dest.xPais = "BRASIL";
             nota.dest.fone = "1129148627";
-            nota.dest.IE = "ISENTO";
+            nota.dest.indIEDest = "9";
             nota.dest.email = "teste@teste.com";
 
             WallegNFe.Model.Nota.DUP dup = new WallegNFe.Model.Nota.DUP();
@@ -126,6 +128,7 @@ namespace Exemplo
 
             nota.total.vBC = "0.00";
             nota.total.vICMS = "0.00";
+            nota.total.vICMSDeson = "0.00";
             nota.total.vBCST = "0.00";
             nota.total.vST = "0.00";
             nota.total.vProd = "1.00";
@@ -148,13 +151,13 @@ namespace Exemplo
             int numeroDoLote = 1; //Para cada nota enviada, esse número deve ser único.
             //Pode usar o número da nota também: String numeroDoLote = Int32.Parse(nota.ide.cNF);
 
-            WallegNFe.Operacao.Recepcao nfeRecepcao = new WallegNFe.Operacao.Recepcao(nfeContexto);
+            WallegNFe.Operacao.Recepcao nfeRecepcao = new WallegNFe.Operacao.Recepcao(NFeContexto);
             nfeRecepcao.AdicionarNota(nota);
 
             WallegNFe.Model.Retorno.Recepcao retornoRecepcao = nfeRecepcao.Enviar(numeroDoLote, codigoUF);
 
             //Consultar nota
-            WallegNFe.Operacao.RetRecepcao nfeRetRecepcao = new WallegNFe.Operacao.RetRecepcao(nfeContexto);
+            WallegNFe.Operacao.RetRecepcao nfeRetRecepcao = new WallegNFe.Operacao.RetRecepcao(NFeContexto);
             WallegNFe.Model.Retorno.RetRecepcao retRetorno = nfeRetRecepcao.Enviar(retornoRecepcao.Recibo, codigoUF);
         }
     }

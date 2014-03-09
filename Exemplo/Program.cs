@@ -17,9 +17,9 @@ namespace Exemplo
 
             /*
 
-            WallegNFe.NfeContexto nfeContexto = new WallegNFe.NfeContexto(false);
+            WallegNFe.NFeContexto NFeContexto = new WallegNFe.NFeContexto(false);
             
-            WallegNFe.Operacao.RecepcaoEvento operacaoEvento = new WallegNFe.Operacao.RecepcaoEvento(nfeContexto);
+            WallegNFe.Operacao.RecepcaoEvento operacaoEvento = new WallegNFe.Operacao.RecepcaoEvento(NFeContexto);
 
             operacaoEvento.Cancelar(new WallegNFe.Model.Evento()
             {
