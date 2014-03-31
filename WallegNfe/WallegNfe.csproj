@@ -44,15 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bll\Assinatura.cs" />
-    <Compile Include="Bll\Arquivo.cs" />
     <Compile Include="Bll\Util.cs" />
     <Compile Include="Bll\Xml.cs" />
     <Compile Include="Bll\Certificado.cs" />
-    <Compile Include="NFeVersao.cs" />
+    <Compile Include="Versao\NFeVersao.cs" />
     <Compile Include="Model\Evento.cs" />
-    <Compile Include="Model\Nota.cs" />
-    <Compile Include="Bll\Nota.cs" />
-    <Compile Include="Model\NotaSituacao.cs" />
     <Compile Include="Model\Nota\COBR.cs" />
     <Compile Include="Model\Nota\DEST.cs" />
     <Compile Include="Model\Nota\DET.cs" />
@@ -79,6 +75,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Versao\VersaoAbstract.cs" />
+    <Compile Include="Versao\Versao2_0_0.cs" />
+    <Compile Include="Versao\Versao3_1_0.cs" />
     <Compile Include="Web References\NfeRecepcao2\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -89,7 +88,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\RecepcaoEvento1\Reference.cs">
+    <Compile Include="Web References\RecepcaoEvento2\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -111,8 +110,8 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\RecepcaoEvento1\RecepcaoEvento.wsdl" />
-    <None Include="Web References\RecepcaoEvento1\Reference.map">
+    <None Include="Web References\RecepcaoEvento2\RecepcaoEvento.wsdl" />
+    <None Include="Web References\RecepcaoEvento2\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
@@ -124,6 +123,17 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
+    <WebReferenceUrl Include="https://homologacao.nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\RecepcaoEvento2\</RelPath>
+      <UpdateFromURL>https://homologacao.nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>WallegNFe_RecepcaoEvento2_RecepcaoEvento</CachedSettingsPropName>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeRecepcao2.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\NfeRecepcao2\</RelPath>
@@ -146,26 +156,15 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>WallegNfe_NfeRetRecepcao2_NfeRetRecepcao2</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\RecepcaoEvento1\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>WallegNfe_RecepcaoEvento1_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\NfeRetRecepcao2\NfeRetRecepcao2.disco" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\NfeRecepcao2\NfeRecepcao2.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Web References\RecepcaoEvento1\RecepcaoEvento.disco" />
+    <None Include="Web References\NfeRetRecepcao2\NfeRetRecepcao2.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\RecepcaoEvento2\RecepcaoEvento.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

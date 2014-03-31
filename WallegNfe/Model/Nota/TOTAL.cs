@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace WallegNFe.Model.Nota
 {
@@ -23,6 +20,5 @@ namespace WallegNFe.Model.Nota
         public String vOutro { get; set; }
         public String vNF { get; set; }
         public String vTotTrib { get; set; }
-
     }
 }

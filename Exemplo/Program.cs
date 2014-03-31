@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-//Trabalhar com o certificado
-using System.Security.Cryptography.X509Certificates;
+﻿//Trabalhar com o certificado
 
 namespace Exemplo
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            EnviarNota enviarNota = new EnviarNota();
+            var enviarNota = new EnviarNota();
             enviarNota.Enviar();
 
             /*

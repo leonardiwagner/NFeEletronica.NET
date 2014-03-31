@@ -1,12 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using WallegNFe.Model.Nota.Enum;
 
 namespace WallegNFe.Model.Nota
 {
     public class DET
     {
+        public DET()
+        {
+            //valores padrão
+            indTot = "1";
+        }
+
         public String nItem { get; set; }
         public String cProd { get; set; }
         public String cEAN { get; set; }
@@ -30,7 +34,7 @@ namespace WallegNFe.Model.Nota
         public String vTotTrib { get; set; }
 
         //ICMS
-        public Enum.ICMS icms {get;set;}
+        public ICMS icms { get; set; }
         public String icms_orig { get; set; }
         public String icms_CST { get; set; }
         public String icms_modBC { get; set; }
@@ -51,17 +55,17 @@ namespace WallegNFe.Model.Nota
         public String icms_vICMSSTRet { get; set; }
 
         //CST
-        public Enum.IPI ipi { get; set; }
-        public String ipi_cIEnq {get;set;}
-        public String ipi_CST {get;set;}
-        public String ipi_vBC   {get;set;}
-        public String ipi_pIPI {get;set;}
-        public String ipi_qUnid {get;set;}
-        public String ipi_vUnid {get;set;}
-        public String ipi_vIPI {get;set;}
+        public IPI ipi { get; set; }
+        public String ipi_cIEnq { get; set; }
+        public String ipi_CST { get; set; }
+        public String ipi_vBC { get; set; }
+        public String ipi_pIPI { get; set; }
+        public String ipi_qUnid { get; set; }
+        public String ipi_vUnid { get; set; }
+        public String ipi_vIPI { get; set; }
 
         //PIS
-        public Enum.PIS pis { get; set; }
+        public PIS pis { get; set; }
         public String pis_CST { get; set; }
         public String pis_vBC { get; set; }
         public String pis_pPIS { get; set; }
@@ -70,19 +74,12 @@ namespace WallegNFe.Model.Nota
         public String pis_vAliqProd { get; set; }
 
         //COFINS
-        public Enum.COFINS cofins { get; set; }
+        public COFINS cofins { get; set; }
         public String cofins_CST { get; set; }
         public String cofins_vBC { get; set; }
         public String cofins_pCOFINS { get; set; }
         public String cofins_vCOFINS { get; set; }
         public String cofins_qBCProd { get; set; }
         public String cofins_vAliqProd { get; set; }
-
-        public DET()
-        {
-            //valores padrão
-            this.indTot = "1";
-        }
     }
-
 }

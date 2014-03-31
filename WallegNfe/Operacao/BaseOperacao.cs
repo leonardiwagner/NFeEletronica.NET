@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using System.Security.Cryptography.X509Certificates;
-
-namespace WallegNFe.Operacao
+﻿namespace WallegNFe.Operacao
 {
     public abstract class BaseOperacao
     {
-        protected WallegNFe.NFeContexto NFeContexto;
+        protected NFeContexto NFeContexto;
 
-        public BaseOperacao(WallegNFe.NFeContexto nfeContexto)
+        public BaseOperacao(NFeContexto nfeContexto)
         {
-            this.NFeContexto = nfeContexto;
+            NFeContexto = nfeContexto;
         }
     }
 }

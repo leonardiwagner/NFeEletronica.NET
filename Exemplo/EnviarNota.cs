@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Exemplo
 {
@@ -10,13 +7,13 @@ namespace Exemplo
         public void Enviar()
         {
             //Cria o objeto de contexto, e seleciona o certificado no computador
-            WallegNFe.NFeContexto NFeContexto = new WallegNFe.NFeContexto(false, WallegNFe.NFeVersao.VERSAO_2_0_0);
+            var nfeContexto = new WallegNFe.NFeContexto(false, WallegNFe.Versao.NFeVersao.VERSAO_2_0_0);
 
             //Cria a nota com o objeto "Nota"
-            WallegNFe.Nota nota = new WallegNFe.Nota(NFeContexto);
+            var nota = new WallegNFe.Nota(nfeContexto);
 
             nota.ide.cUF = "35";
-            
+
             //cNF e cDV é gerado automaticamente, mas você pode inserir manualmente
             //nota.ide.cNF = "123";
             //nota.ide.cDV = "1";
@@ -25,8 +22,8 @@ namespace Exemplo
             nota.ide.indPag = "0"; //'0 - a vista, 1 - a prazo, 2 - outros
             nota.ide.mod = "55";
             nota.ide.serie = "1";
-            nota.ide.nNF = "12345";
-            nota.ide.dhEmi = "2010-08-19T13:00:15-03:00";
+            nota.ide.nNF = new Random().Next(1111,3333).ToString();
+            nota.ide.dEmi = "2014-03-29";
             //dSaiEnt e hSaiEnt são opcionais
             nota.ide.tpNF = "1";
             nota.ide.cMunFG = "3550308";
@@ -39,7 +36,7 @@ namespace Exemplo
             nota.ide.indPres = "0";
             //Não é necessário passar o tipo de ambiente, pois já pega automaticamente do contexto
             //nota.ide.tpAmb = "2";
-            
+
             nota.ide.finNFe = "1";
             nota.ide.procEmi = "3";
 
@@ -73,7 +70,7 @@ namespace Exemplo
             nota.dest.indIEDest = "9";
             nota.dest.email = "teste@teste.com";
 
-            WallegNFe.Model.Nota.DUP dup = new WallegNFe.Model.Nota.DUP();
+            var dup = new WallegNFe.Model.Nota.DUP();
             dup.nDup = "123";
             dup.dVenc = "2014-03-21";
             dup.vDup = "23.33";
@@ -87,7 +84,7 @@ namespace Exemplo
             nota.transp.UF = "RO";
 
             //início de um produto
-            WallegNFe.Model.Nota.DET notaProduto = new WallegNFe.Model.Nota.DET();
+            var notaProduto = new WallegNFe.Model.Nota.DET();
             notaProduto.cProd = "123";
             notaProduto.cEAN = "7896090701049";
             notaProduto.xProd = "Produto de teste";
@@ -143,22 +140,34 @@ namespace Exemplo
             nota.total.vNF = "1.00";
             nota.total.vTotTrib = "0.00";
 
-            nota.SalvarNota("C:\\NFE\\teste-nota.xml");
+            nota.SalvarNota(@"C:\NFE\teste-nota.xml");
 
             //Enviar a nota
-            String codigoUF = nota.emit.UF;
+            String codigoUF = nota.ide.cUF;
 
             int numeroDoLote = 1; //Para cada nota enviada, esse número deve ser único.
             //Pode usar o número da nota também: String numeroDoLote = Int32.Parse(nota.ide.cNF);
 
-            WallegNFe.Operacao.Recepcao nfeRecepcao = new WallegNFe.Operacao.Recepcao(NFeContexto);
+            var nfeRecepcao = new WallegNFe.Operacao.Recepcao(nfeContexto);
             nfeRecepcao.AdicionarNota(nota);
 
             WallegNFe.Model.Retorno.Recepcao retornoRecepcao = nfeRecepcao.Enviar(numeroDoLote, codigoUF);
 
             //Consultar nota
-            WallegNFe.Operacao.RetRecepcao nfeRetRecepcao = new WallegNFe.Operacao.RetRecepcao(NFeContexto);
+            var nfeRetRecepcao = new WallegNFe.Operacao.RetRecepcao(nfeContexto);
             WallegNFe.Model.Retorno.RetRecepcao retRetorno = nfeRetRecepcao.Enviar(retornoRecepcao.Recibo, codigoUF);
+
+            //Cancelar a nota
+            var nfeCancelamento = new WallegNFe.Model.Evento();
+            nfeCancelamento.CNPJ = nota.emit.CNPJ;
+            nfeCancelamento.Justificativa = "Cancelando por teste";
+            nfeCancelamento.NumeroLote = numeroDoLote.ToString();
+            nfeCancelamento.ChaveAcesso = nota.NotaId;
+            nfeCancelamento.Protocolo = retRetorno.Protocolo;
+
+            var nfeEvento = new WallegNFe.Operacao.RecepcaoEvento(nfeContexto);
+            nfeEvento.AdicionarCancelamento(nfeCancelamento, @"C:\NFE\cancelamento.xml");
+
         }
     }
 }

@@ -1,12 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace WallegNFe.Model.Nota
 {
     public class IDE
     {
+        public IDE()
+        {
+            cUF = "35";
+            mod = "55";
+            serie = "1";
+            tpImp = "1";
+            tpEmis = "1";
+            cDV = "0";
+            tpAmb = "2";
+            finNFe = "1";
+            procEmi = "3";
+            verProc = "2.2.19";
+        }
+
         public String cUF { get; set; }
         public String cNF { get; set; }
         public String natOp { get; set; }
@@ -31,18 +42,5 @@ namespace WallegNFe.Model.Nota
         public String verProc { get; set; }
 
         //valores padrão
-        public IDE()
-        {
-            this.cUF = "35";
-            this.mod = "55";
-            this.serie = "1";
-            this.tpImp = "1";
-            this.tpEmis = "1";
-            this.cDV = "0";
-            this.tpAmb = "2";
-            this.finNFe = "1";
-            this.procEmi = "3";
-            this.verProc = "2.2.19";
-        }
     }
 }

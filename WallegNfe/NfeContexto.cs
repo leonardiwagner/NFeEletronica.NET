@@ -1,82 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-//Trabalhar com o certificado
+﻿//Trabalhar com o certificado
+using System;
 using System.Security.Cryptography.X509Certificates;
+using WallegNFe.Bll;
+using WallegNFe.Versao;
 
 namespace WallegNFe
 {
     public class NFeContexto
     {
-        private X509Certificate2 _Certificado = null;
         private readonly bool _Producao = false;
-        private readonly String _VersaoString;
-        private readonly NFeVersao _Versao;
+        private readonly VersaoAbstract _Versao;
+        private X509Certificate2 _Certificado;
 
         public NFeContexto(bool producao, NFeVersao versao)
         {
-            this._Versao = versao;
-            if (this._Versao == NFeVersao.VERSAO_3_1_0)
+            if (versao == NFeVersao.VERSAO_3_1_0)
             {
-                this._VersaoString = "3.10";
+                _Versao = new Versao3_1_0();
             }
             else
             {
-                this._VersaoString = "2.00";
+                _Versao = new Versao2_0_0();
             }
 
-            this.Inicializar();
+            Inicializar();
         }
 
         public bool Producao
         {
-            get
-            {
-                return this._Producao;
-            }
+            get { return _Producao; }
         }
 
-        public NFeVersao Versao
+        public VersaoAbstract Versao
         {
-            get
-            {
-                return this._Versao;
-            }
-        }
-
-        public String VersaoString
-        {
-            get
-            {
-                return this._VersaoString;
-            }
+            get { return _Versao; }
         }
 
         public X509Certificate2 Certificado
         {
-            get
-            {
-                return this._Certificado;
-            }
+            get { return _Certificado; }
         }
 
         private void Inicializar()
         {
-            this._Certificado = this.carregarCertificado();
+            _Certificado = carregarCertificado();
         }
 
         /// <summary>
-        /// Carrega um certificado para trabalhar com a NFe
+        ///     Carrega um certificado para trabalhar com a NFe
         /// </summary>
         /// <returns></returns>
         private X509Certificate2 carregarCertificado()
         {
-            Bll.Certificado bllCertificado = new Bll.Certificado();
+            var bllCertificado = new Certificado();
             X509Certificate2 certificado = null;
 
-  
+
             //Abre uma janela para selecionar o certificado instalado no computador
             certificado = bllCertificado.SelecionarPorWindows();
 
@@ -84,13 +63,8 @@ namespace WallegNFe
             {
                 return certificado;
             }
-            else
-            {
-                throw new Exception("Nenhum certificado encontrado, não será possível prosseguir com a Nota Fiscal Eletrônica.");
-            }
+            throw new Exception(
+                "Nenhum certificado encontrado, não será possível prosseguir com a Nota Fiscal Eletrônica.");
         }
-
     }
-
-    
 }

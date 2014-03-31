@@ -39,10 +39,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WallegNfe, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WallegNFe.0.2\lib\WallegNfe.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EnviarNota.cs" />
@@ -53,81 +49,131 @@
     <None Include="App.config" />
     <None Include="NFeSchemas\2.0.0\cancNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\consCad_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\consReciNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\consSitNFe_v2.01.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\consStatServ_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="NFeSchemas\2.0.0\e110111_v1.00.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="NFeSchemas\2.0.0\envEventoCancNFe_v1.00.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\enviNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="NFeSchemas\2.0.0\eventoCancNFe_v1.00.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\inutNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\leiauteCancNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\leiauteConsSitNFe_v2.01.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\leiauteConsStatServ_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\leiauteConsultaCadastro_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="NFeSchemas\2.0.0\leiauteEventoCancNFe_v1.00.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\leiauteInutNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\leiauteNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\nfe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\procCancNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="NFeSchemas\2.0.0\procEventoCancNFe_v1.00.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\procInutNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\procNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\retCancNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\retConsCad_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\retConsReciNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\retConsSitNFe_v2.01.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\retConsStatServ_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="NFeSchemas\2.0.0\retEnvEventoCancNFe_v1.00.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\retEnviNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\retInutNFe_v2.00.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\tiposBasico_v1.03.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\2.0.0\xmldsig-core-schema_v1.01.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NFeSchemas\3.1.0\consReciNFe_v3.10.xsd">
       <SubType>Designer</SubType>
@@ -186,7 +232,12 @@
     <None Include="NFeSchemas\3.1.0\xmldsig-core-schema_v1.01.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WallegNfe\WallegNFe.csproj">
+      <Project>{97c0497f-ec90-41c2-be61-3c7abed1c71a}</Project>
+      <Name>WallegNFe</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

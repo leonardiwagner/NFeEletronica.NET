@@ -1,30 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Configuration;
-
+using System.IO;
 using System.Reflection;
 
 namespace WallegNFe.Bll
 {
     public class Util
     {
-
-        public static String ContentFolderSchemaValidacao 
+        public static String ContentFolderSchemaValidacao
         {
             get
             {
-                if(ConfigurationManager.AppSettings["WallegNFe.Pasta.SchemaValidacao"] != null)
+                if (ConfigurationManager.AppSettings["WallegNFe.Pasta.SchemaValidacao"] != null)
                 {
                     return ConfigurationManager.AppSettings["WallegNFe.Pasta.SchemaValidacao"];
                 }
-                else
-                {
-                    return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\NFeSchemas";
-                }
+                return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\NFeSchemas";
             }
-            
         }
 
         public static String GerarModulo11(String chaveAcesso)
@@ -40,10 +32,10 @@ namespace WallegNFe.Bll
                 }
 
                 int digit = Int32.Parse(chaveAcesso.Substring(i, 1));
-                total += digit * multiplier++;
+                total += digit*multiplier++;
             }
 
-            int remainder = (total % 11);
+            int remainder = (total%11);
 
             if (0 == remainder || 1 == remainder)
             {
@@ -53,6 +45,4 @@ namespace WallegNFe.Bll
             return (11 - remainder).ToString();
         }
     }
-
-
 }

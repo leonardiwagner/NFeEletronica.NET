@@ -23,8 +23,8 @@
     <Setting Name="WallegNFe_RecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx</Value>
     </Setting>
-    <Setting Name="WallegNFe_RecepcaoEvento1_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx</Value>
+    <Setting Name="WallegNFe_RecepcaoEvento2_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx</Value>
     </Setting>
   </Settings>
 </SettingsFile>

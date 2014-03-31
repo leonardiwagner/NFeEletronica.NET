@@ -1,116 +1,134 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-
 using System.Xml;
+using WallegNFe.Bll;
+using WallegNFe.Model;
+using WallegNFe.Model.Nota;
+using WallegNFe.Model.Nota.Enum;
+using WallegNFe.Versao;
 
 namespace WallegNFe
 {
     public class Nota
     {
         private readonly NFeContexto NFeContexto;
-
-        public Model.Nota.IDE ide { get; set; }
-        public Model.Nota.EMIT emit { get; set; }
-        public Model.Nota.DEST dest { get; set; }
-        private List<Model.Nota.DET> detList = null;
-        public Model.Nota.TOTAL total { get; set; }
-        public Model.Nota.TRANSP transp { get; set; }
-        public Model.Nota.COBR cobr { get; set; }
-        public String infAdic { get; set; }
-
-        private StringBuilder XmlString = null;
-
-        public String CaminhoFisico = "";
+        private readonly StringBuilder XmlString;
+        private readonly List<DET> detList;
         public String ArquivoNome = "";
+        public String CaminhoFisico = "";
         public String ConteudoXml = "";
         public String NotaId = "";
-        public Model.NotaSituacao Situacao { get; set; }
 
         public Nota(NFeContexto NFeContexto)
         {
             this.NFeContexto = NFeContexto;
 
-            this.ide = new Model.Nota.IDE();
-            this.emit = new Model.Nota.EMIT();
-            this.dest = new Model.Nota.DEST();
-            this.detList = new List<Model.Nota.DET>();
-            this.total = new Model.Nota.TOTAL();
-            this.transp = new Model.Nota.TRANSP();
-            this.cobr = new Model.Nota.COBR();
+            ide = new IDE();
+            emit = new EMIT();
+            dest = new DEST();
+            detList = new List<DET>();
+            total = new TOTAL();
+            transp = new TRANSP();
+            cobr = new COBR();
 
-            this.XmlString = new StringBuilder();
+            XmlString = new StringBuilder();
 
             if (this.NFeContexto.Producao)
-                this.ide.tpAmb = "1";
+                ide.tpAmb = "1";
             else
-                this.ide.tpAmb = "2"; 
+                ide.tpAmb = "2";
         }
 
-        public void AddDet(Model.Nota.DET det)
+        public Nota(String arquivoNotaXml)
         {
-            this.detList.Add(det);
-        }
-
-        public String GerarCodigoDaNota()
-        {
-
-            if (!this.NFeContexto.Producao)
+            if (!File.Exists(arquivoNotaXml))
             {
-                this.emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
-                this.dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
+                throw new Exception("O arquivo de nota para envio não existe: " + arquivoNotaXml);
             }
 
-            Random random = new Random();
-            String codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
-            this.ide.cNF = codigoNumerico;
+            var xmlDoc = new XmlDocument();
+            xmlDoc.Load(arquivoNotaXml);
 
-            String result = this.ide.cUF + this.ide.dhEmi.Replace("-", "").Substring(2, 4) + this.emit.CNPJ + System.Int32.Parse(this.ide.mod).ToString("D2") + System.Int32.Parse(this.ide.serie).ToString("D3") + System.Int32.Parse(this.ide.nNF).ToString("D9") + System.Int32.Parse(this.ide.tpEmis).ToString("D1") + codigoNumerico;
-            String digitoVerificador = Bll.Util.GerarModulo11(result);
+            this.CaminhoFisico = arquivoNotaXml;
+            this.ConteudoXml = xmlDoc.ToString();
+        }
+
+        public IDE ide { get; set; }
+        public EMIT emit { get; set; }
+        public DEST dest { get; set; }
+        public TOTAL total { get; set; }
+        public TRANSP transp { get; set; }
+        public COBR cobr { get; set; }
+        public String infAdic { get; set; }
+
+        public void AddDet(DET det)
+        {
+            detList.Add(det);
+        }
+
+        
+        public String GerarCodigoDaNota()
+        {
+            if (!NFeContexto.Producao)
+            {
+                emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
+                dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
+            }
+
+            var random = new Random();
+            String codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
+            ide.cNF = codigoNumerico;
+
+            String result = ide.cUF + ide.dEmi.Replace("-", "").Substring(2, 4) + emit.CNPJ +
+                            Int32.Parse(ide.mod).ToString("D2") + Int32.Parse(ide.serie).ToString("D3") +
+                            Int32.Parse(ide.nNF).ToString("D9") + Int32.Parse(ide.tpEmis).ToString("D1") +
+                            codigoNumerico;
+            String digitoVerificador = Util.GerarModulo11(result);
 
             result = result + digitoVerificador;
-            this.NotaId = result;
+            NotaId = result;
 
-            this.ide.cDV = digitoVerificador;
+            ide.cDV = digitoVerificador;
 
-            return this.NotaId;
+            return NotaId;
         }
 
         public void SalvarNota(String caminho)
         {
-            this.GerarCodigoDaNota();
+            GerarCodigoDaNota();
 
-           
-            this.XmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
-            this.XmlString.Append("   <infNFe Id=\"NFe" + this.NotaId + "\" versao=\"" +  this.NFeContexto.Versao + "\">");
 
-            this.MontaIDE();
-            this.MontaEMIT();
-            this.MontaDEST();
-            this.MontaDET();
-            this.MontaTOTAL();
-            this.MontaTRANSP();
-            this.MontaCOBR();
+            XmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
+            XmlString.Append("   <infNFe Id=\"NFe" + NotaId + "\" versao=\"" + NFeContexto.Versao.VersaoString + "\">");
 
-            if (!String.IsNullOrEmpty(this.infAdic))
+            MontaIDE();
+            MontaEMIT();
+            MontaDEST();
+            MontaDET();
+            MontaTOTAL();
+            MontaTRANSP();
+            MontaCOBR();
+
+            if (!String.IsNullOrEmpty(infAdic))
             {
-                this.XmlString.Append("<infAdic>");
-                this.XmlString.Append("	<infCpl>");
-                this.XmlString.Append(this.infAdic);
-                this.XmlString.Append("	</infCpl>");
-                this.XmlString.Append("</infAdic>");
+                XmlString.Append("<infAdic>");
+                XmlString.Append("	<infCpl>");
+                XmlString.Append(infAdic);
+                XmlString.Append("	</infCpl>");
+                XmlString.Append("</infAdic>");
             }
 
-            this.XmlString.Append("   </infNFe>");
+            XmlString.Append("   </infNFe>");
             //this.XmlString.Append("   <Signature></Signature>"); acho que não precisa disso
-            this.XmlString.Append("</NFe>");
+            XmlString.Append("</NFe>");
 
-            XmlDocument xmlDocument = new XmlDocument();
+            var xmlDocument = new XmlDocument();
 
             try
             {
-                xmlDocument.LoadXml(this.XmlString.ToString().Replace("&","&amp;"));
+                xmlDocument.LoadXml(XmlString.ToString().Replace("&", "&amp;"));
             }
             catch (Exception e)
             {
@@ -126,729 +144,736 @@ namespace WallegNFe
                 throw new Exception("Erro ao salvar a nota como XML: " + e.Message);
             }
 
-            this.CaminhoFisico = caminho;
-            this.ConteudoXml = this.XmlString.ToString();
+            CaminhoFisico = caminho;
+            ConteudoXml = XmlString.ToString();
         }
 
         private void MontaIDE()
         {
-            this.XmlString.Append("<ide>");
-            this.XmlString.Append("	<cUF>" + this.ide.cUF + "</cUF>");
-            this.XmlString.Append("	<cNF>" + this.ide.cNF + "</cNF>");
-            this.XmlString.Append("	<natOp>" + this.ide.natOp + "</natOp>");
-            this.XmlString.Append("	<indPag>" + this.ide.indPag + "</indPag>"); //0 - a vista, 1 - a prazo, 2 - outros
-            this.XmlString.Append("	<mod>" + this.ide.mod + "</mod>");
-            this.XmlString.Append("	<serie>" + this.ide.serie + "</serie>");
-            this.XmlString.Append("	<nNF>" + this.ide.nNF + "</nNF>");
+            XmlString.Append("<ide>");
+            XmlString.Append("	<cUF>" + ide.cUF + "</cUF>");
+            XmlString.Append("	<cNF>" + ide.cNF + "</cNF>");
+            XmlString.Append("	<natOp>" + ide.natOp + "</natOp>");
+            XmlString.Append("	<indPag>" + ide.indPag + "</indPag>"); //0 - a vista, 1 - a prazo, 2 - outros
+            XmlString.Append("	<mod>" + ide.mod + "</mod>");
+            XmlString.Append("	<serie>" + ide.serie + "</serie>");
+            XmlString.Append("	<nNF>" + ide.nNF + "</nNF>");
 
-            if (this.NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
             {
-                this.XmlString.Append("	<dhEmi>" + this.ide.dhEmi + "</dhEmi>");
+                XmlString.Append("	<dhEmi>" + ide.dhEmi + "</dhEmi>");
             }
             else
             {
-                this.XmlString.Append("	<dEmi>" + this.ide.dEmi + "</dEmi>");
+                XmlString.Append("	<dEmi>" + ide.dEmi + "</dEmi>");
             }
 
-            if (!String.IsNullOrEmpty(this.ide.dhSaiEnt))
-                this.XmlString.Append("	<dhSaiEnt>" + this.ide.dhSaiEnt + "</dhSaiEnt>");
+            if (!String.IsNullOrEmpty(ide.dhSaiEnt))
+                XmlString.Append("	<dhSaiEnt>" + ide.dhSaiEnt + "</dhSaiEnt>");
 
-            this.XmlString.Append("	<tpNF>" + this.ide.tpNF + "</tpNF>");
-            this.XmlString.Append("	<idDest>" + this.ide.idDest + "</idDest>");
-            this.XmlString.Append("	<cMunFG>" + this.ide.cMunFG + "</cMunFG>");
-            this.XmlString.Append("	<tpImp>" + this.ide.tpImp   + "</tpImp>");
-            this.XmlString.Append("	<tpEmis>" + this.ide.tpEmis   + "</tpEmis>");
-            this.XmlString.Append("	<cDV>" + this.ide.cDV   + "</cDV>");
-            this.XmlString.Append("	<tpAmb>" + this.ide.tpAmb   + "</tpAmb>");
+            XmlString.Append("	<tpNF>" + ide.tpNF + "</tpNF>");
+            
+            if(NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+                XmlString.Append("	<idDest>" + ide.idDest + "</idDest>");
+            
+            XmlString.Append("	<cMunFG>" + ide.cMunFG + "</cMunFG>");
+            XmlString.Append("	<tpImp>" + ide.tpImp + "</tpImp>");
+            XmlString.Append("	<tpEmis>" + ide.tpEmis + "</tpEmis>");
+            XmlString.Append("	<cDV>" + ide.cDV + "</cDV>");
+            XmlString.Append("	<tpAmb>" + ide.tpAmb + "</tpAmb>");
 
-            this.XmlString.Append("	<finNFe>" + this.ide.finNFe   + "</finNFe>");
+            XmlString.Append("	<finNFe>" + ide.finNFe + "</finNFe>");
 
-            this.XmlString.Append("	<indFinal>" + this.ide.indFinal + "</indFinal>");
-            this.XmlString.Append("	<indPres>" + this.ide.indPres + "</indPres>");
+            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            {
+                //XmlString.Append("	<indFinal>" + ide.indFinal + "</indFinal>");
+                //XmlString.Append("	<indPres>" + ide.indPres + "</indPres>");
+            }
 
-            this.XmlString.Append("	<procEmi>" + this.ide.procEmi   + "</procEmi>");
-            this.XmlString.Append("	<verProc>1</verProc>");
-            this.XmlString.Append("</ide>");
+            XmlString.Append("	<procEmi>" + ide.procEmi + "</procEmi>");
+            XmlString.Append("	<verProc>1</verProc>");
+            XmlString.Append("</ide>");
         }
 
         private void MontaEMIT()
         {
-            this.XmlString.Append("<emit>");
+            XmlString.Append("<emit>");
 
-            if(!String.IsNullOrEmpty(this.emit.CPF))
+            if (!String.IsNullOrEmpty(emit.CPF))
             {
-                this.XmlString.Append("	<CPF>" + this.emit.CPF  + "</CPF>");
+                XmlString.Append("	<CPF>" + emit.CPF + "</CPF>");
             }
-             if(!String.IsNullOrEmpty(this.emit.CNPJ))
+            if (!String.IsNullOrEmpty(emit.CNPJ))
             {
-                this.XmlString.Append("	<CNPJ>" + this.emit.CNPJ + "</CNPJ>");
+                XmlString.Append("	<CNPJ>" + emit.CNPJ + "</CNPJ>");
             }
 
-            this.XmlString.Append("	<xNome>" + this.emit.xNome + "</xNome>");
-            this.XmlString.Append("	<enderEmit>");
-            this.XmlString.Append("		<xLgr>" + this.emit.xLgr + "</xLgr>");
-            this.XmlString.Append("		<nro>" + this.emit.nro + "</nro>");
-            this.XmlString.Append("		<xBairro>" +this.emit.xBairro + "</xBairro>");
-            this.XmlString.Append("		<cMun>" + this.emit.cMun + "</cMun>");
-            this.XmlString.Append("		<xMun>" +this.emit.xMun + "</xMun>");
-            this.XmlString.Append("		<UF>" + this.emit.UF.Trim() + "</UF>");
-            this.XmlString.Append("		<CEP>" + this.emit.CEP + "</CEP>");
-            this.XmlString.Append("		<cPais>1058</cPais>");
-            this.XmlString.Append("		<xPais>BRASIL</xPais>");
+            XmlString.Append("	<xNome>" + emit.xNome + "</xNome>");
+            XmlString.Append("	<enderEmit>");
+            XmlString.Append("		<xLgr>" + emit.xLgr + "</xLgr>");
+            XmlString.Append("		<nro>" + emit.nro + "</nro>");
+            XmlString.Append("		<xBairro>" + emit.xBairro + "</xBairro>");
+            XmlString.Append("		<cMun>" + emit.cMun + "</cMun>");
+            XmlString.Append("		<xMun>" + emit.xMun + "</xMun>");
+            XmlString.Append("		<UF>" + emit.UF.Trim() + "</UF>");
+            XmlString.Append("		<CEP>" + emit.CEP + "</CEP>");
+            XmlString.Append("		<cPais>1058</cPais>");
+            XmlString.Append("		<xPais>BRASIL</xPais>");
 
-            if(!String.IsNullOrEmpty(this.emit.fone))
-                this.XmlString.Append("		<fone>" + this.emit.fone + "</fone>");
+            if (!String.IsNullOrEmpty(emit.fone))
+                XmlString.Append("		<fone>" + emit.fone + "</fone>");
 
-            this.XmlString.Append("	</enderEmit>");
+            XmlString.Append("	</enderEmit>");
 
-            this.XmlString.Append("	<IE>" + this.emit.IE + "</IE>");
-            this.XmlString.Append("	<CRT>" + this.emit.CRT + "</CRT>");
-            this.XmlString.Append("</emit>");
+            XmlString.Append("	<IE>" + emit.IE + "</IE>");
+            XmlString.Append("	<CRT>" + emit.CRT + "</CRT>");
+            XmlString.Append("</emit>");
         }
 
         private void MontaDEST()
         {
-            this.XmlString.Append("<dest>");
+            XmlString.Append("<dest>");
 
-            if(!String.IsNullOrEmpty(this.dest.CPF))
+            if (!String.IsNullOrEmpty(dest.CPF))
             {
-                this.XmlString.Append("	<CPF>" + this.dest.CPF  + "</CPF>");
+                XmlString.Append("	<CPF>" + dest.CPF + "</CPF>");
             }
+
+            if (!String.IsNullOrEmpty(dest.CNPJ))
+            {
+                XmlString.Append("	<CNPJ>" + dest.CNPJ + "</CNPJ>");
+            }
+
+            if (!String.IsNullOrEmpty(dest.idEstrangeiro))
+            {
+                XmlString.Append("	<idEstrangeiro>" + dest.idEstrangeiro + "</idEstrangeiro>");
+            }
+
+            XmlString.Append("	<xNome>" + dest.xNome + "</xNome>");
+            XmlString.Append("	<enderDest>");
+            XmlString.Append("		<xLgr>" + dest.xLgr + "</xLgr>");
+            XmlString.Append("		<nro>" + dest.nro + "</nro>");
+
+            if (!String.IsNullOrEmpty(dest.xCpl))
+            {
+                XmlString.Append("		<xCpl>" + dest.xCpl + "</xCpl>");
+            }
+
+            XmlString.Append("		<xBairro>" + dest.xBairro + "</xBairro>");
+            XmlString.Append("		<cMun>" + dest.cMun + "</cMun>");
+            XmlString.Append("		<xMun>" + dest.xMun + "</xMun>");
+            XmlString.Append("		<UF>" + dest.UF.Trim() + "</UF>");
+
+            if (!String.IsNullOrEmpty(dest.CEP))
+                XmlString.Append("		<CEP>" + dest.CEP + "</CEP>");
+
+            XmlString.Append("		<cPais>1058</cPais>");
+            XmlString.Append("		<xPais>BRASIL</xPais>");
+
+            if (!String.IsNullOrEmpty(dest.fone))
+                XmlString.Append("		<fone>" + dest.fone + "</fone>");
+
+            XmlString.Append("	</enderDest>");
+
+            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            {
+                XmlString.Append("	<indIEDest>" + dest.indIEDest + "</indIEDest>");
+            }
+
             
-            if(!String.IsNullOrEmpty(this.dest.CNPJ))
-            {
-                this.XmlString.Append("	<CNPJ>" + this.dest.CNPJ + "</CNPJ>");
-            }
+            XmlString.Append("	<IE>" + dest.IE + "</IE>");
+            
 
-            if (!String.IsNullOrEmpty(this.dest.idEstrangeiro))
-            {
-                this.XmlString.Append("	<idEstrangeiro>" + this.dest.idEstrangeiro + "</idEstrangeiro>");
-            }
+            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0 && !String.IsNullOrEmpty(dest.email))
+                XmlString.Append("	<email>" + dest.email + "</email>");
 
-            this.XmlString.Append("	<xNome>" + this.dest.xNome + "</xNome>");
-            this.XmlString.Append("	<enderDest>");
-            this.XmlString.Append("		<xLgr>" + this.dest.xLgr + "</xLgr>");
-            this.XmlString.Append("		<nro>" + this.dest.nro + "</nro>");
-
-            if (!String.IsNullOrEmpty(this.dest.xCpl))
-            {
-                this.XmlString.Append("		<xCpl>" + this.dest.xCpl + "</xCpl>");
-            }
-
-            this.XmlString.Append("		<xBairro>" + this.dest.xBairro + "</xBairro>");
-            this.XmlString.Append("		<cMun>" + this.dest.cMun + "</cMun>");
-            this.XmlString.Append("		<xMun>" + this.dest.xMun + "</xMun>");
-            this.XmlString.Append("		<UF>" + this.dest.UF.Trim() + "</UF>");
-
-            if(!String.IsNullOrEmpty(this.dest.CEP))
-                this.XmlString.Append("		<CEP>" + this.dest.CEP + "</CEP>");
-
-            this.XmlString.Append("		<cPais>1058</cPais>");
-            this.XmlString.Append("		<xPais>BRASIL</xPais>");
-
-            if(!String.IsNullOrEmpty(this.dest.fone))
-                this.XmlString.Append("		<fone>" + this.dest.fone + "</fone>");
-
-            this.XmlString.Append("	</enderDest>");
-
-            if (this.NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
-            {
-                this.XmlString.Append("	<indIEDest>" + this.dest.indIEDest + "</indIEDest>");
-            }
-
-            if (!String.IsNullOrEmpty(this.dest.IE) && this.NFeContexto.Versao == NFeVersao.VERSAO_2_0_0)
-            {
-                this.XmlString.Append("	<IE>" + this.dest.IE + "</IE>");
-            }
-   
-            if(!String.IsNullOrEmpty(this.dest.email))
-                this.XmlString.Append("	<email>" + this.dest.email + "</email>");
-
-            this.XmlString.Append("</dest>");
+            XmlString.Append("</dest>");
         }
 
         private void MontaDET()
         {
-            for(int i=0;i< this.detList.Count;i++)
+            for (int i = 0; i < detList.Count; i++)
             {
-                this.XmlString.Append("<det nItem=\"" + (i + 1).ToString() + "\">");
-                this.XmlString.Append("	<prod>");
-                this.XmlString.Append("		<cProd>" + this.detList[i].cProd.Trim() + "</cProd>");
-                this.XmlString.Append("		<cEAN>" + this.detList[i].cEAN + "</cEAN>");
-                this.XmlString.Append("		<xProd>" + this.detList[i].xProd + "</xProd>");
-                this.XmlString.Append("		<NCM>" + this.detList[i].NCM + "</NCM>");
-                this.XmlString.Append("		<CFOP>" + this.detList[i].CFOP + "</CFOP>");
-                this.XmlString.Append("		<uCom>" + this.detList[i].uCom + "</uCom>");
-                this.XmlString.Append("		<qCom>" + this.detList[i].qCom + "</qCom>");
-                this.XmlString.Append("		<vUnCom>" + this.detList[i].vUnCom + "</vUnCom>");
-                this.XmlString.Append("		<vProd>" + this.detList[i].vProd + "</vProd>");
-                this.XmlString.Append("		<cEANTrib>" + this.detList[i].cEANTrib + "</cEANTrib>");
-                this.XmlString.Append("		<uTrib>" + this.detList[i].uTrib + "</uTrib>");
-                this.XmlString.Append("		<qTrib>" + this.detList[i].qTrib + "</qTrib>");
-                this.XmlString.Append("		<vUnTrib>" + this.detList[i].vUnTrib + "</vUnTrib>");
+                XmlString.Append("<det nItem=\"" + (i + 1) + "\">");
+                XmlString.Append("	<prod>");
+                XmlString.Append("		<cProd>" + detList[i].cProd.Trim() + "</cProd>");
+                XmlString.Append("		<cEAN>" + detList[i].cEAN + "</cEAN>");
+                XmlString.Append("		<xProd>" + detList[i].xProd + "</xProd>");
+                XmlString.Append("		<NCM>" + detList[i].NCM + "</NCM>");
+                XmlString.Append("		<CFOP>" + detList[i].CFOP + "</CFOP>");
+                XmlString.Append("		<uCom>" + detList[i].uCom + "</uCom>");
+                XmlString.Append("		<qCom>" + detList[i].qCom + "</qCom>");
+                XmlString.Append("		<vUnCom>" + detList[i].vUnCom + "</vUnCom>");
+                XmlString.Append("		<vProd>" + detList[i].vProd + "</vProd>");
+                XmlString.Append("		<cEANTrib>" + detList[i].cEANTrib + "</cEANTrib>");
+                XmlString.Append("		<uTrib>" + detList[i].uTrib + "</uTrib>");
+                XmlString.Append("		<qTrib>" + detList[i].qTrib + "</qTrib>");
+                XmlString.Append("		<vUnTrib>" + detList[i].vUnTrib + "</vUnTrib>");
 
-                if(!String.IsNullOrEmpty(this.detList[i].vFrete))
+                if (!String.IsNullOrEmpty(detList[i].vFrete))
                 {
-                    this.XmlString.Append("		<vFrete>" + this.detList[i].vFrete + "</vFrete>");
+                    XmlString.Append("		<vFrete>" + detList[i].vFrete + "</vFrete>");
                 }
-                if (!String.IsNullOrEmpty(this.detList[i].vDesc))
+                if (!String.IsNullOrEmpty(detList[i].vDesc))
                 {
-                    this.XmlString.Append("		<vDesc>" + this.detList[i].vDesc + "</vDesc>");
+                    XmlString.Append("		<vDesc>" + detList[i].vDesc + "</vDesc>");
                 }
-                
-                this.XmlString.Append("		<indTot>" + this.detList[i].indTot + "</indTot>");
-                this.XmlString.Append("	</prod>");
 
-                this.XmlString.Append("	<imposto>");
+                XmlString.Append("		<indTot>" + detList[i].indTot + "</indTot>");
+                XmlString.Append("	</prod>");
 
-                if(!string.IsNullOrEmpty(this.detList[i].vTotTrib))
-                    this.XmlString.Append("	<vTotTrib>" +  this.detList[i].vTotTrib + "</vTotTrib>");
+                XmlString.Append("	<imposto>");
 
-                this.MontaDET_ICMS(this.detList[i]);
-                this.MontaDET_IPI(this.detList[i]);
-                this.MontaDET_PIS(this.detList[i]);
-                this.MontaDET_COFINS(this.detList[i]);
+                if (!string.IsNullOrEmpty(detList[i].vTotTrib))
+                    XmlString.Append("	<vTotTrib>" + detList[i].vTotTrib + "</vTotTrib>");
 
-                this.XmlString.Append("	</imposto>");
+                MontaDET_ICMS(detList[i]);
+                MontaDET_IPI(detList[i]);
+                MontaDET_PIS(detList[i]);
+                MontaDET_COFINS(detList[i]);
 
-                this.XmlString.Append("</det>");
+                XmlString.Append("	</imposto>");
+
+                XmlString.Append("</det>");
             }
         }
 
-        private void MontaDET_ICMS(Model.Nota.DET det)
+        private void MontaDET_ICMS(DET det)
         {
-            this.XmlString.Append("<ICMS>");
+            XmlString.Append("<ICMS>");
 
             switch (det.icms)
             {
-                case Model.Nota.Enum.ICMS.ICMS00:
-                    this.XmlString.Append("<ICMS00>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    this.XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    this.XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
-                    this.XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    this.XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-                    this.XmlString.Append("</ICMS00>");
+                case ICMS.ICMS00:
+                    XmlString.Append("<ICMS00>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
+                    XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
+                    XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
+                    XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                    XmlString.Append("</ICMS00>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS10:
-                    this.XmlString.Append("<ICMS10>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    this.XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    this.XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
-                    this.XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    this.XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-                    this.XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                case ICMS.ICMS10:
+                    XmlString.Append("<ICMS10>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
+                    XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
+                    XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
+                    XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                    XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
 
                     if (!String.IsNullOrEmpty(det.icms_pMVAST))
                     {
-                        this.XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
                     }
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
                     }
 
-                    this.XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    this.XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    this.XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
+                    XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
+                    XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
 
-                    this.XmlString.Append("</ICMS10>");
+                    XmlString.Append("</ICMS10>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS20:
-                    this.XmlString.Append("<ICMS20>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    this.XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    this.XmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
-                    this.XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
-                    this.XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    this.XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-                    this.XmlString.Append("</ICMS20>");
+                case ICMS.ICMS20:
+                    XmlString.Append("<ICMS20>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
+                    XmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
+                    XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
+                    XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
+                    XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                    XmlString.Append("</ICMS20>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS30:
-                    this.XmlString.Append("<ICMS30>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    this.XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
-                    this.XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
-                    this.XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
-                    this.XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    this.XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    this.XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
-                    this.XmlString.Append("</ICMS30>");
+                case ICMS.ICMS30:
+                    XmlString.Append("<ICMS30>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                    XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                    XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                    XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
+                    XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
+                    XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    XmlString.Append("</ICMS30>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS40_50:
-                    this.XmlString.Append("<ICMS40>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    this.XmlString.Append("</ICMS40>");
+                case ICMS.ICMS40_50:
+                    XmlString.Append("<ICMS40>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    XmlString.Append("</ICMS40>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS51:
-                    this.XmlString.Append("<ICMS51>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    this.XmlString.Append("</ICMS51>");
+                case ICMS.ICMS51:
+                    XmlString.Append("<ICMS51>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    XmlString.Append("</ICMS51>");
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    }
-
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
-                    {
-                        this.XmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
+                        XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
                     }
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
+                        XmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
                     }
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
+                        XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
                     }
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                        XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
+                    }
+
+                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    {
+                        XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
                     }
                     break;
-                case Model.Nota.Enum.ICMS.ICMS60:
-                    this.XmlString.Append("<ICMS60>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    this.XmlString.Append("</ICMS60>");
+                case ICMS.ICMS60:
+                    XmlString.Append("<ICMS60>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    XmlString.Append("</ICMS60>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS70:
-                    this.XmlString.Append("<ICMS70>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    this.XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    this.XmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
-                    this.XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
-                    this.XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    this.XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-                    this.XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                case ICMS.ICMS70:
+                    XmlString.Append("<ICMS70>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
+                    XmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
+                    XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
+                    XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
+                    XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                    XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
 
                     if (!String.IsNullOrEmpty(det.icms_pMVAST))
                     {
-                        this.XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
                     }
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
                     }
 
-                    this.XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    this.XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    this.XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
-                    this.XmlString.Append("</ICMS70>");
+                    XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
+                    XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
+                    XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    XmlString.Append("</ICMS70>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS90:
-                    this.XmlString.Append("<ICMS90>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    this.XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    this.XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
+                case ICMS.ICMS90:
+                    XmlString.Append("<ICMS90>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
+                    XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBC))
                     {
-                        this.XmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
+                        XmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
                     }
 
-                    this.XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    this.XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-                    this.XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                    XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
+                    XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                    XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
 
                     if (!String.IsNullOrEmpty(det.icms_pMVAST))
                     {
-                        this.XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
                     }
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
                     }
 
-                    this.XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    this.XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    this.XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
-                    this.XmlString.Append("</ICMS90>");
+                    XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
+                    XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
+                    XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    XmlString.Append("</ICMS90>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS101:
-                    this.XmlString.Append("<ICMSSN101>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    this.XmlString.Append("    <pCredSN>" + det.icms_pCredSN + "</pCredSN>");
-                    this.XmlString.Append("    <vCredICMSSN>" + det.icms_vCredICMSSN + "</vCredICMSSN>");
-                    this.XmlString.Append("</ICMSSN101>");
+                case ICMS.ICMS101:
+                    XmlString.Append("<ICMSSN101>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
+                    XmlString.Append("    <pCredSN>" + det.icms_pCredSN + "</pCredSN>");
+                    XmlString.Append("    <vCredICMSSN>" + det.icms_vCredICMSSN + "</vCredICMSSN>");
+                    XmlString.Append("</ICMSSN101>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS102_400:
-                    this.XmlString.Append("<ICMSSN102>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    this.XmlString.Append("</ICMSSN102>");
+                case ICMS.ICMS102_400:
+                    XmlString.Append("<ICMSSN102>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
+                    XmlString.Append("</ICMSSN102>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS201:
-                    this.XmlString.Append("<ICMSSN201>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    this.XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                case ICMS.ICMS201:
+                    XmlString.Append("<ICMSSN201>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
+                    XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
                     }
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
                     }
 
-                    this.XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    this.XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    this.XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
+                    XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
+                    XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
 
-                    this.XmlString.Append("</ICMSSN201>");
+                    XmlString.Append("</ICMSSN201>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS202:
-                    this.XmlString.Append("<ICMSSN202>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    this.XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                case ICMS.ICMS202:
+                    XmlString.Append("<ICMSSN202>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
+                    XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
 
                     if (!String.IsNullOrEmpty(det.icms_pMVAST))
                     {
-                        this.XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
                     }
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
                     }
 
-                    this.XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    this.XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    this.XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
+                    XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
+                    XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
 
-                    this.XmlString.Append("</ICMSSN202>");
+                    XmlString.Append("</ICMSSN202>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS500:
-                    this.XmlString.Append("<ICMSSN500>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    this.XmlString.Append("    <vBCSTRet>" + det.icms_vBCSTRet + "</vBCSTRet>");
-                    this.XmlString.Append("    <vICMSSTRet>" + det.icms_vICMSSTRet + "</vICMSSTRet>");
-                    this.XmlString.Append("</ICMSSN500>");
+                case ICMS.ICMS500:
+                    XmlString.Append("<ICMSSN500>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
+                    XmlString.Append("    <vBCSTRet>" + det.icms_vBCSTRet + "</vBCSTRet>");
+                    XmlString.Append("    <vICMSSTRet>" + det.icms_vICMSSTRet + "</vICMSSTRet>");
+                    XmlString.Append("</ICMSSN500>");
                     break;
-                case Model.Nota.Enum.ICMS.ICMS900:
-                    this.XmlString.Append("<ICMSSN900>");
-                    this.XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    this.XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    this.XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    this.XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
+                case ICMS.ICMS900:
+                    XmlString.Append("<ICMSSN900>");
+                    XmlString.Append("    <orig>" + det.icms_orig + "</orig>");
+                    XmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
+                    XmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
+                    XmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBC))
                     {
-                        this.XmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
+                        XmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
                     }
 
-                    this.XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    this.XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-                    this.XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                    XmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
+                    XmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                    XmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
 
                     if (!String.IsNullOrEmpty(det.icms_pMVAST))
                     {
-                        this.XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        XmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
                     }
 
                     if (!String.IsNullOrEmpty(det.icms_pRedBCST))
                     {
-                        this.XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        XmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
                     }
 
-                    this.XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    this.XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    this.XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
-                    this.XmlString.Append("    <pCredSN>" + det.icms_pCredSN + "</pCredSN>");
-                    this.XmlString.Append("    <vCredICMSSN>" + det.icms_vCredICMSSN + "</vCredICMSSN>");
-                    this.XmlString.Append("</ICMSSN900>");
+                    XmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
+                    XmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
+                    XmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    XmlString.Append("    <pCredSN>" + det.icms_pCredSN + "</pCredSN>");
+                    XmlString.Append("    <vCredICMSSN>" + det.icms_vCredICMSSN + "</vCredICMSSN>");
+                    XmlString.Append("</ICMSSN900>");
                     break;
-                    
             }
 
-            this.XmlString.Append("</ICMS>");
+            XmlString.Append("</ICMS>");
         }
 
-        private void MontaDET_IPI(Model.Nota.DET det)
+        private void MontaDET_IPI(DET det)
         {
             if (!String.IsNullOrEmpty(det.ipi_cIEnq))
             {
+                XmlString.Append("<IPI>");
 
-                this.XmlString.Append("<IPI>");
-
-                this.XmlString.Append("<cEnq>" + det.ipi_cIEnq + "</cEnq>");
+                XmlString.Append("<cEnq>" + det.ipi_cIEnq + "</cEnq>");
 
                 switch (det.ipi)
                 {
+                    case IPI.IPI00_49_50_99:
+                        XmlString.Append("<IPITrib>");
 
-                    case Model.Nota.Enum.IPI.IPI00_49_50_99:
-                        this.XmlString.Append("<IPITrib>");
-
-                        this.XmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
+                        XmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
 
                         if (!String.IsNullOrEmpty(det.ipi_vBC))
                         {
-                            this.XmlString.Append("    <vBC>" + det.ipi_vBC + "</vBC>");
-                            this.XmlString.Append("    <pIPI>" + det.ipi_pIPI + "</pIPI>");
+                            XmlString.Append("    <vBC>" + det.ipi_vBC + "</vBC>");
+                            XmlString.Append("    <pIPI>" + det.ipi_pIPI + "</pIPI>");
                         }
                         else
                         {
-                            this.XmlString.Append("    <qUnid>" + det.ipi_qUnid + "</qUnid>");
-                            this.XmlString.Append("    <vUnid>" + det.ipi_vUnid + "</vUnid>");
+                            XmlString.Append("    <qUnid>" + det.ipi_qUnid + "</qUnid>");
+                            XmlString.Append("    <vUnid>" + det.ipi_vUnid + "</vUnid>");
                         }
 
-                        this.XmlString.Append("    <vIPI>" + det.ipi_vIPI + "</vIPI>");
+                        XmlString.Append("    <vIPI>" + det.ipi_vIPI + "</vIPI>");
 
-                        this.XmlString.Append("</IPITrib>");
+                        XmlString.Append("</IPITrib>");
                         break;
-                    case Model.Nota.Enum.IPI.IPI01_55:
-                        this.XmlString.Append("<IPINT>");
-                        this.XmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
-                        this.XmlString.Append("</IPINT>");
+                    case IPI.IPI01_55:
+                        XmlString.Append("<IPINT>");
+                        XmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
+                        XmlString.Append("</IPINT>");
                         break;
                 }
 
-                this.XmlString.Append("</IPI>");
+                XmlString.Append("</IPI>");
             }
         }
 
-        private void MontaDET_PIS(Model.Nota.DET det)
+        private void MontaDET_PIS(DET det)
         {
-            this.XmlString.Append("<PIS>");
+            XmlString.Append("<PIS>");
 
             switch (det.pis)
             {
-                case Model.Nota.Enum.PIS.PIS01_02:
-                    this.XmlString.Append("<PISAliq>");
-                    this.XmlString.Append("    <CST>" + det.pis_CST + "</CST>");
-                    this.XmlString.Append("    <vBC>" + det.pis_vBC + "</vBC>");
-                    this.XmlString.Append("    <pPIS>" + det.pis_pPIS + "</pPIS>");
-                    this.XmlString.Append("    <vPIS>" + det.pis_vPIS + "</vPIS>");
-                    this.XmlString.Append("</PISAliq>");
+                case PIS.PIS01_02:
+                    XmlString.Append("<PISAliq>");
+                    XmlString.Append("    <CST>" + det.pis_CST + "</CST>");
+                    XmlString.Append("    <vBC>" + det.pis_vBC + "</vBC>");
+                    XmlString.Append("    <pPIS>" + det.pis_pPIS + "</pPIS>");
+                    XmlString.Append("    <vPIS>" + det.pis_vPIS + "</vPIS>");
+                    XmlString.Append("</PISAliq>");
                     break;
-                case Model.Nota.Enum.PIS.PIS03:
-                    this.XmlString.Append("<PISQtde>");
-                    this.XmlString.Append("    <CST>" + det.pis_CST + "</CST>");
-                    this.XmlString.Append("    <qBCProd>" + det.pis_qBCProd + "</qBCProd>");
-                    this.XmlString.Append("    <vAliqProd>" + det.pis_vAliqProd + "</vAliqProd>");
-                    this.XmlString.Append("    <vPIS>" + det.pis_vPIS + "</vPIS>");
-                    this.XmlString.Append("</PISQtde>");
+                case PIS.PIS03:
+                    XmlString.Append("<PISQtde>");
+                    XmlString.Append("    <CST>" + det.pis_CST + "</CST>");
+                    XmlString.Append("    <qBCProd>" + det.pis_qBCProd + "</qBCProd>");
+                    XmlString.Append("    <vAliqProd>" + det.pis_vAliqProd + "</vAliqProd>");
+                    XmlString.Append("    <vPIS>" + det.pis_vPIS + "</vPIS>");
+                    XmlString.Append("</PISQtde>");
                     break;
-                case Model.Nota.Enum.PIS.PIS04_09:
-                    this.XmlString.Append("<PISNT>");
-                    this.XmlString.Append("    <CST>" + det.pis_CST + "</CST>");
-                    this.XmlString.Append("</PISNT>");
+                case PIS.PIS04_09:
+                    XmlString.Append("<PISNT>");
+                    XmlString.Append("    <CST>" + det.pis_CST + "</CST>");
+                    XmlString.Append("</PISNT>");
                     break;
-                case Model.Nota.Enum.PIS.PIS99:
-                    this.XmlString.Append("<PISOutr>");
-                    this.XmlString.Append("    <CST>" + det.pis_CST + "</CST>");
+                case PIS.PIS99:
+                    XmlString.Append("<PISOutr>");
+                    XmlString.Append("    <CST>" + det.pis_CST + "</CST>");
 
                     if (!String.IsNullOrEmpty(det.pis_vBC) && !String.IsNullOrEmpty(det.pis_pPIS))
                     {
-                        this.XmlString.Append("    <vBC>" + det.pis_vBC + "</vBC>");
-                        this.XmlString.Append("    <pPIS>" + det.pis_pPIS + "</pPIS>");
+                        XmlString.Append("    <vBC>" + det.pis_vBC + "</vBC>");
+                        XmlString.Append("    <pPIS>" + det.pis_pPIS + "</pPIS>");
                     }
                     else
                     {
-                        this.XmlString.Append("    <qBCProd>" + det.pis_qBCProd + "</qBCProd>");
-                        this.XmlString.Append("    <vAliqProd>" + det.pis_vAliqProd + "</vAliqProd>");
+                        XmlString.Append("    <qBCProd>" + det.pis_qBCProd + "</qBCProd>");
+                        XmlString.Append("    <vAliqProd>" + det.pis_vAliqProd + "</vAliqProd>");
                     }
 
-                    this.XmlString.Append("    <vPIS>" + det.pis_vPIS + "</vPIS>");
-                    this.XmlString.Append("</PISOutr>");
+                    XmlString.Append("    <vPIS>" + det.pis_vPIS + "</vPIS>");
+                    XmlString.Append("</PISOutr>");
                     break;
             }
 
-            this.XmlString.Append("</PIS>");
+            XmlString.Append("</PIS>");
         }
 
 
-        private void MontaDET_COFINS(Model.Nota.DET det)
+        private void MontaDET_COFINS(DET det)
         {
-            this.XmlString.Append("<COFINS>");
+            XmlString.Append("<COFINS>");
 
             switch (det.cofins)
             {
-                case Model.Nota.Enum.COFINS.CST01_02:
-                    this.XmlString.Append("<COFINSAliq>");
-                    this.XmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
-                    this.XmlString.Append("    <vBC>" + det.cofins_vBC + "</vBC>");
-                    this.XmlString.Append("    <pCOFINS>" + det.cofins_pCOFINS + "</pCOFINS>");
-                    this.XmlString.Append("    <vCOFINS>" + det.cofins_vCOFINS + "</vCOFINS>");
-                    this.XmlString.Append("</COFINSAliq>");
+                case COFINS.CST01_02:
+                    XmlString.Append("<COFINSAliq>");
+                    XmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
+                    XmlString.Append("    <vBC>" + det.cofins_vBC + "</vBC>");
+                    XmlString.Append("    <pCOFINS>" + det.cofins_pCOFINS + "</pCOFINS>");
+                    XmlString.Append("    <vCOFINS>" + det.cofins_vCOFINS + "</vCOFINS>");
+                    XmlString.Append("</COFINSAliq>");
                     break;
-                case Model.Nota.Enum.COFINS.CST03:
-                    this.XmlString.Append("<COFINSQtde>");
-                    this.XmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
-                    this.XmlString.Append("    <qBCProd>" + det.cofins_qBCProd + "</qBCProd>");
-                    this.XmlString.Append("    <vAliqProd>" + det.cofins_vAliqProd + "</vAliqProd>");
-                    this.XmlString.Append("    <vCOFINS>" + det.cofins_vCOFINS + "</vCOFINS>");
-                    this.XmlString.Append("</COFINSQtde>");
+                case COFINS.CST03:
+                    XmlString.Append("<COFINSQtde>");
+                    XmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
+                    XmlString.Append("    <qBCProd>" + det.cofins_qBCProd + "</qBCProd>");
+                    XmlString.Append("    <vAliqProd>" + det.cofins_vAliqProd + "</vAliqProd>");
+                    XmlString.Append("    <vCOFINS>" + det.cofins_vCOFINS + "</vCOFINS>");
+                    XmlString.Append("</COFINSQtde>");
                     break;
-                case Model.Nota.Enum.COFINS.CST04_09:
-                    this.XmlString.Append("<COFINSNT>");
-                    this.XmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
-                    this.XmlString.Append("</COFINSNT>");
+                case COFINS.CST04_09:
+                    XmlString.Append("<COFINSNT>");
+                    XmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
+                    XmlString.Append("</COFINSNT>");
                     break;
-                case Model.Nota.Enum.COFINS.CST99:
-                    this.XmlString.Append("<COFINSOutr>");
-                    this.XmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
+                case COFINS.CST99:
+                    XmlString.Append("<COFINSOutr>");
+                    XmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
 
                     if (!String.IsNullOrEmpty(det.cofins_vBC) && !String.IsNullOrEmpty(det.cofins_pCOFINS))
                     {
-                        this.XmlString.Append("    <vBC>" + det.cofins_vBC + "</vBC>");
-                        this.XmlString.Append("    <pCOFINS>" + det.cofins_pCOFINS + "</pCOFINS>");
+                        XmlString.Append("    <vBC>" + det.cofins_vBC + "</vBC>");
+                        XmlString.Append("    <pCOFINS>" + det.cofins_pCOFINS + "</pCOFINS>");
                     }
                     else
                     {
-                        this.XmlString.Append("    <qBCProd>" + det.cofins_qBCProd + "</qBCProd>");
-                        this.XmlString.Append("    <vAliqProd>" + det.cofins_vAliqProd + "</vAliqProd>");
+                        XmlString.Append("    <qBCProd>" + det.cofins_qBCProd + "</qBCProd>");
+                        XmlString.Append("    <vAliqProd>" + det.cofins_vAliqProd + "</vAliqProd>");
                     }
 
-                    this.XmlString.Append("    <vCOFINS>" + det.cofins_vCOFINS + "</vCOFINS>");
-                    this.XmlString.Append("</COFINSOutr>");
+                    XmlString.Append("    <vCOFINS>" + det.cofins_vCOFINS + "</vCOFINS>");
+                    XmlString.Append("</COFINSOutr>");
                     break;
             }
 
-            this.XmlString.Append("</COFINS>");
+            XmlString.Append("</COFINS>");
         }
 
         private void MontaTOTAL()
         {
-            this.XmlString.Append("<total>");
-            this.XmlString.Append("	<ICMSTot>");
-            this.XmlString.Append("		<vBC>" + this.total.vBC + "</vBC>");
-            this.XmlString.Append("		<vICMS>" + this.total.vICMS + "</vICMS>");
-            if(this.NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
-                this.XmlString.Append("		<vICMSDeson>" + this.total.vICMSDeson + "</vICMSDeson>");
-            this.XmlString.Append("		<vBCST>" + this.total.vBCST + "</vBCST>");
-            this.XmlString.Append("		<vST>" + this.total.vST + "</vST>");
-            this.XmlString.Append("		<vProd>" + this.total.vProd + "</vProd>");
-            this.XmlString.Append("		<vFrete>" + this.total.vFrete + "</vFrete>");
-            this.XmlString.Append("		<vSeg>" + this.total.vSeg + "</vSeg>");
-            this.XmlString.Append("		<vDesc>" + this.total.vDesc + "</vDesc>");
-            this.XmlString.Append("		<vII>0.00</vII>");
-            this.XmlString.Append("		<vIPI>" + this.total.vIPI + "</vIPI>");
-            this.XmlString.Append("		<vPIS>0.00</vPIS>");
-            this.XmlString.Append("		<vCOFINS>0.00</vCOFINS>");
-            this.XmlString.Append("		<vOutro>" + this.total.vOutro + "</vOutro>");
-            this.XmlString.Append("		<vNF>" + this.total.vNF + "</vNF>");
+            XmlString.Append("<total>");
+            XmlString.Append("	<ICMSTot>");
+            XmlString.Append("		<vBC>" + total.vBC + "</vBC>");
+            XmlString.Append("		<vICMS>" + total.vICMS + "</vICMS>");
+            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+                XmlString.Append("		<vICMSDeson>" + total.vICMSDeson + "</vICMSDeson>");
+            XmlString.Append("		<vBCST>" + total.vBCST + "</vBCST>");
+            XmlString.Append("		<vST>" + total.vST + "</vST>");
+            XmlString.Append("		<vProd>" + total.vProd + "</vProd>");
+            XmlString.Append("		<vFrete>" + total.vFrete + "</vFrete>");
+            XmlString.Append("		<vSeg>" + total.vSeg + "</vSeg>");
+            XmlString.Append("		<vDesc>" + total.vDesc + "</vDesc>");
+            XmlString.Append("		<vII>0.00</vII>");
+            XmlString.Append("		<vIPI>" + total.vIPI + "</vIPI>");
+            XmlString.Append("		<vPIS>0.00</vPIS>");
+            XmlString.Append("		<vCOFINS>0.00</vCOFINS>");
+            XmlString.Append("		<vOutro>" + total.vOutro + "</vOutro>");
+            XmlString.Append("		<vNF>" + total.vNF + "</vNF>");
 
-            if (!string.IsNullOrEmpty(this.total.vTotTrib))
-                this.XmlString.Append("		<vTotTrib>" + this.total.vTotTrib + "</vTotTrib>");
-            
-            this.XmlString.Append("	</ICMSTot>");
-            this.XmlString.Append("</total>");
+            if (!string.IsNullOrEmpty(total.vTotTrib))
+                XmlString.Append("		<vTotTrib>" + total.vTotTrib + "</vTotTrib>");
+
+            XmlString.Append("	</ICMSTot>");
+            XmlString.Append("</total>");
         }
 
         private void MontaTRANSP()
         {
-            this.XmlString.Append("<transp>");
-            this.XmlString.Append("	<modFrete>" + this.transp.modFrete + "</modFrete>");
+            XmlString.Append("<transp>");
+            XmlString.Append("	<modFrete>" + transp.modFrete + "</modFrete>");
 
-            if(!String.IsNullOrEmpty(this.transp.CNPJ)){
-                this.XmlString.Append("	<transporta>");
-                
-                if(!String.IsNullOrEmpty(this.transp.CNPJ))
-                    this.XmlString.Append("		<CNPJ>" + this.transp.CNPJ + "</CNPJ>");
+            if (!String.IsNullOrEmpty(transp.CNPJ))
+            {
+                XmlString.Append("	<transporta>");
+
+                if (!String.IsNullOrEmpty(transp.CNPJ))
+                    XmlString.Append("		<CNPJ>" + transp.CNPJ + "</CNPJ>");
 
                 /* 
                 if(!String.IsNullOrEmpty(this.transp.CPF))
                     this.XmlString.Append("		<CPF>" + this.transp.CPF + "</CPF>");
                 */
 
-                if(!String.IsNullOrEmpty(this.transp.xNome))
-                    this.XmlString.Append("		<xNome>" + this.transp.xNome + "</xNome>");
+                if (!String.IsNullOrEmpty(transp.xNome))
+                    XmlString.Append("		<xNome>" + transp.xNome + "</xNome>");
 
-                if(!String.IsNullOrEmpty(this.transp.IE)){
-                    this.XmlString.Append("		<IE>" + this.transp.IE + "</IE>");
-                }
-
-                if(!String.IsNullOrEmpty(this.transp.xEnder)){
-                    this.XmlString.Append("		<xEnder>" + this.transp.xEnder + "</xEnder>");
-                }
-
-                if(!String.IsNullOrEmpty(this.transp.xMun)){
-                    this.XmlString.Append("		<xMun>" + this.transp.xMun + "</xMun>");
-                }
-
-                if(!String.IsNullOrEmpty(this.transp.UF)){
-                    this.XmlString.Append("		<UF>" + this.transp.UF.Trim() + "</UF>");
-                }
-
-                this.XmlString.Append("	</transporta>");
-            }
-            if(!String.IsNullOrEmpty(this.transp.veic_placa)){
-                this.XmlString.Append("	<veicTransp>");
-                this.XmlString.Append("		<placa>" + this.transp.veic_placa + "</placa>");
-                this.XmlString.Append("		<UF>" + this.transp.veic_UF + "</UF>");
-                this.XmlString.Append("	</veicTransp>");
-            }
-
-            if (!String.IsNullOrEmpty(this.transp.qVol))
-            {
-                this.XmlString.Append("	<vol>");
-                this.XmlString.Append("		<qVol>" + this.transp.qVol + "</qVol>");
-                this.XmlString.Append("		<esp>" + this.transp.esp + "</esp>");
-            
-
-                if (!String.IsNullOrEmpty(this.transp.marca))
+                if (!String.IsNullOrEmpty(transp.IE))
                 {
-                    this.XmlString.Append("		<marca>" + this.transp.marca + "</marca>");
+                    XmlString.Append("		<IE>" + transp.IE + "</IE>");
                 }
 
-                if(!String.IsNullOrEmpty(this.transp.nVol))
-                    this.XmlString.Append("		<nVol>" + this.transp.nVol + "</nVol>");
+                if (!String.IsNullOrEmpty(transp.xEnder))
+                {
+                    XmlString.Append("		<xEnder>" + transp.xEnder + "</xEnder>");
+                }
 
-                if(!String.IsNullOrEmpty(this.transp.pesoL))
-                    this.XmlString.Append("		<pesoL>" + this.transp.pesoL + "</pesoL>");
+                if (!String.IsNullOrEmpty(transp.xMun))
+                {
+                    XmlString.Append("		<xMun>" + transp.xMun + "</xMun>");
+                }
 
-                if(!String.IsNullOrEmpty(this.transp.pesoB))
-                    this.XmlString.Append("		<pesoB>" + this.transp.pesoB + "</pesoB>");
+                if (!String.IsNullOrEmpty(transp.UF))
+                {
+                    XmlString.Append("		<UF>" + transp.UF.Trim() + "</UF>");
+                }
 
-                this.XmlString.Append("	</vol>");
+                XmlString.Append("	</transporta>");
             }
-            this.XmlString.Append("</transp>");
+            if (!String.IsNullOrEmpty(transp.veic_placa))
+            {
+                XmlString.Append("	<veicTransp>");
+                XmlString.Append("		<placa>" + transp.veic_placa + "</placa>");
+                XmlString.Append("		<UF>" + transp.veic_UF + "</UF>");
+                XmlString.Append("	</veicTransp>");
+            }
+
+            if (!String.IsNullOrEmpty(transp.qVol))
+            {
+                XmlString.Append("	<vol>");
+                XmlString.Append("		<qVol>" + transp.qVol + "</qVol>");
+                XmlString.Append("		<esp>" + transp.esp + "</esp>");
+
+
+                if (!String.IsNullOrEmpty(transp.marca))
+                {
+                    XmlString.Append("		<marca>" + transp.marca + "</marca>");
+                }
+
+                if (!String.IsNullOrEmpty(transp.nVol))
+                    XmlString.Append("		<nVol>" + transp.nVol + "</nVol>");
+
+                if (!String.IsNullOrEmpty(transp.pesoL))
+                    XmlString.Append("		<pesoL>" + transp.pesoL + "</pesoL>");
+
+                if (!String.IsNullOrEmpty(transp.pesoB))
+                    XmlString.Append("		<pesoB>" + transp.pesoB + "</pesoB>");
+
+                XmlString.Append("	</vol>");
+            }
+            XmlString.Append("</transp>");
         }
 
         private void MontaCOBR()
         {
-            if (!String.IsNullOrEmpty(this.cobr.nFat))
+            if (!String.IsNullOrEmpty(cobr.nFat))
             {
+                XmlString.Append("<cobr>");
+                XmlString.Append("	<fat>");
+                XmlString.Append("		<nFat>" + cobr.nFat + "</nFat>");
+                XmlString.Append("		<vOrig>" + cobr.vOrig + "</vOrig>");
+                XmlString.Append("		<vLiq>" + cobr.vLiq + "</vLiq>");
+                XmlString.Append("	</fat>");
 
-                this.XmlString.Append("<cobr>");
-                this.XmlString.Append("	<fat>");
-                this.XmlString.Append("		<nFat>" + this.cobr.nFat + "</nFat>");
-                this.XmlString.Append("		<vOrig>" + this.cobr.vOrig + "</vOrig>");
-                this.XmlString.Append("		<vLiq>" + this.cobr.vLiq + "</vLiq>");
-                this.XmlString.Append("	</fat>");
-
-                for (int i = 0; i < this.cobr.dup.Count; i++)
+                for (int i = 0; i < cobr.dup.Count; i++)
                 {
-                    this.XmlString.Append("	<dup>");
-                    this.XmlString.Append("		<nDup>" + this.cobr.dup[i].nDup + "</nDup>");
-                    this.XmlString.Append("		<dVenc>" + this.cobr.dup[i].dVenc + "</dVenc>");
-                    this.XmlString.Append("		<vDup>" + this.cobr.dup[i].vDup + "</vDup>");
-                    this.XmlString.Append("	</dup>");
+                    XmlString.Append("	<dup>");
+                    XmlString.Append("		<nDup>" + cobr.dup[i].nDup + "</nDup>");
+                    XmlString.Append("		<dVenc>" + cobr.dup[i].dVenc + "</dVenc>");
+                    XmlString.Append("		<vDup>" + cobr.dup[i].vDup + "</vDup>");
+                    XmlString.Append("	</dup>");
                 }
 
-                this.XmlString.Append("</cobr>");
+                XmlString.Append("</cobr>");
             }
         }
     }

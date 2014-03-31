@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Bll.Servicos
 {
     public class Inutilizacao
     {
-        public void NfeInutilizacaoNF2(String cUf, String ano, String CNPJ, String mod, String serie, String inicio, String fim, String justificativa)
+        public void NfeInutilizacaoNF2(String cUf, String ano, String CNPJ, String mod, String serie, String inicio,
+            String fim, String justificativa)
         {
             //Monta corpo do xml de envio
-            StringBuilder xmlString = new StringBuilder();
+            var xmlString = new StringBuilder();
             xmlString.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             xmlString.Append("<infInut xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"2.00\">");
             xmlString.Append("    <Id>2</Id>");

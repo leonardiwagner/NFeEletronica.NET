@@ -1,5 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.portalfiscal.inf.br/nfe/wsdl/NfeRecepcao2" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeRecepcao2" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+                  xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"
+                  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                  xmlns:tns="http://www.portalfiscal.inf.br/nfe/wsdl/NfeRecepcao2"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeRecepcao2"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Serviço destinado à recepção de mensagens de lote de NF-e.</wsdl:documentation>
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeRecepcao2">
@@ -46,7 +55,8 @@
   <wsdl:binding name="NfeRecepcao2Soap12" type="tns:NfeRecepcao2Soap12">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="nfeRecepcaoLote2">
-      <soap12:operation soapAction="http://www.portalfiscal.inf.br/nfe/wsdl/NfeRecepcao2/nfeRecepcaoLote2" style="document" />
+      <soap12:operation soapAction="http://www.portalfiscal.inf.br/nfe/wsdl/NfeRecepcao2/nfeRecepcaoLote2"
+                        style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
         <soap12:header message="tns:nfeRecepcaoLote2nfeCabecMsg" part="nfeCabecMsg" use="literal" />

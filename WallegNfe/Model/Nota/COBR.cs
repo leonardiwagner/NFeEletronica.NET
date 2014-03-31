@@ -1,28 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace WallegNFe.Model.Nota
 {
     public class COBR
     {
+        public COBR()
+        {
+            dup = new List<DUP>();
+        }
+
         public String nFat { get; set; }
         public String vOrig { get; set; }
         public String vLiq { get; set; }
 
         public List<DUP> dup { get; set; }
 
-        public COBR()
-        {
-            this.dup = new List<DUP>();
-        }
-
         public void addDup(DUP dup)
         {
             this.dup.Add(dup);
         }
-
     }
 
     public class DUP

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Bll.Servicos
@@ -10,7 +8,7 @@ namespace Bll.Servicos
         public void ConsultaCadastro2()
         {
             //Monta corpo do xml de envio
-            StringBuilder xmlString = new StringBuilder();
+            var xmlString = new StringBuilder();
             xmlString.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             xmlString.Append("<ConsCad xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"2.00\">");
             xmlString.Append("    <infCons>");

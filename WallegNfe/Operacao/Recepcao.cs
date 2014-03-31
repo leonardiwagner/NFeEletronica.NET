@@ -1,45 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-//Trabalhar com o certificado
-using System.Security.Cryptography.X509Certificates;
+﻿//Trabalhar com o certificado
 
 //Trabalhar com o xml
+using System;
+using System.Collections.Generic;
 using System.Xml;
+using WallegNFe.Bll;
+using WallegNFe.NfeRecepcao2;
+using WallegNFe.Versao;
 
 namespace WallegNFe.Operacao
 {
     public class Recepcao : BaseOperacao
     {
-        private List<WallegNFe.Nota> NotaLista = new List<WallegNFe.Nota>();
+        private readonly String ArquivoSchema = "";
+        private readonly List<Nota> NotaLista = new List<Nota>();
         private readonly bool Sincrono;
-        private String ArquivoSchema = "";
 
 
-        public Recepcao(WallegNFe.NFeContexto nfeContexto) : base(nfeContexto) 
-        {
-            if (nfeContexto.Versao == NFeVersao.VERSAO_3_1_0)
-                this.ArquivoSchema = "nfe_v3.10.xsd";
-            else
-                this.ArquivoSchema = "nfe_v2.00.xsd";
-
-            this.Sincrono = false;
-        }
-        
-        /// <summary>
-        /// Adiciona e valida uma nota a ser enviada.
-        /// </summary>
-        /// <param name="nota"></param>
-        public void AdicionarNota(WallegNFe.Nota nota)
+        public Recepcao(NFeContexto nfeContexto) : base(nfeContexto)
         {
             
-            Bll.Assinatura bllAssinatura = new Bll.Assinatura();
-            Bll.Xml bllXml = new Bll.Xml();
+            ArquivoSchema = "nfe_v" +  nfeContexto.Versao.VersaoString + ".xsd";
+
+            Sincrono = false;
+        }
+
+        /// <summary>
+        ///     Adiciona e valida uma nota a ser enviada.
+        /// </summary>
+        /// <param name="nota"></param>
+        public void AdicionarNota(Nota nota)
+        {
+            var bllAssinatura = new Assinatura();
+            var bllXml = new Xml();
 
             //Verifica se já passou o limite de notas por lote (regra do SEFAZ). 
-            if (this.NotaLista.Count >= 50)
+            if (NotaLista.Count >= 50)
             {
                 throw new Exception("Limite máximo por lote é de 50 arquivos");
             }
@@ -47,8 +43,7 @@ namespace WallegNFe.Operacao
             //Assina a nota
             try
             {
-                bllAssinatura.AssinarXml(nota, this.NFeContexto.Certificado, "NFe");
-
+                bllAssinatura.AssinarXml(nota, NFeContexto.Certificado, "NFe");
             }
             catch (Exception e)
             {
@@ -58,7 +53,8 @@ namespace WallegNFe.Operacao
             //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
             try
             {
-                bllXml.ValidaSchema(nota.CaminhoFisico, Bll.Util.ContentFolderSchemaValidacao + "\\" + this.NFeContexto.VersaoString + "\\" + this.ArquivoSchema);
+                bllXml.ValidaSchema(nota.CaminhoFisico,
+                    Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXML + "\\" + ArquivoSchema);
             }
             catch (Exception e)
             {
@@ -66,33 +62,33 @@ namespace WallegNFe.Operacao
             }
 
             //Adiciona para a lista do lote a serem enviadas
-            this.NotaLista.Add(nota);
+            NotaLista.Add(nota);
         }
 
         /// <summary>
-        /// Adiciona e valida uma nota a ser enviada apartir de um arquivo XML.
+        ///     Adiciona e valida uma nota a ser enviada apartir de um arquivo XML.
         /// </summary>
         /// <param name="arquivoCaminhoXml"></param>
         public void AdicionarNota(String arquivoCaminhoXml)
         {
             //Carrega uma nota XML e passa para um objeto Nota
-            Bll.Nota bllNota = new Bll.Nota();
-            WallegNFe.Nota nota = bllNota.Carregar(arquivoCaminhoXml);
+            Nota nota = new Nota(arquivoCaminhoXml);
 
-            this.AdicionarNota(nota);
+            AdicionarNota(nota);
         }
 
         private XmlDocument MontarXml(long numeroLote)
         {
             //Cabeçalho do lote
             String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-            xmlString += "<enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + this.NFeContexto.VersaoString + "\">";
+            xmlString += "<enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + NFeContexto.Versao.VersaoString +
+                         "\">";
 
             xmlString += "<idLote>" + numeroLote.ToString("000000000000000") + "</idLote>";
 
-            if (this.NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
             {
-                if (this.Sincrono)
+                if (Sincrono)
                 {
                     xmlString += "<indSinc>1</indSinc>";
                 }
@@ -103,10 +99,10 @@ namespace WallegNFe.Operacao
             }
 
             //Adiciona as notas no lote
-            for (int i = 0; i < this.NotaLista.Count; i++)
+            for (int i = 0; i < NotaLista.Count; i++)
             {
                 //Converte o Xml de uma nota em texto
-                String NotaString = this.NotaLista[i].ConteudoXml;
+                String NotaString = NotaLista[i].ConteudoXml;
 
                 //Identifica somente o conteudo entre a tag <NFe>
                 int inicioTag = NotaString.IndexOf("<NFe");
@@ -120,30 +116,30 @@ namespace WallegNFe.Operacao
             xmlString += "</enviNFe>";
 
 
-            Bll.Xml bllXml = new Bll.Xml();
-            return Bll.Xml.StringToXml(xmlString);
+            var bllXml = new Xml();
+            return Xml.StringToXml(xmlString);
         }
 
         public Model.Retorno.Recepcao Enviar(long numeroLote, String cUF)
         {
-            NfeRecepcao2.NfeRecepcao2 nfeRecepcao2 = new NfeRecepcao2.NfeRecepcao2();
-            NfeRecepcao2.nfeCabecMsg nfeCabecalho = new NfeRecepcao2.nfeCabecMsg();
+            var nfeRecepcao2 = new NfeRecepcao2.NfeRecepcao2();
+            var nfeCabecalho = new nfeCabecMsg();
 
             //Informa dados no WS de cabecalho
             nfeCabecalho.cUF = cUF;
-            nfeCabecalho.versaoDados = this.NFeContexto.VersaoString;
+            nfeCabecalho.versaoDados = NFeContexto.Versao.VersaoString;
 
             nfeRecepcao2.nfeCabecMsgValue = nfeCabecalho;
-            nfeRecepcao2.ClientCertificates.Add(this.NFeContexto.Certificado);
+            nfeRecepcao2.ClientCertificates.Add(NFeContexto.Certificado);
 
             //Envia para o webservice e recebe a resposta
-            XmlNode xmlResposta = nfeRecepcao2.nfeRecepcaoLote2(this.MontarXml(numeroLote).DocumentElement);
+            XmlNode xmlResposta = nfeRecepcao2.nfeRecepcaoLote2(MontarXml(numeroLote).DocumentElement);
 
-            WallegNFe.Model.Retorno.Recepcao retorno = new WallegNFe.Model.Retorno.Recepcao();
+            var retorno = new Model.Retorno.Recepcao();
             retorno.Recibo = xmlResposta["infRec"]["nRec"].InnerText;
             retorno.Motivo = xmlResposta["xMotivo"].InnerText;
 
-           return retorno;
+            return retorno;
         }
     }
 }
