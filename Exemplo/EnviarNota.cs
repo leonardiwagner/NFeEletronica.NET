@@ -157,10 +157,24 @@ namespace Exemplo
             var nfeRetRecepcao = new WallegNFe.Operacao.RetRecepcao(nfeContexto);
             WallegNFe.Model.Retorno.RetRecepcao retRetorno = nfeRetRecepcao.Enviar(retornoRecepcao.Recibo, codigoUF);
 
+            //Inutilizar
+            var inutilizacao = new WallegNFe.Consulta.Inutilizacao();
+            inutilizacao.Ano = "14";
+            inutilizacao.CNPJ = nota.emit.CNPJ;
+            inutilizacao.Justificativa = "Cancelando por testedddddddddd fdf df";
+            inutilizacao.Mod = nota.ide.mod;
+            inutilizacao.Serie = nota.ide.serie;
+            inutilizacao.UF = "35";
+            inutilizacao.NumeroNfeInicial = nota.ide.nNF;
+            inutilizacao.NumeroNfeFinal = nota.ide.nNF;
+
+            var nfeInutilizacao = new WallegNFe.Operacao.Inutilizacao(nfeContexto);
+            nfeInutilizacao.NfeInutilizacaoNF2(inutilizacao);
+
             //Cancelar a nota
             var nfeCancelamento = new WallegNFe.Model.Evento();
             nfeCancelamento.CNPJ = nota.emit.CNPJ;
-            nfeCancelamento.Justificativa = "Cancelando por teste";
+            nfeCancelamento.Justificativa = "Cancelando por testedddddddddd fdf df";//minimo 15 char
             nfeCancelamento.NumeroLote = numeroDoLote.ToString();
             nfeCancelamento.ChaveAcesso = nota.NotaId;
             nfeCancelamento.Protocolo = retRetorno.Protocolo;

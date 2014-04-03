@@ -105,5 +105,15 @@ namespace WallegNFe.Properties {
                 return ((string)(this["WallegNFe_RecepcaoEvento2_RecepcaoEvento"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/nfeinutilizacao2.asmx")]
+        public string WallegNFe_NfeInutilizacao21_NfeInutilizacao2 {
+            get {
+                return ((string)(this["WallegNFe_NfeInutilizacao21_NfeInutilizacao2"]));
+            }
+        }
     }
 }
