@@ -30,6 +30,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -47,9 +65,12 @@
     <Compile Include="Bll\Util.cs" />
     <Compile Include="Bll\Xml.cs" />
     <Compile Include="Bll\Certificado.cs" />
+    <Compile Include="Consulta\CartaCorrecao.cs" />
     <Compile Include="Consulta\Inutilizacao.cs" />
+    <Compile Include="Retorno\IRetorno.cs" />
+    <Compile Include="Retorno\RetornoSimples.cs" />
     <Compile Include="Versao\NFeVersao.cs" />
-    <Compile Include="Model\Evento.cs" />
+    <Compile Include="Consulta\Cancelamento.cs" />
     <Compile Include="Model\Nota\COBR.cs" />
     <Compile Include="Model\Nota\DEST.cs" />
     <Compile Include="Model\Nota\DET.cs" />
@@ -58,9 +79,9 @@
     <Compile Include="Model\Nota\TOTAL.cs" />
     <Compile Include="Model\Nota\IDE.cs" />
     <Compile Include="Model\Nota\TRANSP.cs" />
-    <Compile Include="Model\Retorno\RetRecepcao.cs" />
+    <Compile Include="Retorno\RetRecepcao.cs" />
     <Compile Include="NFeContexto.cs" />
-    <Compile Include="Model\Retorno\Recepcao.cs" />
+    <Compile Include="Retorno\Recepcao.cs" />
     <Compile Include="Nota.cs" />
     <Compile Include="Operacao\CadConsultaCadastro.cs" />
     <Compile Include="Operacao\Consulta.cs" />
@@ -79,7 +100,7 @@
     <Compile Include="Versao\VersaoAbstract.cs" />
     <Compile Include="Versao\Versao2_0_0.cs" />
     <Compile Include="Versao\Versao3_1_0.cs" />
-    <Compile Include="Web References\NfeInutilizacao21\Reference.cs">
+    <Compile Include="Web References\NfeInutilizacao\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -106,8 +127,8 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Web References\NfeInutilizacao21\nfeinutilizacao2.wsdl" />
-    <None Include="Web References\NfeInutilizacao21\Reference.map">
+    <None Include="Web References\NfeInutilizacao\NfeInutilizacao2.wsdl" />
+    <None Include="Web References\NfeInutilizacao\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
@@ -145,16 +166,16 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>WallegNFe_RecepcaoEvento2_RecepcaoEvento</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/nfeinutilizacao2.asmx">
+    <WebReferenceUrl Include="https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeInutilizacao2.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\NfeInutilizacao21\</RelPath>
-      <UpdateFromURL>https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/nfeinutilizacao2.asmx</UpdateFromURL>
+      <RelPath>Web References\NfeInutilizacao\</RelPath>
+      <UpdateFromURL>https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeInutilizacao2.asmx</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>WallegNFe_NfeInutilizacao21_NfeInutilizacao2</CachedSettingsPropName>
+      <CachedSettingsPropName>WallegNFe_NfeInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
     </WebReferenceUrl>
     <WebReferenceUrl Include="https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeRecepcao2.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
@@ -189,10 +210,7 @@
     <None Include="Web References\RecepcaoEvento2\RecepcaoEvento.disco" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Retorno\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\NfeInutilizacao21\nfeinutilizacao2.disco" />
+    <None Include="Web References\NfeInutilizacao\NfeInutilizacao2.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

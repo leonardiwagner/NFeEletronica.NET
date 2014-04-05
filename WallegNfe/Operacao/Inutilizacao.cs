@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text;
 using WallegNFe;
 using WallegNFe.Bll;
-using WallegNFe.NfeInutilizacao21;
+using WallegNFe.NfeInutilizacao;
 using WallegNFe.Operacao;
 using System.Xml;
 
@@ -18,13 +18,16 @@ namespace WallegNFe.Operacao
             ArquivoSchema = "inutNFe_v2.00.xsd";
         }
 
-        public void NfeInutilizacaoNF2(WallegNFe.Consulta.Inutilizacao inutilizacao)
+        public Retorno.RetornoSimples NfeInutilizacaoNF2(WallegNFe.Consulta.Inutilizacao inutilizacao)
         {
-            WallegNFe.NfeInutilizacao21.NfeInutilizacao2 webservice = new NfeInutilizacao2();
-            var cabecalho = new WallegNFe.NfeInutilizacao21.nfeCabecMsg();
+            WallegNFe.NfeInutilizacao.NfeInutilizacao2 webservice = new WallegNFe.NfeInutilizacao.NfeInutilizacao2();
+            var cabecalho = new WallegNFe.NfeInutilizacao.nfeCabecMsg();
 
-            cabecalho.cUF = inutilizacao.UF;
+            cabecalho.cUF = "35";
             cabecalho.versaoDados = NFeContexto.Versao.VersaoString;
+
+            
+
             String id = "ID" + inutilizacao.UF + inutilizacao.Ano + inutilizacao.CNPJ + Int32.Parse(inutilizacao.Mod).ToString("D2") + Int32.Parse(inutilizacao.Serie).ToString("D3") + Int32.Parse(inutilizacao.NumeroNfeInicial).ToString("D9") + Int32.Parse(inutilizacao.NumeroNfeFinal).ToString("D9");
             //Monta corpo do xml de envio
             var xmlString = new StringBuilder();
@@ -44,11 +47,22 @@ namespace WallegNFe.Operacao
             xmlString.Append("</infInut>");
             xmlString.Append("</inutNFe>");
 
+
+            XmlNode assinado = Assinar(xmlString, id);
+
             webservice.nfeCabecMsgValue = cabecalho;
-            var resultado = webservice.nfeInutilizacaoNF2(Assinar(xmlString, id));
+            var resultado = webservice.nfeInutilizacaoNF2(assinado);
+
+     
+            var retorno = new Retorno.RetornoSimples();
+            retorno.Motivo = resultado["cStat"].InnerText;
+            retorno.Motivo = resultado["xMotivo"].InnerText;
+
+            return retorno;
+            
         }
 
-        private XmlDocument Assinar(StringBuilder xmlStringBuilder, String id)
+        private XmlNode Assinar(StringBuilder xmlStringBuilder, String id)
         {
             var bllXml = new WallegNFe.Bll.Xml();
             String arquivoTemporario = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\temp.xml";
@@ -86,9 +100,10 @@ namespace WallegNFe.Operacao
                 throw new Exception("Erro ao validar Nota: " + e.Message);
             }
 
-           
+            var xmlDoc = new XmlDocument();
+            xmlDoc.Load(arquivoTemporario);
 
-            return Xml.StringToXml(xmlStringBuilder.ToString());
+            return xmlDoc;
         }
     }
 }

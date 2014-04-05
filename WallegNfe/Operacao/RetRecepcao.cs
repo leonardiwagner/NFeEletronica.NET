@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using WallegNFe.Bll;
+using WallegNFe.Retorno;
 using WallegNFe.NfeRetRecepcao2;
 
 namespace WallegNFe.Operacao
@@ -17,7 +18,7 @@ namespace WallegNFe.Operacao
         {
         }
 
-        public Model.Retorno.RetRecepcao Enviar(String numeroRecibo, String cUF)
+        public Retorno.RetRecepcao Enviar(String numeroRecibo, String cUF)
         {
             //Monta corpo do xml de envio
             var xmlString = new StringBuilder();
@@ -42,7 +43,7 @@ namespace WallegNFe.Operacao
             nfeRetRecepcao2.ClientCertificates.Add(NFeContexto.Certificado);
 
 
-            var retorno = new Model.Retorno.RetRecepcao();
+            var retorno = new Retorno.RetRecepcao();
             XmlNode respostaXml = null;
 
             bool isEmProcessamento = true;
@@ -96,7 +97,7 @@ namespace WallegNFe.Operacao
 
                 try
                 {
-                    return new Model.Retorno.RetRecepcao
+                    return new Retorno.RetRecepcao()
                     {
                         Motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText,
                         NumeroNota = respostaXml["protNFe"]["infProt"]["chNFe"].InnerText,

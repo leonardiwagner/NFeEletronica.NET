@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WallegNFe.Model.Retorno
+namespace WallegNFe.Retorno
 {
     public class Recepcao
     {

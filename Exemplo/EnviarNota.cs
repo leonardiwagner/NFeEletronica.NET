@@ -6,6 +6,7 @@ namespace Exemplo
     {
         public void Enviar()
         {
+            /*
             //Cria o objeto de contexto, e seleciona o certificado no computador
             var nfeContexto = new WallegNFe.NFeContexto(false, WallegNFe.Versao.NFeVersao.VERSAO_2_0_0);
 
@@ -181,7 +182,7 @@ namespace Exemplo
 
             var nfeEvento = new WallegNFe.Operacao.RecepcaoEvento(nfeContexto);
             nfeEvento.AdicionarCancelamento(nfeCancelamento, @"C:\NFE\cancelamento.xml");
-
+            */
         }
     }
 }

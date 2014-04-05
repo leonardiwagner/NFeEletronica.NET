@@ -44,5 +44,7 @@ namespace WallegNFe.Bll
 
             return (11 - remainder).ToString();
         }
+
+       
     }
 }

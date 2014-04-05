@@ -97,7 +97,7 @@ namespace WallegNFe
 
         public void SalvarNota(String caminho)
         {
-            GerarCodigoDaNota();
+            //GerarCodigoDaNota();
 
 
             XmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");

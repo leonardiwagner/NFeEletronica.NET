@@ -120,7 +120,7 @@ namespace WallegNFe.Operacao
             return Xml.StringToXml(xmlString);
         }
 
-        public Model.Retorno.Recepcao Enviar(long numeroLote, String cUF)
+        public Retorno.Recepcao Enviar(long numeroLote, String cUF)
         {
             var nfeRecepcao2 = new NfeRecepcao2.NfeRecepcao2();
             var nfeCabecalho = new nfeCabecMsg();
@@ -135,7 +135,7 @@ namespace WallegNFe.Operacao
             //Envia para o webservice e recebe a resposta
             XmlNode xmlResposta = nfeRecepcao2.nfeRecepcaoLote2(MontarXml(numeroLote).DocumentElement);
 
-            var retorno = new Model.Retorno.Recepcao();
+            var retorno = new Retorno.Recepcao();
             retorno.Recibo = xmlResposta["infRec"]["nRec"].InnerText;
             retorno.Motivo = xmlResposta["xMotivo"].InnerText;
 

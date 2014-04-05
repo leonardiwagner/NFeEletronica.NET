@@ -1,55 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
+using System.Xml;
 using WallegNFe.Bll;
+using WallegNFe.Consulta;
 using WallegNFe.Model;
+using WallegNFe.Retorno;
 
 namespace WallegNFe.Operacao
 {
     public class RecepcaoEvento : BaseOperacao
     {
-        private readonly String ArquivoSchema = "";
+        
         private long NumeroLote = 0;
-        private Nota nota;
+        
 
         public RecepcaoEvento(NFeContexto nfe)
             : base(nfe)
         {
-            //this.ArquivoSchema = "nfe_v2.00.xsd";
-            ArquivoSchema = "envEventoCancNFe_v1.00.xsd";
+
 
         }
 
-        public void Cancelar(String contenudoXml)
+        private RetornoSimples EnviarEvento(StringBuilder eventoXml, String id, String arquivoEvento, String schema)
         {
+
+            var documentXml = Assinar(eventoXml, id, schema);
+
+            var xmlDoc = new XmlDocument();
+            xmlDoc.Load(arquivoEvento);
+
+            String conteudoXml = xmlDoc.OuterXml;
+
+
+            var nota = new Nota(this.NFeContexto) { CaminhoFisico = arquivoEvento };
+
             var bllXml = new Xml();
 
             var xmlString = new StringBuilder();
             xmlString.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             xmlString.Append("<envEvento versao=\"1.00\" xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
             xmlString.Append("	<idLote>0131318</idLote>");
-            xmlString.Append(contenudoXml);
+            xmlString.Append(conteudoXml);
             xmlString.Append("</envEvento>");
 
-            StreamWriter SW_2 = File.CreateText(nota.CaminhoFisico);
+            StreamWriter SW_2 = File.CreateText(arquivoEvento);
             SW_2.Write(xmlString.ToString());
             SW_2.Close();
 
             //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
             try
             {
-                
-                bllXml.ValidaSchema(nota.CaminhoFisico,
-                    Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXML + "\\" + ArquivoSchema);
+
+                bllXml.ValidaSchema(arquivoEvento,
+                    Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXML + "\\" + schema);
             }
             catch (Exception e)
             {
                 throw new Exception("Erro ao validar Nota: " + e.Message);
             }
-
-            
-            var documentXml = Xml.StringToXml(xmlString.ToString());
 
             var recepcao = new RecepcaoEvento2.RecepcaoEvento();
             var cabecalho = new RecepcaoEvento2.nfeCabecMsg();
@@ -59,33 +70,55 @@ namespace WallegNFe.Operacao
             recepcao.nfeCabecMsgValue = cabecalho;
             recepcao.ClientCertificates.Add(NFeContexto.Certificado);
 
-            var resposta = recepcao.nfeRecepcaoEvento(documentXml);
-            var retorno = new Model.Retorno.RetRecepcao();
-
+            var resposta = recepcao.nfeRecepcaoEvento(Bll.Xml.StringToXml(xmlString.ToString()));
+           
+            var retorno = new RetornoSimples();
             retorno.Status = resposta["cStat"].InnerText;
             retorno.Motivo = resposta["xMotivo"].InnerText;
-
-
-
+            return retorno;
         }
 
-        public void AdicionarCancelamento(Evento eventoCancelamento, String caminhoXml)
+        public IRetorno CartaCorrecao(CartaCorrecao cartaCorrecao)
         {
-            String tpEvento = "110111";
-            String id = "ID" + tpEvento + eventoCancelamento.ChaveAcesso + "01";
-
+            String tpEvento = "110110";
+            String id = "ID" + tpEvento + cartaCorrecao.NotaChaveAcesso + "01";
 
             var xmlString = new StringBuilder();
-          //  xmlString.Append("<envEvento versao=\"1.00\" xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
-          //  xmlString.Append("	<idLote>0131318</idLote>");
+            xmlString.Append("<evento xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + "1.00" + "\">");
+            xmlString.Append("  <infEvento Id=\"" + id + "\">");
+            xmlString.Append("      <cOrgao>" + cartaCorrecao.CodigoUF + "</cOrgao>");
+            xmlString.Append("      <tpAmb>" + (NFeContexto.Producao ? "1" : "2") + "</tpAmb>");
+            xmlString.Append("      <CNPJ>" + cartaCorrecao.CNPJ + "</CNPJ>");
+            xmlString.Append("      <chNFe>" + cartaCorrecao.NotaChaveAcesso + "</chNFe>");
+            xmlString.Append("      <dhEvento>" + DateTime.Now.ToString("s") + "-03:00" + "</dhEvento>");
+            xmlString.Append("      <tpEvento>" + tpEvento + "</tpEvento>");
+            xmlString.Append("      <nSeqEvento>" + "1" + "</nSeqEvento>");
+            xmlString.Append("      <verEvento>" + "1.00" + "</verEvento>");
+            xmlString.Append("      <detEvento versao=\"" + "1.00" + "\">");
+            xmlString.Append("         <descEvento>" + "Carta de Correcao" + "</descEvento>");
+            xmlString.Append("         <xCorrecao>" + cartaCorrecao.Correcao + "</xCorrecao>");
+            xmlString.Append("         <xCondUso>A Carta de Correcao e disciplinada pelo paragrafo 1o-A do art. 7o do Convenio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularizacao de erro ocorrido na emissao de documento fiscal, desde que o erro nao esteja relacionado com: I - as variaveis que determinam o valor do imposto tais como: base de calculo, aliquota, diferenca de preco, quantidade, valor da operacao ou da prestacao; II - a correcao de dados cadastrais que implique mudanca do remetente ou do destinatario; III - a data de emissao ou de saida.</xCondUso>");
+            xmlString.Append("      </detEvento>");
+            xmlString.Append("  </infEvento>");
+            xmlString.Append("</evento>");
+
+            String arquivoTemporario = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\temp.xml";
+            return EnviarEvento(xmlString, id, arquivoTemporario, "envCCe_v1.00.xsd");
+        }
+
+        public IRetorno Cancelar(Cancelamento eventoCancelamento, String caminhoXml)
+        {
+            String tpEvento = "110111";
+            String id = "ID" + tpEvento + eventoCancelamento.NotaChaveAcesso + "01";
+
+            var xmlString = new StringBuilder();
             xmlString.Append("	<evento xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"1.00\">");
             xmlString.Append("		<infEvento Id=\"" + id + "\">");
             xmlString.Append("			<cOrgao>35</cOrgao>");
             xmlString.Append("			<tpAmb>" + (NFeContexto.Producao ? "1" : "2") + "</tpAmb>");
             xmlString.Append("			<CNPJ>" + eventoCancelamento.CNPJ + "</CNPJ>");
-            xmlString.Append("			<chNFe>" + eventoCancelamento.ChaveAcesso + "</chNFe>");
-            xmlString.Append("			<dhEvento>" + "2014-03-30T22:46:57-03:00" + "</dhEvento>");
-                //2012-09-13T10:46:57-03:00
+            xmlString.Append("			<chNFe>" + eventoCancelamento.NotaChaveAcesso + "</chNFe>");
+            xmlString.Append("			<dhEvento>" + DateTime.Now.ToString("s") + "-03:00" + "</dhEvento>"); //2012-09-13T10:46:57-03:00
             xmlString.Append("			<tpEvento>" + tpEvento + "</tpEvento>");
             xmlString.Append("			<nSeqEvento>1</nSeqEvento>");
             xmlString.Append("			<verEvento>1.00</verEvento>");
@@ -95,37 +128,42 @@ namespace WallegNFe.Operacao
             xmlString.Append("				<xJust>" + eventoCancelamento.Justificativa + "</xJust>");
             xmlString.Append("			</detEvento>");
             xmlString.Append("		</infEvento>");
-            //xmlString.Append("		<Signature></Signature>");
             xmlString.Append("	</evento>");
-          //  xmlString.Append("</envEvento>");
+            //xmlString.Append("</envEvento>");
 
+            String arquivoTemporario = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\temp.xml";
+            return EnviarEvento(xmlString, id, arquivoTemporario, "envEventoCancNFe_v1.00.xsd");
+        }
 
-            StreamWriter SW_2 = File.CreateText(caminhoXml);
-            SW_2.Write(xmlString.ToString());
+        private String Assinar(StringBuilder xmlStringBuilder, String id, String schema)
+        {
+            var bllXml = new WallegNFe.Bll.Xml();
+            String arquivoTemporario = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\temp.xml";
+            StreamWriter SW_2 = File.CreateText(arquivoTemporario);
+            SW_2.Write(xmlStringBuilder.ToString());
             SW_2.Close();
 
-            var bllAssinatura = new Assinatura();
-            this.nota = new Nota(this.NFeContexto) {CaminhoFisico = caminhoXml};
+            var nota = new Nota(this.NFeContexto) { CaminhoFisico = arquivoTemporario };
 
-          
-           
             //Assina a nota
+            var bllAssinatura = new WallegNFe.Bll.Assinatura();
             try
             {
-                
+
                 bllAssinatura.AssinarXml(
-                    nota ,
+                    nota,
                     NFeContexto.Certificado, "evento", "#" + id);
-                 
+
             }
             catch (Exception e)
             {
                 throw new Exception("Erro ao assinar Nota: " + e.Message);
             }
 
-            
 
-            this.Cancelar(nota.ConteudoXml);
+          
+
+            return xmlStringBuilder.ToString();
         }
     }
 }
