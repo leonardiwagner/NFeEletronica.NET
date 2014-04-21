@@ -71,10 +71,10 @@ namespace WallegNFe.Operacao
             recepcao.ClientCertificates.Add(NFeContexto.Certificado);
 
             var resposta = recepcao.nfeRecepcaoEvento(Bll.Xml.StringToXml(xmlString.ToString()));
-           
+        
             var retorno = new RetornoSimples();
-            retorno.Status = resposta["cStat"].InnerText;
-            retorno.Motivo = resposta["xMotivo"].InnerText;
+            retorno.Status = resposta["retEvento"]["infEvento"]["xMotivo"].InnerText;
+            retorno.Motivo = resposta["retEvento"]["infEvento"]["cStat"].InnerText;
             return retorno;
         }
 
