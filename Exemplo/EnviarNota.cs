@@ -6,7 +6,6 @@ namespace Exemplo
     {
         public void Enviar()
         {
-            /*
             //Cria o objeto de contexto, e seleciona o certificado no computador
             var nfeContexto = new WallegNFe.NFeContexto(false, WallegNFe.Versao.NFeVersao.VERSAO_2_0_0);
 
@@ -71,7 +70,7 @@ namespace Exemplo
             nota.dest.indIEDest = "9";
             nota.dest.email = "teste@teste.com";
 
-            var dup = new WallegNFe.Model.Nota.DUP();
+            var dup = new WallegNFe.ModeloNota.DUP();
             dup.nDup = "123";
             dup.dVenc = "2014-03-21";
             dup.vDup = "23.33";
@@ -85,7 +84,7 @@ namespace Exemplo
             nota.transp.UF = "RO";
 
             //início de um produto
-            var notaProduto = new WallegNFe.Model.Nota.DET();
+            var notaProduto = new WallegNFe.ModeloNota.DET();
             notaProduto.cProd = "123";
             notaProduto.cEAN = "7896090701049";
             notaProduto.xProd = "Produto de teste";
@@ -101,21 +100,21 @@ namespace Exemplo
             notaProduto.vUnTrib = "1.00000000";
             notaProduto.indTot = "1";
 
-            notaProduto.icms = WallegNFe.Model.Nota.Enum.ICMS.ICMS102_400;
+            notaProduto.icms = WallegNFe.ModeloNota.ICMS.ICMS102_400;
             notaProduto.icms_orig = "0";
             notaProduto.icms_CSOSN = "102";
 
-            notaProduto.ipi = WallegNFe.Model.Nota.Enum.IPI.IPI00_49_50_99;
+            notaProduto.ipi = WallegNFe.ModeloNota.IPI.IPI00_49_50_99;
             notaProduto.ipi_CST = "99";
             notaProduto.ipi_vIPI = "0";
 
-            notaProduto.pis = WallegNFe.Model.Nota.Enum.PIS.PIS01_02;
+            notaProduto.pis = WallegNFe.ModeloNota.PIS.PIS01_02;
             notaProduto.pis_CST = "01";
             notaProduto.pis_vBC = "0";
             notaProduto.pis_pPIS = "0";
             notaProduto.pis_vPIS = "0";
 
-            notaProduto.cofins = WallegNFe.Model.Nota.Enum.COFINS.CST01_02;
+            notaProduto.cofins = WallegNFe.ModeloNota.COFINS.CST01_02;
             notaProduto.cofins_CST = "01";
             notaProduto.cofins_vBC = "0";
             notaProduto.cofins_pCOFINS = "0";
@@ -152,11 +151,11 @@ namespace Exemplo
             var nfeRecepcao = new WallegNFe.Operacao.Recepcao(nfeContexto);
             nfeRecepcao.AdicionarNota(nota);
 
-            WallegNFe.Model.Retorno.Recepcao retornoRecepcao = nfeRecepcao.Enviar(numeroDoLote, codigoUF);
+            WallegNFe.Retorno.Recepcao retornoRecepcao = nfeRecepcao.Enviar(numeroDoLote, codigoUF);
 
             //Consultar nota
             var nfeRetRecepcao = new WallegNFe.Operacao.RetRecepcao(nfeContexto);
-            WallegNFe.Model.Retorno.RetRecepcao retRetorno = nfeRetRecepcao.Enviar(retornoRecepcao.Recibo, codigoUF);
+            WallegNFe.Retorno.RetRecepcao retRetorno = nfeRetRecepcao.Enviar(retornoRecepcao.Recibo, codigoUF);
 
             //Inutilizar
             var inutilizacao = new WallegNFe.Consulta.Inutilizacao();
@@ -173,16 +172,15 @@ namespace Exemplo
             nfeInutilizacao.NfeInutilizacaoNF2(inutilizacao);
 
             //Cancelar a nota
-            var nfeCancelamento = new WallegNFe.Model.Evento();
+            var nfeCancelamento = new WallegNFe.Consulta.Cancelamento();
             nfeCancelamento.CNPJ = nota.emit.CNPJ;
             nfeCancelamento.Justificativa = "Cancelando por testedddddddddd fdf df";//minimo 15 char
             nfeCancelamento.NumeroLote = numeroDoLote.ToString();
-            nfeCancelamento.ChaveAcesso = nota.NotaId;
+            nfeCancelamento.NotaChaveAcesso = nota.NotaId;
             nfeCancelamento.Protocolo = retRetorno.Protocolo;
 
             var nfeEvento = new WallegNFe.Operacao.RecepcaoEvento(nfeContexto);
-            nfeEvento.AdicionarCancelamento(nfeCancelamento, @"C:\NFE\cancelamento.xml");
-            */
+            nfeEvento.Cancelar(nfeCancelamento, @"C:\NFE\cancelamento.xml");
         }
     }
 }
