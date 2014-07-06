@@ -3,27 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
-using WallegNFe.Bll;
-using WallegNFe.Model;
-using WallegNFe.Model.Nota;
-using WallegNFe.Model.Nota.Enum;
+using WallegNFe.ModeloNota;
 using WallegNFe.Versao;
 
 namespace WallegNFe
 {
     public class Nota
     {
-        private readonly NFeContexto NFeContexto;
         private readonly StringBuilder XmlString;
         private readonly List<DET> detList;
+        private readonly NFeContexto nFeContexto;
         public String ArquivoNome = "";
         public String CaminhoFisico = "";
         public String ConteudoXml = "";
         public String NotaId = "";
 
-        public Nota(NFeContexto NFeContexto)
+        public Nota(NFeContexto nFeContexto)
         {
-            this.NFeContexto = NFeContexto;
+            this.nFeContexto = nFeContexto;
 
             ide = new IDE();
             emit = new EMIT();
@@ -35,7 +32,7 @@ namespace WallegNFe
 
             XmlString = new StringBuilder();
 
-            if (this.NFeContexto.Producao)
+            if (this.nFeContexto.Producao)
                 ide.tpAmb = "1";
             else
                 ide.tpAmb = "2";
@@ -68,10 +65,10 @@ namespace WallegNFe
             detList.Add(det);
         }
 
-        
+
         public String GerarCodigoDaNota()
         {
-            if (!NFeContexto.Producao)
+            if (!nFeContexto.Producao)
             {
                 emit.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
                 dest.xNome = "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL";
@@ -101,7 +98,7 @@ namespace WallegNFe
 
 
             XmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
-            XmlString.Append("   <infNFe Id=\"NFe" + NotaId + "\" versao=\"" + NFeContexto.Versao.VersaoString + "\">");
+            XmlString.Append("   <infNFe Id=\"NFe" + NotaId + "\" versao=\"" + nFeContexto.Versao.VersaoString + "\">");
 
             MontaIDE();
             MontaEMIT();
@@ -159,7 +156,7 @@ namespace WallegNFe
             XmlString.Append("	<serie>" + ide.serie + "</serie>");
             XmlString.Append("	<nNF>" + ide.nNF + "</nNF>");
 
-            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
             {
                 XmlString.Append("	<dhEmi>" + ide.dhEmi + "</dhEmi>");
             }
@@ -172,10 +169,10 @@ namespace WallegNFe
                 XmlString.Append("	<dhSaiEnt>" + ide.dhSaiEnt + "</dhSaiEnt>");
 
             XmlString.Append("	<tpNF>" + ide.tpNF + "</tpNF>");
-            
-            if(NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+
+            if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
                 XmlString.Append("	<idDest>" + ide.idDest + "</idDest>");
-            
+
             XmlString.Append("	<cMunFG>" + ide.cMunFG + "</cMunFG>");
             XmlString.Append("	<tpImp>" + ide.tpImp + "</tpImp>");
             XmlString.Append("	<tpEmis>" + ide.tpEmis + "</tpEmis>");
@@ -184,7 +181,7 @@ namespace WallegNFe
 
             XmlString.Append("	<finNFe>" + ide.finNFe + "</finNFe>");
 
-            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
             {
                 //XmlString.Append("	<indFinal>" + ide.indFinal + "</indFinal>");
                 //XmlString.Append("	<indPres>" + ide.indPres + "</indPres>");
@@ -275,16 +272,16 @@ namespace WallegNFe
 
             XmlString.Append("	</enderDest>");
 
-            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
             {
                 XmlString.Append("	<indIEDest>" + dest.indIEDest + "</indIEDest>");
             }
 
-            
-            XmlString.Append("	<IE>" + dest.IE + "</IE>");
-            
 
-            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0 && !String.IsNullOrEmpty(dest.email))
+            XmlString.Append("	<IE>" + dest.IE + "</IE>");
+
+
+            if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0 && !String.IsNullOrEmpty(dest.email))
                 XmlString.Append("	<email>" + dest.email + "</email>");
 
             XmlString.Append("</dest>");
@@ -755,7 +752,7 @@ namespace WallegNFe
             XmlString.Append("	<ICMSTot>");
             XmlString.Append("		<vBC>" + total.vBC + "</vBC>");
             XmlString.Append("		<vICMS>" + total.vICMS + "</vICMS>");
-            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+            if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
                 XmlString.Append("		<vICMSDeson>" + total.vICMSDeson + "</vICMSDeson>");
             XmlString.Append("		<vBCST>" + total.vBCST + "</vBCST>");
             XmlString.Append("		<vST>" + total.vST + "</vST>");

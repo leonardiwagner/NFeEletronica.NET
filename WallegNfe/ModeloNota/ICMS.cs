@@ -1,4 +1,4 @@
-﻿namespace WallegNFe.Model.Nota.Enum
+﻿namespace WallegNFe.ModeloNota
 {
     public enum ICMS
     {

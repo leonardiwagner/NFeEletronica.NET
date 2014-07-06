@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Text;
 
-namespace Bll.Servicos
+namespace WallegNFe.Operacao
 {
     public class CadConsultaCadastro
     {
         public void ConsultaCadastro2()
         {
-            //Monta corpo do xml de envio
+            //todo: Precisa implementar essa operação
             var xmlString = new StringBuilder();
             xmlString.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             xmlString.Append("<ConsCad xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"2.00\">");

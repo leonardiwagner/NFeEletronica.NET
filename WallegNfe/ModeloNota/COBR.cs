@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WallegNFe.Model.Nota
+namespace WallegNFe.ModeloNota
 {
     public class COBR
     {

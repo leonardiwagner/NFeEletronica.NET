@@ -2,33 +2,33 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
-using WallegNFe;
-using WallegNFe.Bll;
-using WallegNFe.NfeInutilizacao;
-using WallegNFe.Operacao;
 using System.Xml;
+using WallegNFe.NfeInutilizacao;
+using WallegNFe.Retorno;
 
 namespace WallegNFe.Operacao
 {
     public class Inutilizacao : BaseOperacao
     {
-        public readonly String ArquivoSchema ;
+        public readonly String ArquivoSchema;
+
         public Inutilizacao(NFeContexto nfeContexto) : base(nfeContexto)
         {
             ArquivoSchema = "inutNFe_v2.00.xsd";
         }
 
-        public Retorno.RetornoSimples NfeInutilizacaoNF2(WallegNFe.Consulta.Inutilizacao inutilizacao)
+        public RetornoSimples NfeInutilizacaoNF2(WallegNFe.Consulta.Inutilizacao inutilizacao)
         {
-            WallegNFe.NfeInutilizacao.NfeInutilizacao2 webservice = new WallegNFe.NfeInutilizacao.NfeInutilizacao2();
-            var cabecalho = new WallegNFe.NfeInutilizacao.nfeCabecMsg();
+            var webservice = new NfeInutilizacao2();
+            var cabecalho = new nfeCabecMsg();
 
             cabecalho.cUF = "35";
             cabecalho.versaoDados = NFeContexto.Versao.VersaoString;
 
-            
-
-            String id = "ID" + inutilizacao.UF + inutilizacao.Ano + inutilizacao.CNPJ + Int32.Parse(inutilizacao.Mod).ToString("D2") + Int32.Parse(inutilizacao.Serie).ToString("D3") + Int32.Parse(inutilizacao.NumeroNfeInicial).ToString("D9") + Int32.Parse(inutilizacao.NumeroNfeFinal).ToString("D9");
+            String id = "ID" + inutilizacao.UF + inutilizacao.Ano + inutilizacao.CNPJ +
+                        Int32.Parse(inutilizacao.Mod).ToString("D2") + Int32.Parse(inutilizacao.Serie).ToString("D3") +
+                        Int32.Parse(inutilizacao.NumeroNfeInicial).ToString("D9") +
+                        Int32.Parse(inutilizacao.NumeroNfeFinal).ToString("D9");
             //Monta corpo do xml de envio
             var xmlString = new StringBuilder();
             xmlString.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -53,34 +53,31 @@ namespace WallegNFe.Operacao
             webservice.nfeCabecMsgValue = cabecalho;
             var resultado = webservice.nfeInutilizacaoNF2(assinado);
 
-     
-            var retorno = new Retorno.RetornoSimples();
+
+            var retorno = new RetornoSimples();
             retorno.Motivo = resultado["cStat"].InnerText;
             retorno.Motivo = resultado["xMotivo"].InnerText;
 
             return retorno;
-            
         }
 
         private XmlNode Assinar(StringBuilder xmlStringBuilder, String id)
         {
-            var bllXml = new WallegNFe.Bll.Xml();
+            var bllXml = new Xml();
             String arquivoTemporario = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\temp.xml";
-            StreamWriter SW_2 = File.CreateText(arquivoTemporario);
-            SW_2.Write(xmlStringBuilder.ToString());
-            SW_2.Close();
+            StreamWriter sw2 = File.CreateText(arquivoTemporario);
+            sw2.Write(xmlStringBuilder.ToString());
+            sw2.Close();
 
-            var nota = new Nota(this.NFeContexto) { CaminhoFisico = arquivoTemporario };
-          
+            var nota = new Nota(this.NFeContexto) {CaminhoFisico = arquivoTemporario};
+
             //Assina a nota
-            var bllAssinatura = new WallegNFe.Bll.Assinatura();
+            var bllAssinatura = new Assinatura();
             try
             {
-
                 bllAssinatura.AssinarXml(
                     nota,
                     NFeContexto.Certificado, "inutNFe", "#" + id);
-
             }
             catch (Exception e)
             {
@@ -91,7 +88,6 @@ namespace WallegNFe.Operacao
             //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
             try
             {
-
                 bllXml.ValidaSchema(arquivoTemporario,
                     Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXML + "\\" + ArquivoSchema);
             }

@@ -2,8 +2,6 @@
 using System.Text;
 using System.Threading;
 using System.Xml;
-using WallegNFe.Bll;
-using WallegNFe.Retorno;
 using WallegNFe.NfeRetRecepcao2;
 
 namespace WallegNFe.Operacao
@@ -87,6 +85,7 @@ namespace WallegNFe.Operacao
                 }
                 catch
                 {
+                    //ignora o erro
                 }
 
                 //Caso deu algum problema e nao veio o protocolo, mas veio a descrição do problema
@@ -97,7 +96,7 @@ namespace WallegNFe.Operacao
 
                 try
                 {
-                    return new Retorno.RetRecepcao()
+                    return new Retorno.RetRecepcao
                     {
                         Motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText,
                         NumeroNota = respostaXml["protNFe"]["infProt"]["chNFe"].InnerText,
@@ -109,8 +108,6 @@ namespace WallegNFe.Operacao
                 {
                     throw new Exception("Erro ler resposta de envio: " + e.Message);
                 }
-
-                return retorno;
             }
             throw new Exception("Erro ao enviar lote XML: " + retorno.Motivo);
         }

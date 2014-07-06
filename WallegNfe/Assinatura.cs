@@ -4,28 +4,27 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Xml;
 
-namespace WallegNFe.Bll
+namespace WallegNFe
 {
     public class Assinatura
     {
-
         /// <summary>
         ///     Assina um arquivo Xml
         /// </summary>
         /// <param name="arquivoNome"></param>
         /// <param name="operacao"></param>
         /// <param name="x509Cert"></param>
-        public String AssinarXml(WallegNFe.Nota nota, X509Certificate2 x509Cert, String TagAssinatura, String URI = "")
+        public String AssinarXml(Nota nota, X509Certificate2 x509Cert, String TagAssinatura, String URI = "")
         {
-            StreamReader SR = null;
+            StreamReader srReader = null;
 
             try
             {
                 //Abrir o arquivo XML a ser assinado e ler o seu conteúdo
-                SR = File.OpenText(nota.CaminhoFisico);
-                string xmlString = SR.ReadToEnd();
-                SR.Close();
-                SR = null;
+                srReader = File.OpenText(nota.CaminhoFisico);
+                string xmlString = srReader.ReadToEnd();
+                srReader.Close();
+                srReader = null;
 
 
                 // Create a new XML document.
@@ -35,13 +34,12 @@ namespace WallegNFe.Bll
                 doc.PreserveWhitespace = false;
                 doc.LoadXml(xmlString);
 
-                XmlDocument XMLDoc;
-
+                XmlDocument xMLDoc;
 
                 var reference = new Reference();
-                if(!String.IsNullOrEmpty(nota.NotaId))
+                if (!String.IsNullOrEmpty(nota.NotaId))
                     reference.Uri = "#" + TagAssinatura + nota.NotaId;
-                else if(!String.IsNullOrEmpty(URI))
+                else if (!String.IsNullOrEmpty(URI))
                     reference.Uri = URI;
 
                 // Create a SignedXml object.
@@ -84,13 +82,13 @@ namespace WallegNFe.Bll
                 }
 
 
-                XMLDoc = new XmlDocument();
-                XMLDoc.PreserveWhitespace = false;
-                XMLDoc = doc;
+                xMLDoc = new XmlDocument();
+                xMLDoc.PreserveWhitespace = false;
+                xMLDoc = doc;
 
 
                 // Atualizar a string do XML já assinada
-                string StringXMLAssinado = XMLDoc.OuterXml;
+                string StringXMLAssinado = xMLDoc.OuterXml;
 
                 //Atualiza a nota assinada
                 nota.ConteudoXml = StringXMLAssinado;
@@ -110,8 +108,8 @@ namespace WallegNFe.Bll
             }
             finally
             {
-                if (SR != null)
-                    SR.Close();
+                if (srReader != null)
+                    srReader.Close();
             }
         }
     }

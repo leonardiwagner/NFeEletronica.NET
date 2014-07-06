@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bll.Servicos
+namespace WallegNFe.Operacao
 {
     public class Consulta
     {

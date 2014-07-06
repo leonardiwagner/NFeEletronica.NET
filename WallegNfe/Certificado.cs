@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 
-namespace WallegNFe.Bll
+namespace WallegNFe
 {
     public class Certificado
     {
@@ -54,7 +54,7 @@ namespace WallegNFe.Bll
         public X509Certificate2 SelecionarPorOtmismo()
         {
             X509Certificate2Collection colecao = SelecionarColecao();
-            foreach (X509Certificate2 certificado in colecao)
+            foreach (var certificado in colecao)
             {
                 if (certificado.IssuerName.Name.ToLower().Contains("Secretaria da Receita Federal do Brasil".ToLower()))
                 {

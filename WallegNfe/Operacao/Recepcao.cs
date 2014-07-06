@@ -1,10 +1,6 @@
-﻿//Trabalhar com o certificado
-
-//Trabalhar com o xml
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Xml;
-using WallegNFe.Bll;
 using WallegNFe.NfeRecepcao2;
 using WallegNFe.Versao;
 
@@ -16,11 +12,9 @@ namespace WallegNFe.Operacao
         private readonly List<Nota> NotaLista = new List<Nota>();
         private readonly bool Sincrono;
 
-
         public Recepcao(NFeContexto nfeContexto) : base(nfeContexto)
         {
-            
-            ArquivoSchema = "nfe_v" +  nfeContexto.Versao.VersaoString + ".xsd";
+            ArquivoSchema = "nfe_v" + nfeContexto.Versao.VersaoString + ".xsd";
 
             Sincrono = false;
         }
@@ -72,7 +66,7 @@ namespace WallegNFe.Operacao
         public void AdicionarNota(String arquivoCaminhoXml)
         {
             //Carrega uma nota XML e passa para um objeto Nota
-            Nota nota = new Nota(arquivoCaminhoXml);
+            var nota = new Nota(arquivoCaminhoXml);
 
             AdicionarNota(nota);
         }
@@ -81,7 +75,8 @@ namespace WallegNFe.Operacao
         {
             //Cabeçalho do lote
             String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-            xmlString += "<enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + NFeContexto.Versao.VersaoString +
+            xmlString += "<enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" +
+                         NFeContexto.Versao.VersaoString +
                          "\">";
 
             xmlString += "<idLote>" + numeroLote.ToString("000000000000000") + "</idLote>";

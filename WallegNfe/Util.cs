@@ -3,7 +3,7 @@ using System.Configuration;
 using System.IO;
 using System.Reflection;
 
-namespace WallegNFe.Bll
+namespace WallegNFe
 {
     public class Util
     {
@@ -44,7 +44,5 @@ namespace WallegNFe.Bll
 
             return (11 - remainder).ToString();
         }
-
-       
     }
 }

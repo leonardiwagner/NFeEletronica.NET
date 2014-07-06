@@ -1,32 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
-using WallegNFe.Bll;
 using WallegNFe.Consulta;
-using WallegNFe.Model;
+using WallegNFe.RecepcaoEvento2;
 using WallegNFe.Retorno;
 
 namespace WallegNFe.Operacao
 {
     public class RecepcaoEvento : BaseOperacao
     {
-        
-        private long NumeroLote = 0;
-        
-
         public RecepcaoEvento(NFeContexto nfe)
             : base(nfe)
         {
-
-
         }
 
         private RetornoSimples EnviarEvento(StringBuilder eventoXml, String id, String arquivoEvento, String schema)
         {
-
             var documentXml = Assinar(eventoXml, id, schema);
 
             var xmlDoc = new XmlDocument();
@@ -35,7 +26,7 @@ namespace WallegNFe.Operacao
             String conteudoXml = xmlDoc.OuterXml;
 
 
-            var nota = new Nota(this.NFeContexto) { CaminhoFisico = arquivoEvento };
+            var nota = new Nota(this.NFeContexto) {CaminhoFisico = arquivoEvento};
 
             var bllXml = new Xml();
 
@@ -53,7 +44,6 @@ namespace WallegNFe.Operacao
             //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
             try
             {
-
                 bllXml.ValidaSchema(arquivoEvento,
                     Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXML + "\\" + schema);
             }
@@ -63,15 +53,15 @@ namespace WallegNFe.Operacao
             }
 
             var recepcao = new RecepcaoEvento2.RecepcaoEvento();
-            var cabecalho = new RecepcaoEvento2.nfeCabecMsg();
+            var cabecalho = new nfeCabecMsg();
             cabecalho.cUF = "35";
             cabecalho.versaoDados = "1.00";
 
             recepcao.nfeCabecMsgValue = cabecalho;
             recepcao.ClientCertificates.Add(NFeContexto.Certificado);
 
-            var resposta = recepcao.nfeRecepcaoEvento(Bll.Xml.StringToXml(xmlString.ToString()));
-        
+            var resposta = recepcao.nfeRecepcaoEvento(Xml.StringToXml(xmlString.ToString()));
+
             var retorno = new RetornoSimples();
             retorno.Status = resposta["retEvento"]["infEvento"]["xMotivo"].InnerText;
             retorno.Motivo = resposta["retEvento"]["infEvento"]["cStat"].InnerText;
@@ -97,7 +87,8 @@ namespace WallegNFe.Operacao
             xmlString.Append("      <detEvento versao=\"" + "1.00" + "\">");
             xmlString.Append("         <descEvento>" + "Carta de Correcao" + "</descEvento>");
             xmlString.Append("         <xCorrecao>" + cartaCorrecao.Correcao + "</xCorrecao>");
-            xmlString.Append("         <xCondUso>A Carta de Correcao e disciplinada pelo paragrafo 1o-A do art. 7o do Convenio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularizacao de erro ocorrido na emissao de documento fiscal, desde que o erro nao esteja relacionado com: I - as variaveis que determinam o valor do imposto tais como: base de calculo, aliquota, diferenca de preco, quantidade, valor da operacao ou da prestacao; II - a correcao de dados cadastrais que implique mudanca do remetente ou do destinatario; III - a data de emissao ou de saida.</xCondUso>");
+            xmlString.Append(
+                "         <xCondUso>A Carta de Correcao e disciplinada pelo paragrafo 1o-A do art. 7o do Convenio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularizacao de erro ocorrido na emissao de documento fiscal, desde que o erro nao esteja relacionado com: I - as variaveis que determinam o valor do imposto tais como: base de calculo, aliquota, diferenca de preco, quantidade, valor da operacao ou da prestacao; II - a correcao de dados cadastrais que implique mudanca do remetente ou do destinatario; III - a data de emissao ou de saida.</xCondUso>");
             xmlString.Append("      </detEvento>");
             xmlString.Append("  </infEvento>");
             xmlString.Append("</evento>");
@@ -118,7 +109,7 @@ namespace WallegNFe.Operacao
             xmlString.Append("			<tpAmb>" + (NFeContexto.Producao ? "1" : "2") + "</tpAmb>");
             xmlString.Append("			<CNPJ>" + eventoCancelamento.CNPJ + "</CNPJ>");
             xmlString.Append("			<chNFe>" + eventoCancelamento.NotaChaveAcesso + "</chNFe>");
-            xmlString.Append("			<dhEvento>" + DateTime.Now.ToString("s") + "-03:00" + "</dhEvento>"); //2012-09-13T10:46:57-03:00
+            xmlString.Append("			<dhEvento>" + DateTime.Now.ToString("s") + "-03:00" + "</dhEvento>");
             xmlString.Append("			<tpEvento>" + tpEvento + "</tpEvento>");
             xmlString.Append("			<nSeqEvento>1</nSeqEvento>");
             xmlString.Append("			<verEvento>1.00</verEvento>");
@@ -129,7 +120,6 @@ namespace WallegNFe.Operacao
             xmlString.Append("			</detEvento>");
             xmlString.Append("		</infEvento>");
             xmlString.Append("	</evento>");
-            //xmlString.Append("</envEvento>");
 
             String arquivoTemporario = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\temp.xml";
             return EnviarEvento(xmlString, id, arquivoTemporario, "envEventoCancNFe_v1.00.xsd");
@@ -137,31 +127,26 @@ namespace WallegNFe.Operacao
 
         private String Assinar(StringBuilder xmlStringBuilder, String id, String schema)
         {
-            var bllXml = new WallegNFe.Bll.Xml();
+            var bllXml = new Xml();
             String arquivoTemporario = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\temp.xml";
-            StreamWriter SW_2 = File.CreateText(arquivoTemporario);
-            SW_2.Write(xmlStringBuilder.ToString());
-            SW_2.Close();
+            StreamWriter sw2 = File.CreateText(arquivoTemporario);
+            sw2.Write(xmlStringBuilder.ToString());
+            sw2.Close();
 
-            var nota = new Nota(this.NFeContexto) { CaminhoFisico = arquivoTemporario };
+            var nota = new Nota(this.NFeContexto) {CaminhoFisico = arquivoTemporario};
 
             //Assina a nota
-            var bllAssinatura = new WallegNFe.Bll.Assinatura();
+            var bllAssinatura = new Assinatura();
             try
             {
-
                 bllAssinatura.AssinarXml(
                     nota,
                     NFeContexto.Certificado, "evento", "#" + id);
-
             }
             catch (Exception e)
             {
                 throw new Exception("Erro ao assinar Nota: " + e.Message);
             }
-
-
-          
 
             return xmlStringBuilder.ToString();
         }

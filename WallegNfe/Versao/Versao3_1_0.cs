@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace WallegNFe.Versao
+﻿namespace WallegNFe.Versao
 {
-    public class Versao3_1_0 : VersaoAbstract
+    public class Versao3_1_0 : BaseVersao
     {
         public override string VersaoString
         {

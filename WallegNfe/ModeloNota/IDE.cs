@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WallegNFe.Model.Nota
+namespace WallegNFe.ModeloNota
 {
     public class IDE
     {

@@ -1,7 +1,7 @@
 ﻿using System;
-using WallegNFe.Model.Nota.Enum;
+using WallegNFe.ModeloNota;
 
-namespace WallegNFe.Model.Nota
+namespace WallegNFe.ModeloNota
 {
     public class DET
     {

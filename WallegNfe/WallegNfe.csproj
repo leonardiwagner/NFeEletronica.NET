@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -61,24 +62,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bll\Assinatura.cs" />
-    <Compile Include="Bll\Util.cs" />
-    <Compile Include="Bll\Xml.cs" />
-    <Compile Include="Bll\Certificado.cs" />
+    <Compile Include="Assinatura.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="Xml.cs" />
+    <Compile Include="Certificado.cs" />
     <Compile Include="Consulta\CartaCorrecao.cs" />
     <Compile Include="Consulta\Inutilizacao.cs" />
     <Compile Include="Retorno\IRetorno.cs" />
     <Compile Include="Retorno\RetornoSimples.cs" />
     <Compile Include="Versao\NFeVersao.cs" />
     <Compile Include="Consulta\Cancelamento.cs" />
-    <Compile Include="Model\Nota\COBR.cs" />
-    <Compile Include="Model\Nota\DEST.cs" />
-    <Compile Include="Model\Nota\DET.cs" />
-    <Compile Include="Model\Nota\EMIT.cs" />
-    <Compile Include="Model\Nota\Enum\ICMS.cs" />
-    <Compile Include="Model\Nota\TOTAL.cs" />
-    <Compile Include="Model\Nota\IDE.cs" />
-    <Compile Include="Model\Nota\TRANSP.cs" />
+    <Compile Include="ModeloNota\COBR.cs" />
+    <Compile Include="ModeloNota\DEST.cs" />
+    <Compile Include="ModeloNota\DET.cs" />
+    <Compile Include="ModeloNota\EMIT.cs" />
+    <Compile Include="ModeloNota\ICMS.cs" />
+    <Compile Include="ModeloNota\TOTAL.cs" />
+    <Compile Include="ModeloNota\IDE.cs" />
+    <Compile Include="ModeloNota\TRANSP.cs" />
     <Compile Include="Retorno\RetRecepcao.cs" />
     <Compile Include="NFeContexto.cs" />
     <Compile Include="Retorno\Recepcao.cs" />
@@ -147,9 +148,6 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />

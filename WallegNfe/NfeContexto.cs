@@ -1,7 +1,5 @@
-﻿//Trabalhar com o certificado
-using System;
+﻿using System;
 using System.Security.Cryptography.X509Certificates;
-using WallegNFe.Bll;
 using WallegNFe.Versao;
 
 namespace WallegNFe
@@ -9,7 +7,7 @@ namespace WallegNFe
     public class NFeContexto
     {
         private readonly bool _Producao = false;
-        private readonly VersaoAbstract _Versao;
+        private readonly BaseVersao _Versao;
         private X509Certificate2 _Certificado;
 
         public NFeContexto(bool producao, NFeVersao versao)
@@ -31,7 +29,7 @@ namespace WallegNFe
             get { return _Producao; }
         }
 
-        public VersaoAbstract Versao
+        public BaseVersao Versao
         {
             get { return _Versao; }
         }
