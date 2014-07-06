@@ -1,23 +1,15 @@
-WallegNfe
+WallegNFe
 =========
 
-Hi, this is a software for Brazilian use only, so all content (including code comments) are written in Portuguese (yes, we speak Portuguese in Brazil!). If you want some info in english, please contact me straight in my personal e-mail (see my profile).
+Electronic invoicing integration with Brazilian government.
 
-Porque WallegNfe para emissão de Nota Fiscal Eletrônica?
-=========
-Porque é simples, não faz nada além de criar uma nota e transmitir para o SEFAZ, e outras operações como cancelar e consultar. A forma de uso também é simples, utilize ou compile como DLL e use dentro do seu software. O motivo de fazer esse projeto é porque geralmente os outros projetos tem o uso mais complexo, fazendo outras tarefas, se você quer algo simples e funcional, WallegNfe é perfeito!
+#### Importante
+Atualmente (05/07/2014) eu sou o único contribuidor e não estou mais mantendo o projeto devido a falta de incentivo e tempo, entretanto ele está em perfeito funcionamento e estou disponível para tirar dúvidas. Fiquem avontade para contribuir ou fazer um fork do projeto.
 
-Alguem usa o WallegNfe em produção?
-=========
-WallegNfe está sendo desenvolvido para uma grande soft-house que possui inumeros clientes em comércio, e será usado diariamente por muita gente! Até o presente momento (24/01/2014) o projeto está em Alpha ainda :( , a previsão para entrar em beta é para 02/2014, e em produção em 03/2014
-
-Posso utilizar então para testes, e dar opiniões?
-=========
-Claro! Estamos dando prioridade para as necessidades da empresa, mas caso alguém precisar de algo especifico que poderá ajudar muita gente, a opinião será bem vinda, você pode me encontrar pelo e-mail do meu perfil do GitHub. E pode já ir testando pois está funcional, ainda tem muita arquitetura para ser revisada então é possivel que algumas coisas precisem mudar quando entrarmos na versão de produção, mas não será muita coisa.
+Não está implementado o suporte para a versão 3.X.X da NFe que será obrigatória em 2015, então caso ninguém de continuidade nesse projeto, eu aconselho a usarem o projeto ACBR que também possui suporte a NFe: http://acbr.sourceforge.net/drupal
 
 
-Confira o Wiki do projeto para ver exemplos de código!
-
+#### Exemplos de código
 https://github.com/leonardiwagner/WallegNFe/wiki/Exemplo-de-uso
 
 
