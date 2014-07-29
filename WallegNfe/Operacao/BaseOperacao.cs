@@ -2,9 +2,9 @@
 {
     public abstract class BaseOperacao
     {
-        protected NFeContexto NFeContexto;
+        protected INFeContexto NFeContexto;
 
-        public BaseOperacao(NFeContexto nfeContexto)
+        protected BaseOperacao(INFeContexto nfeContexto)
         {
             NFeContexto = nfeContexto;
         }

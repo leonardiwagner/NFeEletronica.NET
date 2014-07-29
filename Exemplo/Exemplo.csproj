@@ -233,6 +233,12 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WallegNfe\WallegNFe.csproj">
+      <Project>{97c0497f-ec90-41c2-be61-3c7abed1c71a}</Project>
+      <Name>WallegNFe</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

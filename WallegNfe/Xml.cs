@@ -7,7 +7,7 @@ namespace WallegNFe
 {
     public class Xml
     {
-        private String ValidarResultado = "";
+        private String validarResultado = "";
 
         /// <summary>
         ///     Valida se um Xml está seguindo de acordo um Schema
@@ -37,7 +37,7 @@ namespace WallegNFe
             // Adiciona o schema ao ValidatingReader
             reader.Schemas.Add(schemaCollection);
             //Evento que retorna a mensagem de validacao
-            reader.ValidationEventHandler += reader_ValidationEventHandler;
+            reader.ValidationEventHandler += Reader_ValidationEventHandler;
             //Percorre o XML
             while (reader.Read())
             {
@@ -45,21 +45,21 @@ namespace WallegNFe
             reader.Close(); //Fecha o arquivo.
             //O Resultado é preenchido no reader_ValidationEventHandler
 
-            if (ValidarResultado != "")
+            if (validarResultado != "")
             {
-                throw new Exception(ValidarResultado);
+                throw new Exception(validarResultado);
             }
         }
 
         /// <summary>
-        ///     Se der um erro na validação do schema, esse evento é disparado
+        ///  Se der um erro na validação do schema, esse evento é disparado
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void reader_ValidationEventHandler(object sender, ValidationEventArgs e)
+        private void Reader_ValidationEventHandler(object sender, ValidationEventArgs e)
         {
             // Como sera exibida a mensagem de ERROS de validacao
-            ValidarResultado = ValidarResultado + String.Format("\rLinha:{1}" + Environment.NewLine +
+            validarResultado = validarResultado + String.Format("\rLinha:{1}" + Environment.NewLine +
                                                                 "\rColuna:{0}" + Environment.NewLine +
                                                                 "\rErro:{2}" + Environment.NewLine,
                 e.Exception.LinePosition,

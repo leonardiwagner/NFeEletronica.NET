@@ -7,7 +7,7 @@
             get { return "2.00"; }
         }
 
-        public override string PastaXML
+        public override string PastaXml
         {
             get { return "2.0.0"; }
         }

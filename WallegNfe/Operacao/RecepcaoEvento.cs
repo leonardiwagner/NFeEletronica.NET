@@ -11,7 +11,7 @@ namespace WallegNFe.Operacao
 {
     public class RecepcaoEvento : BaseOperacao
     {
-        public RecepcaoEvento(NFeContexto nfe)
+        public RecepcaoEvento(INFeContexto nfe)
             : base(nfe)
         {
         }
@@ -45,7 +45,7 @@ namespace WallegNFe.Operacao
             try
             {
                 bllXml.ValidaSchema(arquivoEvento,
-                    Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXML + "\\" + schema);
+                    Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXml + "\\" + schema);
             }
             catch (Exception e)
             {
@@ -62,10 +62,9 @@ namespace WallegNFe.Operacao
 
             var resposta = recepcao.nfeRecepcaoEvento(Xml.StringToXml(xmlString.ToString()));
 
-            var retorno = new RetornoSimples();
-            retorno.Status = resposta["retEvento"]["infEvento"]["xMotivo"].InnerText;
-            retorno.Motivo = resposta["retEvento"]["infEvento"]["cStat"].InnerText;
-            return retorno;
+            var status = resposta["retEvento"]["infEvento"]["xMotivo"].InnerText;
+            var motivo = resposta["retEvento"]["infEvento"]["cStat"].InnerText;
+            return new RetornoSimples(status, motivo);
         }
 
         public IRetorno CartaCorrecao(CartaCorrecao cartaCorrecao)
@@ -136,12 +135,10 @@ namespace WallegNFe.Operacao
             var nota = new Nota(this.NFeContexto) {CaminhoFisico = arquivoTemporario};
 
             //Assina a nota
-            var bllAssinatura = new Assinatura();
+            var bllAssinatura = new AssinaturaDeXml();
             try
             {
-                bllAssinatura.AssinarXml(
-                    nota,
-                    NFeContexto.Certificado, "evento", "#" + id);
+                bllAssinatura.AssinarNota(nota,NFeContexto.Certificado, "evento", "#" + id);
             }
             catch (Exception e)
             {

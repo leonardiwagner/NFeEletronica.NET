@@ -12,7 +12,7 @@ namespace WallegNFe.Operacao
     {
         public readonly String ArquivoSchema;
 
-        public Inutilizacao(NFeContexto nfeContexto) : base(nfeContexto)
+        public Inutilizacao(INFeContexto nfeContexto) : base(nfeContexto)
         {
             ArquivoSchema = "inutNFe_v2.00.xsd";
         }
@@ -54,11 +54,9 @@ namespace WallegNFe.Operacao
             var resultado = webservice.nfeInutilizacaoNF2(assinado);
 
 
-            var retorno = new RetornoSimples();
-            retorno.Motivo = resultado["cStat"].InnerText;
-            retorno.Motivo = resultado["xMotivo"].InnerText;
-
-            return retorno;
+            var status = resultado["cStat"].InnerText;
+            var motivo = resultado["xMotivo"].InnerText;
+            return new RetornoSimples(status, motivo);
         }
 
         private XmlNode Assinar(StringBuilder xmlStringBuilder, String id)
@@ -72,24 +70,21 @@ namespace WallegNFe.Operacao
             var nota = new Nota(this.NFeContexto) {CaminhoFisico = arquivoTemporario};
 
             //Assina a nota
-            var bllAssinatura = new Assinatura();
+            var bllAssinatura = new AssinaturaDeXml();
             try
             {
-                bllAssinatura.AssinarXml(
-                    nota,
-                    NFeContexto.Certificado, "inutNFe", "#" + id);
+                bllAssinatura.AssinarNota(nota, NFeContexto.Certificado, "inutNFe", "#" + id);
             }
             catch (Exception e)
             {
                 throw new Exception("Erro ao assinar Nota: " + e.Message);
             }
 
-
             //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
             try
             {
                 bllXml.ValidaSchema(arquivoTemporario,
-                    Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXML + "\\" + ArquivoSchema);
+                    Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXml + "\\" + ArquivoSchema);
             }
             catch (Exception e)
             {

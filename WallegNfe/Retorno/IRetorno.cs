@@ -4,7 +4,7 @@ namespace WallegNFe.Retorno
 {
     public interface IRetorno
     {
-        String Status { get; set; }
-        String Motivo { get; set; }
+        String Status { get; }
+        String Motivo { get; }
     }
 }

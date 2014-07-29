@@ -4,14 +4,6 @@ namespace WallegNFe.ModeloNota
 {
     public class EMIT
     {
-        public EMIT()
-        {
-            //valores padrão
-            cPais = "1058";
-            xPais = "BRASIL";
-            IE = "ISENTO";
-        }
-
         public String CPF { get; set; }
         public String CNPJ { get; set; }
         public String xNome { get; set; }
@@ -28,5 +20,13 @@ namespace WallegNFe.ModeloNota
 
         public String IE { get; set; }
         public String CRT { get; set; }
+
+        public EMIT()
+        {
+            //valores padrão
+            this.cPais = "1058";
+            this.xPais = "BRASIL";
+            this.IE = "ISENTO";
+        }
     }
 }

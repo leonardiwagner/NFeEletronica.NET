@@ -5,20 +5,14 @@ namespace WallegNFe.ModeloNota
 {
     public class COBR
     {
-        public COBR()
-        {
-            dup = new List<DUP>();
-        }
-
         public String nFat { get; set; }
         public String vOrig { get; set; }
         public String vLiq { get; set; }
-
         public List<DUP> dup { get; set; }
 
-        public void addDup(DUP dup)
+        public COBR()
         {
-            this.dup.Add(dup);
+            this.dup = new List<DUP>();
         }
     }
 

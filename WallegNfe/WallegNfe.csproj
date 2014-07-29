@@ -62,10 +62,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assinatura.cs" />
+    <Compile Include="AssinaturaDeXml.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Xml.cs" />
-    <Compile Include="Certificado.cs" />
+    <Compile Include="GerenciadorDeCertificado.cs" />
     <Compile Include="Consulta\CartaCorrecao.cs" />
     <Compile Include="Consulta\Inutilizacao.cs" />
     <Compile Include="Retorno\IRetorno.cs" />
@@ -98,7 +98,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Versao\VersaoAbstract.cs" />
+    <Compile Include="Versao\BaseVersao.cs" />
     <Compile Include="Versao\Versao2_0_0.cs" />
     <Compile Include="Versao\Versao3_1_0.cs" />
     <Compile Include="Web References\NfeInutilizacao\Reference.cs">

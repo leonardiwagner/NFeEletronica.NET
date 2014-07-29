@@ -8,15 +8,15 @@ namespace WallegNFe.Operacao
 {
     public class Recepcao : BaseOperacao
     {
-        private readonly String ArquivoSchema = "";
-        private readonly List<Nota> NotaLista = new List<Nota>();
-        private readonly bool Sincrono;
+        private readonly String arquivoSchema = "";
+        private readonly List<Nota> notaLista = new List<Nota>();
+        private readonly bool sincrono;
 
-        public Recepcao(NFeContexto nfeContexto) : base(nfeContexto)
+        public Recepcao(INFeContexto nfeContexto) : base(nfeContexto)
         {
-            ArquivoSchema = "nfe_v" + nfeContexto.Versao.VersaoString + ".xsd";
+            arquivoSchema = "nfe_v" + nfeContexto.Versao.VersaoString + ".xsd";
 
-            Sincrono = false;
+            sincrono = false;
         }
 
         /// <summary>
@@ -25,11 +25,11 @@ namespace WallegNFe.Operacao
         /// <param name="nota"></param>
         public void AdicionarNota(Nota nota)
         {
-            var bllAssinatura = new Assinatura();
+            var bllAssinatura = new AssinaturaDeXml();
             var bllXml = new Xml();
 
             //Verifica se já passou o limite de notas por lote (regra do SEFAZ). 
-            if (NotaLista.Count >= 50)
+            if (notaLista.Count >= 50)
             {
                 throw new Exception("Limite máximo por lote é de 50 arquivos");
             }
@@ -37,7 +37,7 @@ namespace WallegNFe.Operacao
             //Assina a nota
             try
             {
-                bllAssinatura.AssinarXml(nota, NFeContexto.Certificado, "NFe");
+                bllAssinatura.AssinarNota(nota, NFeContexto.Certificado, "NFe");
             }
             catch (Exception e)
             {
@@ -48,7 +48,7 @@ namespace WallegNFe.Operacao
             try
             {
                 bllXml.ValidaSchema(nota.CaminhoFisico,
-                    Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXML + "\\" + ArquivoSchema);
+                    Util.ContentFolderSchemaValidacao + "\\" + NFeContexto.Versao.PastaXml + "\\" + arquivoSchema);
             }
             catch (Exception e)
             {
@@ -56,7 +56,7 @@ namespace WallegNFe.Operacao
             }
 
             //Adiciona para a lista do lote a serem enviadas
-            NotaLista.Add(nota);
+            notaLista.Add(nota);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace WallegNFe.Operacao
 
             if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
             {
-                if (Sincrono)
+                if (sincrono)
                 {
                     xmlString += "<indSinc>1</indSinc>";
                 }
@@ -94,10 +94,10 @@ namespace WallegNFe.Operacao
             }
 
             //Adiciona as notas no lote
-            for (int i = 0; i < NotaLista.Count; i++)
+            for (int i = 0; i < notaLista.Count; i++)
             {
                 //Converte o Xml de uma nota em texto
-                String NotaString = NotaLista[i].ConteudoXml;
+                String NotaString = notaLista[i].ConteudoXml;
 
                 //Identifica somente o conteudo entre a tag <NFe>
                 int inicioTag = NotaString.IndexOf("<NFe");
@@ -130,11 +130,10 @@ namespace WallegNFe.Operacao
             //Envia para o webservice e recebe a resposta
             XmlNode xmlResposta = nfeRecepcao2.nfeRecepcaoLote2(MontarXml(numeroLote).DocumentElement);
 
-            var retorno = new Retorno.Recepcao();
-            retorno.Recibo = xmlResposta["infRec"]["nRec"].InnerText;
-            retorno.Motivo = xmlResposta["xMotivo"].InnerText;
+            var recibo = xmlResposta["infRec"]["nRec"].InnerText;
+            var motivo = xmlResposta["xMotivo"].InnerText;
 
-            return retorno;
+            return new Retorno.Recepcao(recibo, "", motivo);
         }
     }
 }

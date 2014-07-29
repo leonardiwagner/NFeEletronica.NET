@@ -6,7 +6,7 @@ namespace WallegNFe.Versao
     {
         public abstract NFeVersao Versao { get; }
         public abstract String VersaoString { get; }
-        public abstract String PastaXML { get; }
+        public abstract String PastaXml { get; }
 
         public static bool operator ==(BaseVersao versaoAbstract, NFeVersao nfeVersao)
         {

@@ -5,12 +5,6 @@ namespace WallegNFe.ModeloNota
 {
     public class DET
     {
-        public DET()
-        {
-            //valores padrão
-            indTot = "1";
-        }
-
         public String nItem { get; set; }
         public String cProd { get; set; }
         public String cEAN { get; set; }
@@ -81,5 +75,11 @@ namespace WallegNFe.ModeloNota
         public String cofins_vCOFINS { get; set; }
         public String cofins_qBCProd { get; set; }
         public String cofins_vAliqProd { get; set; }
+
+        public DET()
+        {
+            //valores padrão
+            this.indTot = "1";
+        }
     }
 }

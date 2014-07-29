@@ -4,13 +4,6 @@ namespace WallegNFe.ModeloNota
 {
     public class DEST
     {
-        public DEST()
-        {
-            //valores padrão
-            cPais = "1058";
-            xPais = "BRASIL";
-        }
-
         public String CPF { get; set; }
         public String CNPJ { get; set; }
         public String idEstrangeiro { get; set; }
@@ -32,5 +25,12 @@ namespace WallegNFe.ModeloNota
         public String indIEDest { get; set; }
 
         public String email { get; set; }
+
+        public DEST()
+        {
+            //valores padrão
+            this.cPais = "1058";
+            this.xPais = "BRASIL";
+        }
     }
 }

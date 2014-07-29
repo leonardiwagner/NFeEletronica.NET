@@ -6,6 +6,7 @@ namespace WallegNFe.Operacao
     {
         public void NfeConsultaNF2()
         {
+            //todo: Precisa implementar essa operação
             throw new NotImplementedException();
         }
     }

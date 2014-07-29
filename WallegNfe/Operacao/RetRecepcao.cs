@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using WallegNFe.NfeRetRecepcao2;
+using WallegNFe.Retorno;
 
 namespace WallegNFe.Operacao
 {
@@ -11,7 +12,7 @@ namespace WallegNFe.Operacao
     /// </summary>
     public class RetRecepcao : BaseOperacao
     {
-        public RetRecepcao(NFeContexto nfe)
+        public RetRecepcao(INFeContexto nfe)
             : base(nfe)
         {
         }
@@ -41,7 +42,7 @@ namespace WallegNFe.Operacao
             nfeRetRecepcao2.ClientCertificates.Add(NFeContexto.Certificado);
 
 
-            var retorno = new Retorno.RetRecepcao();
+            Retorno.RetRecepcao retorno;
             XmlNode respostaXml = null;
 
             bool isEmProcessamento = true;
@@ -51,10 +52,11 @@ namespace WallegNFe.Operacao
             {
                 respostaXml = nfeRetRecepcao2.nfeRetRecepcao2(consultaXml);
 
-                //Esse e o resultado só do lote (cabeçado e tal)
-                retorno.Status = respostaXml["cStat"].InnerText;
-                retorno.Motivo = respostaXml["xMotivo"].InnerText;
-
+                //Esse e o resultado só do lote (cabeçalho)
+                var status = respostaXml["cStat"].InnerText;
+                var motivo = respostaXml["xMotivo"].InnerText;
+                retorno = new Retorno.RetRecepcao("","",status, motivo);
+                
                 if (retorno.Status != "105")
                 {
                     isEmProcessamento = false;
@@ -79,9 +81,9 @@ namespace WallegNFe.Operacao
 
                 try
                 {
-                    motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText;
                     status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText;
                     protocolo = respostaXml["protNFe"]["infProt"]["nProt"].InnerText;
+                    motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText;
                 }
                 catch
                 {
@@ -96,13 +98,12 @@ namespace WallegNFe.Operacao
 
                 try
                 {
-                    return new Retorno.RetRecepcao
-                    {
-                        Motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText,
-                        NumeroNota = respostaXml["protNFe"]["infProt"]["chNFe"].InnerText,
-                        Protocolo = respostaXml["protNFe"]["infProt"]["nProt"].InnerText,
-                        Status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText
-                    };
+                    var numeroNota = respostaXml["protNFe"]["infProt"]["chNFe"].InnerText;
+                    protocolo = respostaXml["protNFe"]["infProt"]["nProt"].InnerText;
+                    status = respostaXml["protNFe"]["infProt"]["cStat"].InnerText;
+                    motivo = respostaXml["protNFe"]["infProt"]["xMotivo"].InnerText;
+
+                    return new Retorno.RetRecepcao(numeroNota, protocolo, status, motivo);
                 }
                 catch (Exception e)
                 {

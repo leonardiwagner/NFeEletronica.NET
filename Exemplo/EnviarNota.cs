@@ -74,7 +74,7 @@ namespace Exemplo
             dup.nDup = "123";
             dup.dVenc = "2014-03-21";
             dup.vDup = "23.33";
-            nota.cobr.addDup(dup);
+            nota.cobr.dup.Add(dup);
 
             nota.transp.modFrete = "1";
             nota.transp.xNome = "Transportadora Ficticia";
