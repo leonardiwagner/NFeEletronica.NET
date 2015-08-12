@@ -1,4 +1,4 @@
-﻿WallegNFe
+NFeEletronica.NET
 =========
 E-invoicing issuer for the Brazilian government / Emissor de nota fiscal eletrônica
 
