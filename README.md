@@ -3,7 +3,6 @@
   NFeEletronica.NET
   <img title="Build Status Images" src="https://travis-ci.org/leonardiwagner/NFeEletronica.NET.svg">
 </h1>
-=========
 E-invoicing issuer for the Brazilian government / Emissor de nota fiscal eletrônica
 
 Install via NuGet! : `PM> Install-Package NFeEletronica`
