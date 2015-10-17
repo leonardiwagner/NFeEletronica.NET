@@ -1,0 +1,36 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
+              GeneratedClassNamespace="NFeEletronica.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="NFeEletronica_NfeRetRecepcao2_NfeRetRecepcao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeRetRecepcao2.asmx</Value>
+    </Setting>
+    <Setting Name="NFeEletronica_NfeRecepcao2_NfeRecepcao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeRecepcao2.asmx</Value>
+    </Setting>
+    <Setting Name="NFeEletronica_NfeInutilizacao2_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeInutilizacao2.asmx</Value>
+    </Setting>
+    <Setting Name="NFeEletronica_NfeConsulta2_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="NFeEletronica_NfeStatusServico2_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeStatusServico2.asmx</Value>
+    </Setting>
+    <Setting Name="NFeEletronica_CadConsultaCadastro2_CadConsultaCadastro2" Type="(Web Service URL)"
+             Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/CadConsultaCadastro2.asmx</Value>
+    </Setting>
+    <Setting Name="NFeEletronica_RecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="NFeEletronica_RecepcaoEvento2_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="NFeEletronica_NfeInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/nfeweb/services/NfeInutilizacao2.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
