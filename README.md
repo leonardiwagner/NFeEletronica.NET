@@ -1,7 +1,9 @@
 <h1>
   <img src="http://www.piaui.pi.gov.br/images/albuns/album_121/2c8b41305f_media.jpg" width="48">
   NFeEletronica.NET
-  <img title="Build Status Images" src="https://travis-ci.org/leonardiwagner/NFeEletronica.NET.svg">
+  <a href="https://travis-ci.org/leonardiwagner/NFeEletronica.NET" target="_blank">
+    <img title="Build Status Images" src="https://travis-ci.org/leonardiwagner/NFeEletronica.NET.svg">
+  </a>
 </h1>
 E-invoicing issuer for the Brazilian government / Emissor de nota fiscal eletrônica
 
