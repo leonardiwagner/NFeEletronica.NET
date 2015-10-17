@@ -7,6 +7,10 @@ namespace NFeEletronica.Contexto
 {
     public class NFeContexto : INFeContexto
     {
+        public bool Producao { get; } = false;
+        public BaseVersao Versao { get; }
+        public X509Certificate2 Certificado { get; }
+        
         public NFeContexto(bool producao, NFeVersao versao, IGerenciadorDeCertificado gerenciadorDeCertificado = null)
         {
             if (versao == NFeVersao.VERSAO_3_1_0)
@@ -26,9 +30,5 @@ namespace NFeEletronica.Contexto
                 throw new Exception(
                     "Nenhum certificado encontrado, não será possível prosseguir com a Nota Fiscal Eletrônica.");
         }
-
-        public bool Producao { get; } = false;
-        public BaseVersao Versao { get; }
-        public X509Certificate2 Certificado { get; }
     }
 }
