@@ -7,11 +7,7 @@
 </h1>
 E-invoicing issuer for the Brazilian government / Emissor de nota fiscal eletrônica
 
-Install via NuGet! : `PM> Install-Package NFeEletronica`
-
 This project is intended for use only in Brazil, so project is all written in Portuguese, but feel free to ask questions in english too.
-
-Thanks to TeamCity for the free build server to support this project! [They are awesome :)](http://teamcity.codebetter.com/)
 
 ### Como Usar?
 1. Adicione via NuGet o pacote [NFeEletronica](https://www.nuget.org/packages/NFeEletronica/) no seu projeto.
